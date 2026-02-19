@@ -1,4 +1,4 @@
-import { useRouter } from "next/router"; 
+import { useRouter } from "next/router";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -24,24 +24,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </a>
         <a
           role="tab"
-          className={`tab h-16 ${isActive("/boosts") ? "border-2 border-accent shadow-glow" : ""}`}
-          href="/boosts"
+          className={`tab h-16 ${isActive("/shop") ? "border-2 border-accent shadow-glow" : ""}`}
+          href="/shop"
         >
-          <img src="/icons/white/basket.svg" alt="Boosts" className="w-8 h-8" />
+          <img src="/icons/white/basket.svg" alt="Shop" className="w-8 h-8" />
         </a>
         <a
           role="tab"
-          className={`tab h-16 ${isActive("/tasks") ? "border-2 border-accent shadow-glow" : ""}`}
-          href="/tasks"
+          className={`tab h-16 ${isActive("/staking") ? "border-2 border-accent shadow-glow" : ""}`}
+          href="/staking"
         >
-          <img src="/icons/white/invoice-1.svg" alt="Tasks" className="w-8 h-8" />
+          <img src="/icons/white/invoice-1.svg" alt="Staking" className="w-8 h-8" />
         </a>
         <a
           role="tab"
-          className={`tab h-16 ${isActive("/friends") ? "border-2 border-accent shadow-glow" : ""}`}
-          href="/friends"
+          className={`tab h-16 ${isActive("/payment") ? "border-2 border-accent shadow-glow" : ""}`}
+          href="/payment"
         >
-          <img src="/icons/white/user-group.svg" alt="Friends" className="w-8 h-8" />
+          <img src="/icons/white/user-group.svg" alt="Stars" className="w-8 h-8" />
         </a>
         <a
           role="tab"

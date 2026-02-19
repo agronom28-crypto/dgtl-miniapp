@@ -1,220 +1,206 @@
-import Layout from '../components/layout';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { IUserState } from '../models/User';
-import { IUserIcon, IStakedIcon } from '../models/Icon';
-import { shopService } from '../services/shopService';
+import Layout from '../components/layout';
 import { stakingService } from '../services/stakingService';
-import { showNotification } from '../lib/notifications';
-import styles from '../styles/Staking.module.css';
-import axios from 'axios';
+import { shopService } from '../services/shopService';
+import { IUserIcon, IStakedIcon, IIcon } from '../models/Icon';
+import Head from 'next/head';
 
-const Staking: React.FC = () => {
-    const { data: session } = useSession();
-    const [userData, setUserData] = useState<IUserState | null>(null);
-    const [myIcons, setMyIcons] = useState<IUserIcon[]>([]);
-    const [activeStakes, setActiveStakes] = useState<IStakedIcon[]>([]);
-    const [pendingEarnings, setPendingEarnings] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isClaiming, setIsClaiming] = useState(false);
+const StakingPage = () => {
+  const { data: session } = useSession();
+  const [userIcons, setUserIcons] = useState<IUserIcon[]>([]);
+  const [stakedIcons, setStakedIcons] = useState<IStakedIcon[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [staking, setStaking] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (session?.user) {
-            loadData();
-        }
-    }, [session]);
+  const telegramId = (session?.user as any)?.telegramId;
 
-    // Обновляем доход каждые 30 секунд
-    useEffect(() => {
-        if (!userData?._id) return;
-        const interval = setInterval(async () => {
-            try {
-                const res = await stakingService.getEarnings(userData._id);
-                if (res.success) setPendingEarnings(res.pendingEarnings);
-            } catch (e) {}
-        }, 30000);
-        return () => clearInterval(interval);
-    }, [userData]);
-
-    const loadData = async () => {
-        try {
-            setIsLoading(true);
-            const telegramId = (session?.user as any)?.telegramId;
-            if (!telegramId) return;
-
-            const userRes = await axios.get(`/api/users/${telegramId}`);
-            if (userRes.data.success) {
-                setUserData(userRes.data.user);
-                const userId = userRes.data.user._id;
-
-                const [myRes, stakesRes, earningsRes] = await Promise.all([
-                    shopService.getMyIcons(userId),
-                    stakingService.getActiveStakes(userId),
-                    stakingService.getEarnings(userId)
-                ]);
-
-                if (myRes.success) setMyIcons(myRes.userIcons);
-                if (stakesRes.success) setActiveStakes(stakesRes.stakes);
-                if (earningsRes.success) setPendingEarnings(earningsRes.pendingEarnings);
-            }
-        } catch (error) {
-            console.error('Error loading staking data:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleClaim = async () => {
-        if (!userData?._id || pendingEarnings === 0) return;
-        try {
-            setIsClaiming(true);
-            const result = await stakingService.claimEarnings(userData._id);
-            if (result.success) {
-                showNotification(`+${result.earnings} монет собрано!`);
-                setPendingEarnings(0);
-                await loadData();
-            }
-        } catch (error) {
-            showNotification('Ошибка сбора дохода');
-        } finally {
-            setIsClaiming(false);
-        }
-    };
-
-    const handleStake = async (iconId: string) => {
-        if (!userData?._id) return;
-        try {
-            const result = await stakingService.stakeIcon(userData._id, iconId);
-            if (result.success) {
-                showNotification('Иконка в стейкинге!');
-                await loadData();
-            }
-        } catch (error: any) {
-            const msg = error?.response?.data?.error || 'Ошибка стейкинга';
-            showNotification(msg);
-        }
-    };
-
-    const handleUnstake = async (iconId: string) => {
-        if (!userData?._id) return;
-        try {
-            const result = await stakingService.unstakeIcon(userData._id, iconId);
-            if (result.success) {
-                showNotification('Иконка снята из стейкинга');
-                await loadData();
-            }
-        } catch (error: any) {
-            const msg = error?.response?.data?.error || 'Ошибка';
-            showNotification(msg);
-        }
-    };
-
-    const isStaked = (iconId: string) => {
-        return activeStakes.some(s => {
-            const id = typeof s.iconId === 'string' ? s.iconId : s.iconId._id;
-            return id === iconId;
-        });
-    };
-
-    // Иконки, которые куплены, но НЕ в стейкинге
-    const unstaked = myIcons.filter(ui => {
-        const iconId = typeof ui.iconId === 'string' ? ui.iconId : ui.iconId._id;
-        return !isStaked(iconId);
-    });
-
-    if (isLoading) {
-        return (
-            <Layout>
-                <div className={styles.container}>
-                    <div className={styles.loading}>Загрузка...</div>
-                </div>
-            </Layout>
-        );
+  const loadData = useCallback(async () => {
+    if (!telegramId) return;
+    try {
+      const [userIconsData, stakingData] = await Promise.all([
+        shopService.getUserIcons(telegramId),
+        stakingService.getUserStaking(telegramId)
+      ]);
+      setUserIcons(userIconsData);
+      setStakedIcons(stakingData.stakedIcons || []);
+    } catch (err) {
+      console.error('Failed to load staking data:', err);
+    } finally {
+      setLoading(false);
     }
+  }, [telegramId]);
 
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleStake = async (iconId: string) => {
+    if (!telegramId) return;
+    setStaking(iconId);
+    try {
+      await stakingService.stake(telegramId, iconId);
+      await loadData();
+    } catch (err: any) {
+      console.error('Staking failed:', err);
+      alert(err.response?.data?.error || 'Ошибка стейкинга');
+    } finally {
+      setStaking(null);
+    }
+  };
+
+  const handleUnstake = async (stakedIconId: string) => {
+    if (!telegramId) return;
+    try {
+      await stakingService.unstake(telegramId, stakedIconId);
+      await loadData();
+    } catch (err) {
+      console.error('Unstake failed:', err);
+    }
+  };
+
+  const handleClaim = async (stakedIconId: string) => {
+    if (!telegramId) return;
+    try {
+      const result = await stakingService.claimRewards(telegramId, stakedIconId);
+      alert(`Собрано ${result.reward} монет!`);
+      await loadData();
+    } catch (err: any) {
+      console.error('Claim failed:', err);
+      alert(err.response?.data?.error || 'Ошибка сбора наград');
+    }
+  };
+
+  // Вычисляем время стейкинга
+  const getStakingDuration = (stakedAt: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - new Date(stakedAt).getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}ч ${minutes}м`;
+  };
+
+  // Иконки, доступные для стейкинга (не застейканные)
+  const stakedIconIds = stakedIcons
+    .filter(si => si.isActive)
+    .map(si => typeof si.iconId === 'string' ? si.iconId : si.iconId._id);
+
+  const availableForStaking = userIcons.filter(ui => {
+    const iconId = typeof ui.iconId === 'string' ? ui.iconId : ui.iconId._id;
+    return !stakedIconIds.includes(iconId);
+  });
+
+  if (loading) {
     return (
-        <Layout>
-            <div className={styles.container}>
-                <h1 className={styles.title}>Стейкинг</h1>
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <span className="loading loading-spinner loading-lg" />
+        </div>
+      </Layout>
+    );
+  }
 
-                {/* Блок дохода */}
-                <div className={styles.earningsCard}>
-                    <div className={styles.earningsLabel}>Накопленный доход</div>
-                    <div className={styles.earningsValue}>
-                        +{pendingEarnings.toLocaleString()}
+  return (
+    <Layout>
+      <Head>
+        <title>Стейкинг — DGTL</title>
+      </Head>
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-center mb-2">Стейкинг</h1>
+        <p className="text-center text-gray-400 text-sm mb-4">
+          Застейкайте иконки и получайте пассивный доход
+        </p>
+
+        {/* Активные стейки */}
+        {stakedIcons.filter(si => si.isActive).length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-3">Активные стейки</h2>
+            <div className="space-y-3">
+              {stakedIcons
+                .filter(si => si.isActive)
+                .map((si) => {
+                  const icon = typeof si.iconId === 'string' ? null : si.iconId as IIcon;
+                  return (
+                    <div key={si._id} className="bg-base-200 rounded-xl p-4 border border-green-800">
+                      <div className="flex items-center gap-3">
+                        {icon?.imageUrl && (
+                          <img src={icon.imageUrl} alt={icon.name} className="w-14 h-14 rounded-lg object-cover" />
+                        )}
+                        <div className="flex-1">
+                          <h4 className="font-semibold">{icon?.name || 'Иконка'}</h4>
+                          <p className="text-xs text-gray-400">
+                            Застейкано: {getStakingDuration(si.stakedAt)}
+                          </p>
+                          {icon?.stakingBonus && (
+                            <p className="text-xs text-green-400">+{icon.stakingBonus}% бонус</p>
+                          )}
+                          <p className="text-xs text-yellow-400">
+                            Собрано: {si.rewardsClaimed} монет
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            className="btn btn-xs btn-success"
+                            onClick={() => handleClaim(si._id)}
+                          >
+                            Собрать
+                          </button>
+                          <button
+                            className="btn btn-xs btn-outline btn-error"
+                            onClick={() => handleUnstake(si._id)}
+                          >
+                            Снять
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* Доступные для стейкинга */}
+        <div>
+          <h2 className="text-lg font-semibold mb-3">Доступные иконки</h2>
+          {availableForStaking.length === 0 ? (
+            <p className="text-center text-gray-400 py-6">
+              Нет иконок для стейкинга. Купите иконки в магазине.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {availableForStaking.map((ui) => {
+                const icon = typeof ui.iconId === 'string' ? null : ui.iconId as IIcon;
+                if (!icon) return null;
+                const iconId = icon._id;
+                return (
+                  <div key={ui._id} className="flex items-center bg-base-200 rounded-xl p-3 gap-3">
+                    {icon.imageUrl && (
+                      <img src={icon.imageUrl} alt={icon.name} className="w-12 h-12 rounded-lg object-cover" />
+                    )}
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm">{icon.name}</h4>
+                      <span className="badge badge-xs badge-outline">{icon.rarity}</span>
+                      {icon.stakingBonus > 0 && (
+                        <p className="text-xs text-green-400">+{icon.stakingBonus}% бонус</p>
+                      )}
                     </div>
                     <button
-                        className={styles.claimButton}
-                        onClick={handleClaim}
-                        disabled={isClaiming || pendingEarnings === 0}
+                      className="btn btn-sm btn-primary"
+                      disabled={staking === iconId}
+                      onClick={() => handleStake(iconId)}
                     >
-                        {isClaiming ? 'Сбор...' : 'Собрать'}
+                      {staking === iconId ? '...' : 'Стейк'}
                     </button>
-                </div>
-
-                {/* Активные стейки */}
-                <div className={styles.sectionTitle}>
-                    В стейкинге ({activeStakes.length})
-                </div>
-                <div className={styles.stakeList}>
-                    {activeStakes.length === 0 ? (
-                        <div className={styles.emptyText}>
-                            Нет иконок в стейкинге. Купите иконку в магазине и поставьте её сюда.
-                        </div>
-                    ) : (
-                        activeStakes.map(stake => {
-                            const icon = stake.iconId;
-                            return (
-                                <div key={stake._id} className={styles.stakeItem}>
-                                    <img src={icon.imageUrl} alt={icon.name} className={styles.stakeImage} />
-                                    <div className={styles.stakeInfo}>
-                                        <div className={styles.stakeName}>{icon.name}</div>
-                                        <div className={styles.stakeRate}>+{icon.stakingRate}/час</div>
-                                    </div>
-                                    <button
-                                        className={styles.unstakeButton}
-                                        onClick={() => handleUnstake(icon._id)}
-                                    >
-                                        Снять
-                                    </button>
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
-
-                {/* Доступные для стейкинга */}
-                {unstaked.length > 0 && (
-                    <>
-                        <div className={styles.sectionTitle}>
-                            Доступно ({unstaked.length})
-                        </div>
-                        <div className={styles.stakeList}>
-                            {unstaked.map(ui => {
-                                const icon = typeof ui.iconId === 'string' ? null : ui.iconId;
-                                if (!icon) return null;
-                                return (
-                                    <div key={ui._id} className={styles.stakeItem}>
-                                        <img src={icon.imageUrl} alt={icon.name} className={styles.stakeImage} />
-                                        <div className={styles.stakeInfo}>
-                                            <div className={styles.stakeName}>{icon.name}</div>
-                                            <div className={styles.stakeRate}>+{icon.stakingRate}/час</div>
-                                        </div>
-                                        <button
-                                            className={styles.stakeButton}
-                                            onClick={() => handleStake(icon._id)}
-                                        >
-                                            Стейкать
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </>
-                )}
+                  </div>
+                );
+              })}
             </div>
-        </Layout>
-    );
+          )}
+        </div>
+      </div>
+    </Layout>
+  );
 };
 
-export default Staking;
+export default StakingPage;
