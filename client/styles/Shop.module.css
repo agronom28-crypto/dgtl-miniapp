@@ -1,0 +1,123 @@
+.container {
+    padding: 1rem;
+    max-width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+}
+
+.title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.coins {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tabActive {
+    background: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.cardImage {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 auto 0.5rem;
+    display: block;
+}
+
+.cardName {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.cardRarity {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.rarityCommon { color: #9e9e9e; }
+.rarityRare { color: #2196F3; }
+.rarityEpic { color: #9C27B0; }
+.rarityLegendary { color: #FF9800; }
+
+.cardRate {
+    font-size: 0.75rem;
+    color: #81c784;
+    margin-bottom: 0.5rem;
+}
+
+.buyButton {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.buyButton:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.owned {
+    color: #81c784;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.6);
+}

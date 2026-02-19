@@ -1,0 +1,125 @@
+.container {
+    padding: 1rem;
+    max-width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+}
+
+.title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.earningsCard {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+    border-radius: 16px;
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.earningsLabel {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+}
+
+.earningsValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.claimButton {
+    margin-top: 0.75rem;
+    padding: 0.6rem 2rem;
+    border-radius: 25px;
+    border: none;
+    background: #ffd700;
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.claimButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem;
+    font-weight: 600;
+}
+
+.stakeList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stakeItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem;
+}
+
+.stakeImage {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.stakeInfo {
+    flex: 1;
+}
+
+.stakeName {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.stakeRate {
+    font-size: 0.8rem;
+    color: #81c784;
+}
+
+.unstakeButton {
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ef5350;
+    background: transparent;
+    color: #ef5350;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.stakeButton {
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.emptyText {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 2rem;
+    font-size: 0.9rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.6);
+}
