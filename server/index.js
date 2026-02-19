@@ -3,17 +3,22 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const Level = require('./models/Level'); // Снова импортируем модель Level
 
+
 // Local MongoDB connection string
 const MONGODB_URI = 'mongodb://localhost:27017/dgtl_miniapp';
 const PORT = 3001;
 
+
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());
 
+
 // Configure mongoose
 mongoose.set('strictQuery', false);
+
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, {
@@ -42,20 +47,30 @@ mongoose.connect(MONGODB_URI, {
   });
 });
 
+
 // Import routes
 const userRoutes = require('./routes/users');
 const mineralRoutes = require('./routes/minerals');
 const levelRoutes = require('./routes/levels');
+const shopRoutes = require('./routes/shop');
+const stakingRoutes = require('./routes/staking');
+const adminRoutes = require('./routes/admin');
+
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/minerals', mineralRoutes);
 app.use('/api/levels', levelRoutes);
+app.use('/api/shop', shopRoutes);
+app.use('/api/staking', stakingRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 app.get('/', (req, res) => {
   res.json({ message: 'Server is running' });
 });
 
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-}); 
+});
