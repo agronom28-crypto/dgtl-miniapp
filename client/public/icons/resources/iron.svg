@@ -1,4 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <circle cx="40" cy="40" r="35" fill="#708090" stroke="#4A4A4A" stroke-width="3"/>
-  <text x="40" y="48" text-anchor="middle" font-size="28" font-weight="bold" fill="#2F2F2F">Fe</text>
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8899AA" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#556677" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="40" cy="40" r="38" fill="#1A1A1A" stroke="#8899AA" stroke-width="2" opacity="0.95"/>
+  <!-- Mountain/mine shape -->
+  <polygon points="40,8 12,48 68,48" fill="none" stroke="#8899AA" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Mine entrance arch -->
+  <path d="M28,48 L28,35 Q28,28 40,28 Q52,28 52,35 L52,48" fill="none" stroke="#C0C0C0" stroke-width="2"/>
+  <!-- Mine entrance wooden supports -->
+  <line x1="28" y1="35" x2="52" y2="35" stroke="#8899AA" stroke-width="1.5"/>
+  <line x1="30" y1="48" x2="30" y2="32" stroke="#8899AA" stroke-width="1"/>
+  <line x1="50" y1="48" x2="50" y2="32" stroke="#8899AA" stroke-width="1"/>
+  <!-- Mine darkness inside -->
+  <path d="M30,48 L30,36 Q30,30 40,30 Q50,30 50,36 L50,48" fill="#8899AA" opacity="0.1"/>
+  <!-- Rails going into mine -->
+  <line x1="34" y1="48" x2="38" y2="38" stroke="#8899AA" stroke-width="0.8"/>
+  <line x1="46" y1="48" x2="42" y2="38" stroke="#8899AA" stroke-width="0.8"/>
+  <!-- Mine cart -->
+  <rect x="20" y="52" width="18" height="10" rx="2" fill="none" stroke="#8899AA" stroke-width="1.5"/>
+  <rect x="21" y="53" width="16" height="8" rx="1" fill="#8899AA" opacity="0.15"/>
+  <!-- Cart ore load -->
+  <polygon points="22,52 29,46 36,52" fill="none" stroke="#C0C0C0" stroke-width="1"/>
+  <polygon points="23,52 29,47 35,52" fill="#C0C0C0" opacity="0.1"/>
+  <!-- Cart wheels -->
+  <circle cx="24" cy="64" r="2" fill="none" stroke="#8899AA" stroke-width="1"/>
+  <circle cx="34" cy="64" r="2" fill="none" stroke="#8899AA" stroke-width="1"/>
+  <!-- Pickaxe -->
+  <line x1="52" y1="58" x2="66" y2="48" stroke="#C0C0C0" stroke-width="1.5"/>
+  <path d="M64,46 L68,48 L66,52" fill="none" stroke="#8899AA" stroke-width="1.5"/>
 </svg>
