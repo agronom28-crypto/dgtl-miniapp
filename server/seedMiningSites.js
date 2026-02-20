@@ -134,7 +134,13 @@ async function seed() {
 
     const icons = MINING_SITES.map((site, index) => ({
       name: `${site.emoji} ${site.name}`,
-      category: site.region,
+      continent: site.region,
+            resourceType: site.resource || 'gold',
+      resourceEmoji: site.resourceEmoji || '',
+      rarity: site.rarity || (site.price > 120 ? 'epic' : site.price > 80 ? 'rare' : 'common'),
+      isActive: true,
+      stakingRate: Math.round(site.hashrate / 50),
+      shareLabel: '1/10 доли',
       price: site.price,
       totalShares: 10,
       availableShares: 10,

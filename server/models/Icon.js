@@ -6,7 +6,7 @@ const iconSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     continent: {
         type: String,
-        enum: ['africa', 'asia', 'europe', 'north_america', 'south_america', 'australia', 'cis'],
+        enum: ['africa', 'asia', 'europe', 'north_america', 'south_america', 'australia', 'russia'],
         required: true
     },
     country: { type: String, required: true },
