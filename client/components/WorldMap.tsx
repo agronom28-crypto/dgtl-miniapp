@@ -14,7 +14,7 @@ const CONTINENT_COUNTRIES: Record<ContinentKey, string[]> = {
     ],
     south_america: [
         'br','ar','cl','co','pe','ve','ec','bo','py','uy',
-        'gy','sr','fk','gf'
+        'gy','sr','fk'
     ],
     europe: [
         'gb','fr','de','it','es','pt','nl','be','ch','at',
@@ -34,15 +34,14 @@ const CONTINENT_COUNTRIES: Record<ContinentKey, string[]> = {
         'bt','mm','th','vn','la','kh','my','sg','id','ph',
         'tw','bn','tl','sa','ae','om','ye','iq','ir','sy',
         'jo','il','lb','ps','tr','ge','az','am','af','tj',
-        'kg','qa','kw','bh'
+        'kg','qa','kw'
     ],
-    cis: [
-        'ru','kz','uz','tm','ua','by','md'
-    ],
-    australia: [
-        'au','nz','pg','fj','sb','vu','nc','tf'
-    ]
+    russia: ['ru'],
+    australia: ['au','nz','pg','fj','sb','vu','nc','tf']
 };
+
+// Countries shown in neutral gray (not clickable as a continent)
+const NEUTRAL_COUNTRIES = ['ua','by','kz','uz','tm','md'];
 
 const CONTINENT_COLORS: Record<ContinentKey, string> = {
     north_america: '#ff4444',
@@ -50,9 +49,11 @@ const CONTINENT_COLORS: Record<ContinentKey, string> = {
     europe: '#ffdd00',
     africa: '#00cc66',
     asia: '#cc44ff',
-    cis: '#4488ff',
+    russia: '#4488ff',
     australia: '#ff44aa'
 };
+
+const NEUTRAL_COLOR = '#334455';
 
 const CONTINENT_LABELS: Record<ContinentKey, string> = {
     north_america: 'N. America',
@@ -60,8 +61,8 @@ const CONTINENT_LABELS: Record<ContinentKey, string> = {
     europe: 'Europe',
     africa: 'Africa',
     asia: 'Asia',
-    cis: 'CIS',
-    australia: 'Oceania'
+    russia: 'Russia',
+    australia: 'Australia'
 };
 
 // Build reverse lookup: country code -> continent
@@ -73,6 +74,16 @@ for (const [continent, codes] of Object.entries(CONTINENT_COUNTRIES)) {
 }
 
 const SVG_URL = 'https://raw.githubusercontent.com/flekschas/simple-world-map/master/world-map.svg';
+
+const LABEL_POSITIONS: Record<ContinentKey, [number, number]> = {
+    north_america: [180, 380],
+    south_america: [260, 560],
+    europe: [470, 340],
+    africa: [470, 500],
+    asia: [620, 420],
+    russia: [580, 310],
+    australia: [680, 560]
+};
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +119,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                 svg.style.background = '#0a0e1a';
                 svg.style.borderRadius = '12px';
 
-                // Add glow filter
+                // Add glow filters
                 const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
                 Object.entries(CONTINENT_COLORS).forEach(([key, color]) => {
                     const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
@@ -118,7 +129,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     filter.setAttribute('width', '200%');
                     filter.setAttribute('height', '200%');
                     const blur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-                    blur.setAttribute('stdDeviation', '3');
+                    blur.setAttribute('stdDeviation', '2');
                     blur.setAttribute('result', 'blur');
                     const merge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
                     const mn1 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
@@ -133,12 +144,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                 });
                 svg.appendChild(defs);
 
-                // Group paths by continent
+                // Group paths by continent + collect neutrals
                 const groups: Record<string, SVGElement[]> = {};
+                const neutralPaths: SVGElement[] = [];
                 const allPaths = svgEl.querySelectorAll('path');
 
                 allPaths.forEach(path => {
-                    // Get country code from path id or parent g id
                     let code = path.getAttribute('id') || '';
                     if (!code) {
                         const parentG = path.parentElement;
@@ -147,12 +158,32 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                         }
                     }
                     code = code.toLowerCase();
-                    const continent = COUNTRY_TO_CONTINENT[code];
-                    if (continent) {
-                        if (!groups[continent]) groups[continent] = [];
-                        groups[continent].push(path as unknown as SVGElement);
+
+                    if (NEUTRAL_COUNTRIES.includes(code)) {
+                        neutralPaths.push(path as unknown as SVGElement);
+                    } else {
+                        const continent = COUNTRY_TO_CONTINENT[code];
+                        if (continent) {
+                            if (!groups[continent]) groups[continent] = [];
+                            groups[continent].push(path as unknown as SVGElement);
+                        }
                     }
                 });
+
+                // Render neutral countries first (dim gray, not clickable)
+                if (neutralPaths.length) {
+                    const ng = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    neutralPaths.forEach(origPath => {
+                        const newPath = origPath.cloneNode(true) as SVGElement;
+                        newPath.setAttribute('fill', 'none');
+                        newPath.setAttribute('stroke', NEUTRAL_COLOR);
+                        newPath.setAttribute('stroke-width', '0.5');
+                        newPath.setAttribute('opacity', '0.5');
+                        newPath.removeAttribute('id');
+                        ng.appendChild(newPath);
+                    });
+                    svg.appendChild(ng);
+                }
 
                 // Render continent groups
                 Object.entries(CONTINENT_COLORS).forEach(([key, color]) => {
@@ -161,9 +192,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     g.style.cursor = 'pointer';
 
                     const isActive = activeContinent === key;
-                    if (isActive) {
-                        g.setAttribute('filter', `url(#glow-${key})`);
-                    }
+                    g.setAttribute('filter', `url(#glow-${key})`);
 
                     const paths = groups[key] || [];
                     paths.forEach(origPath => {
@@ -171,31 +200,20 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                         newPath.setAttribute('fill', 'none');
                         newPath.setAttribute('stroke', color);
                         newPath.setAttribute('stroke-width', isActive ? '1.5' : '0.8');
-                        newPath.setAttribute('opacity', isActive ? '1' : '0.75');
+                        newPath.setAttribute('opacity', isActive ? '1' : '0.85');
                         newPath.removeAttribute('id');
                         g.appendChild(newPath);
                     });
 
                     g.addEventListener('click', () => {
-                        const ck = key as ContinentKey;
-                        handlePathClick(ck);
+                        handlePathClick(key as ContinentKey);
                     });
 
                     svg.appendChild(g);
                 });
 
                 // Add continent labels
-                const labelPositions: Record<string, [number, number]> = {
-                    north_america: [180, 380],
-                    south_america: [260, 560],
-                    europe: [470, 340],
-                    africa: [470, 500],
-                    asia: [620, 380],
-                    cis: [580, 310],
-                    australia: [680, 560]
-                };
-
-                Object.entries(labelPositions).forEach(([key, [x, y]]) => {
+                Object.entries(LABEL_POSITIONS).forEach(([key, [x, y]]) => {
                     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                     text.setAttribute('x', String(x));
                     text.setAttribute('y', String(y));
