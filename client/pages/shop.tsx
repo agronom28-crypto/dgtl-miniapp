@@ -180,7 +180,7 @@ const Shop: React.FC = () => {
                             return (
                                 <div key={icon._id} className={styles.card}>
                                     <div className={styles.cardEmoji}>
-                                        {resInfo?.emoji || '⛏'}
+                            {icon.imageUrl ? <img src={icon.imageUrl} alt={icon.name} className={styles.cardImage} /> : (resInfo?.emoji || '⛏')}
                                     </div>
                                     <div className={styles.cardName}>{icon.name}</div>
                                     <div className={styles.cardCountry}>
