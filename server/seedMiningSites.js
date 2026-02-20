@@ -3,222 +3,197 @@ const Icon = require('./models/Icon');
 require('dotenv').config();
 
 const MINING_SITES = [
-  // === NORTH AMERICA (25 sites) ===
-  { name: 'Rockdale TX', region: 'north_america', country: 'US', lat: 30.65, lng: -97.0, hashrate: 450, price: 120, emoji: '\u26A1' },
-  { name: 'Massena NY', region: 'north_america', country: 'US', lat: 44.93, lng: -74.89, hashrate: 280, price: 95, emoji: '\u26A1' },
-  { name: 'Dalton GA', region: 'north_america', country: 'US', lat: 34.77, lng: -84.97, hashrate: 320, price: 105, emoji: '\u26A1' },
-  { name: 'Moses Lake WA', region: 'north_america', country: 'US', lat: 47.13, lng: -119.28, hashrate: 510, price: 135, emoji: '\u26A1' },
-  { name: 'Wenatchee WA', region: 'north_america', country: 'US', lat: 47.42, lng: -120.31, hashrate: 390, price: 110, emoji: '\u26A1' },
-  { name: 'The Dalles OR', region: 'north_america', country: 'US', lat: 45.60, lng: -121.18, hashrate: 280, price: 90, emoji: '\u26A1' },
-  { name: 'Plattsburgh NY', region: 'north_america', country: 'US', lat: 44.70, lng: -73.45, hashrate: 210, price: 80, emoji: '\u26A1' },
-  { name: 'Limestone TN', region: 'north_america', country: 'US', lat: 36.22, lng: -82.61, hashrate: 180, price: 75, emoji: '\u26A1' },
-  { name: 'Cottonwood Falls KS', region: 'north_america', country: 'US', lat: 38.37, lng: -96.54, hashrate: 150, price: 65, emoji: '\u26A1' },
-  { name: 'Kearney NE', region: 'north_america', country: 'US', lat: 40.70, lng: -99.08, hashrate: 200, price: 85, emoji: '\u26A1' },
-  { name: 'Sheridan WY', region: 'north_america', country: 'US', lat: 44.80, lng: -106.96, hashrate: 170, price: 70, emoji: '\u26A1' },
-  { name: 'Bonner MT', region: 'north_america', country: 'US', lat: 46.87, lng: -113.88, hashrate: 140, price: 60, emoji: '\u26A1' },
-  { name: 'Miami FL', region: 'north_america', country: 'US', lat: 25.76, lng: -80.19, hashrate: 350, price: 115, emoji: '\u26A1' },
-  { name: 'Austin TX', region: 'north_america', country: 'US', lat: 30.27, lng: -97.74, hashrate: 420, price: 125, emoji: '\u26A1' },
-  { name: 'Niagara Falls ON', region: 'north_america', country: 'CA', lat: 43.09, lng: -79.07, hashrate: 260, price: 90, emoji: '\u26A1' },
-  { name: 'Drumheller AB', region: 'north_america', country: 'CA', lat: 51.46, lng: -112.71, hashrate: 310, price: 100, emoji: '\u26A1' },
-  { name: 'Medicine Hat AB', region: 'north_america', country: 'CA', lat: 50.04, lng: -110.68, hashrate: 290, price: 95, emoji: '\u26A1' },
-  { name: 'Labrador City NL', region: 'north_america', country: 'CA', lat: 52.95, lng: -66.91, hashrate: 240, price: 85, emoji: '\u26A1' },
-  { name: 'Quebec City QC', region: 'north_america', country: 'CA', lat: 46.81, lng: -71.21, hashrate: 380, price: 110, emoji: '\u26A1' },
-  { name: 'Prince George BC', region: 'north_america', country: 'CA', lat: 53.92, lng: -122.75, hashrate: 220, price: 80, emoji: '\u26A1' },
-  { name: 'Monterrey', region: 'north_america', country: 'MX', lat: 25.67, lng: -100.31, hashrate: 160, price: 70, emoji: '\u26A1' },
-  { name: 'Winnipeg MB', region: 'north_america', country: 'CA', lat: 49.90, lng: -97.14, hashrate: 270, price: 90, emoji: '\u26A1' },
-  { name: 'Cheyenne WY', region: 'north_america', country: 'US', lat: 41.14, lng: -104.82, hashrate: 190, price: 78, emoji: '\u26A1' },
-  { name: 'Reno NV', region: 'north_america', country: 'US', lat: 39.53, lng: -119.81, hashrate: 230, price: 88, emoji: '\u26A1' },
-  { name: 'Marquette MI', region: 'north_america', country: 'US', lat: 46.54, lng: -87.40, hashrate: 160, price: 68, emoji: '\u26A1' },
-  // === EUROPE (22 sites) ===
-  { name: 'Boden', region: 'europe', country: 'SE', lat: 66.06, lng: 21.69, hashrate: 480, price: 130, emoji: '\u2744' },
-  { name: 'Lulea', region: 'europe', country: 'SE', lat: 65.58, lng: 22.15, hashrate: 420, price: 120, emoji: '\u2744' },
-  { name: 'Reykjavik', region: 'europe', country: 'IS', lat: 64.15, lng: -21.94, hashrate: 550, price: 140, emoji: '\u2744' },
-  { name: 'Keflavik', region: 'europe', country: 'IS', lat: 64.0, lng: -22.56, hashrate: 380, price: 110, emoji: '\u2744' },
-  { name: 'Mo i Rana', region: 'europe', country: 'NO', lat: 66.31, lng: 14.14, hashrate: 410, price: 115, emoji: '\u2744' },
-  { name: 'Narvik', region: 'europe', country: 'NO', lat: 68.43, lng: 17.43, hashrate: 340, price: 105, emoji: '\u2744' },
-  { name: 'Bratsk', region: 'russia', country: 'RU', lat: 56.13, lng: 101.61, hashrate: 520, price: 85, emoji: '\u2744' },
-  { name: 'Krasnoyarsk', region: 'russia', country: 'RU', lat: 56.01, lng: 92.87, hashrate: 460, price: 80, emoji: '\u2744' },
-  { name: 'Irkutsk', region: 'russia', country: 'RU', lat: 52.30, lng: 104.30, hashrate: 490, price: 78, emoji: '\u2744' },
-  { name: 'Norilsk', region: 'russia', country: 'RU', lat: 69.35, lng: 88.20, hashrate: 300, price: 70, emoji: '\u2744' },
-  { name: 'Helsinki', region: 'europe', country: 'FI', lat: 60.17, lng: 24.94, hashrate: 270, price: 100, emoji: '\u2744' },
-  { name: 'Rovaniemi', region: 'europe', country: 'FI', lat: 66.50, lng: 25.72, hashrate: 220, price: 90, emoji: '\u2744' },
-  { name: 'Frankfurt', region: 'europe', country: 'DE', lat: 50.11, lng: 8.68, hashrate: 310, price: 110, emoji: '\u2744' },
-  { name: 'Zurich', region: 'europe', country: 'CH', lat: 47.38, lng: 8.54, hashrate: 250, price: 105, emoji: '\u2744' },
-  { name: 'Tbilisi', region: 'asia', country: 'GE', lat: 41.72, lng: 44.79, hashrate: 180, price: 65, emoji: '\u2744' },
-  { name: 'Yerevan', region: 'asia', country: 'AM', lat: 40.18, lng: 44.51, hashrate: 150, price: 58, emoji: '\u2744' },
-  { name: 'Mariehamn', region: 'europe', country: 'FI', lat: 60.10, lng: 19.94, hashrate: 130, price: 88, emoji: '\u2744' },
-  { name: 'Dublin', region: 'europe', country: 'IE', lat: 53.35, lng: -6.26, hashrate: 200, price: 95, emoji: '\u2744' },
-  { name: 'Kouvola', region: 'europe', country: 'FI', lat: 60.87, lng: 26.70, hashrate: 190, price: 85, emoji: '\u2744' },
-  { name: 'Amsterdam', region: 'europe', country: 'NL', lat: 52.37, lng: 4.90, hashrate: 280, price: 105, emoji: '\u2744' },
-  { name: 'Bucharest', region: 'europe', country: 'RO', lat: 44.43, lng: 26.10, hashrate: 170, price: 68, emoji: '\u2744' },
-  // === ASIA (25 sites) ===
-  { name: 'Ordos', region: 'asia', country: 'CN', lat: 39.63, lng: 109.78, hashrate: 600, price: 90, emoji: '\uD83C\uDFED' },
-  { name: 'Sichuan Kangding', region: 'asia', country: 'CN', lat: 30.05, lng: 101.96, hashrate: 700, price: 75, emoji: '\uD83C\uDFED' },
-  { name: 'Xinjiang Urumqi', region: 'asia', country: 'CN', lat: 43.83, lng: 87.62, hashrate: 550, price: 70, emoji: '\uD83C\uDFED' },
-  { name: 'Yunnan Qujing', region: 'asia', country: 'CN', lat: 25.49, lng: 103.80, hashrate: 480, price: 68, emoji: '\uD83C\uDFED' },
-  { name: 'Inner Mongolia', region: 'asia', country: 'CN', lat: 40.82, lng: 111.66, hashrate: 520, price: 72, emoji: '\uD83C\uDFED' },
-  { name: 'Guizhou Guiyang', region: 'asia', country: 'CN', lat: 26.65, lng: 106.63, hashrate: 350, price: 65, emoji: '\uD83C\uDFED' },
-  { name: 'Almaty', region: 'asia', country: 'KZ', lat: 43.24, lng: 76.95, hashrate: 420, price: 60, emoji: '\uD83C\uDFED' },
-  { name: 'Nur-Sultan', region: 'asia', country: 'KZ', lat: 51.17, lng: 71.47, hashrate: 380, price: 58, emoji: '\uD83C\uDFED' },
-  { name: 'Ekibastuz', region: 'asia', country: 'KZ', lat: 51.73, lng: 75.32, hashrate: 450, price: 55, emoji: '\uD83C\uDFED' },
-  { name: 'Tashkent', region: 'asia', country: 'UZ', lat: 41.30, lng: 69.28, hashrate: 280, price: 50, emoji: '\uD83C\uDFED' },
-  { name: 'Novosibirsk', region: 'russia', country: 'RU', lat: 55.03, lng: 82.92, hashrate: 390, price: 75, emoji: '\uD83C\uDFED' },
-  { name: 'Chelyabinsk', region: 'russia', country: 'RU', lat: 55.15, lng: 61.43, hashrate: 310, price: 70, emoji: '\uD83C\uDFED' },
-  { name: 'Tokyo', region: 'asia', country: 'JP', lat: 35.68, lng: 139.69, hashrate: 200, price: 130, emoji: '\uD83C\uDFED' },
-  { name: 'Seoul', region: 'asia', country: 'KR', lat: 37.57, lng: 126.98, hashrate: 180, price: 120, emoji: '\uD83C\uDFED' },
-  { name: 'Bhutan Thimphu', region: 'asia', country: 'BT', lat: 27.47, lng: 89.64, hashrate: 250, price: 45, emoji: '\uD83C\uDFED' },
-  { name: 'Laos Vientiane', region: 'asia', country: 'LA', lat: 17.97, lng: 102.63, hashrate: 190, price: 40, emoji: '\uD83C\uDFED' },
-  { name: 'Malaysia Johor', region: 'asia', country: 'MY', lat: 1.49, lng: 103.74, hashrate: 230, price: 85, emoji: '\uD83C\uDFED' },
-  { name: 'Singapore', region: 'asia', country: 'SG', lat: 1.35, lng: 103.82, hashrate: 160, price: 140, emoji: '\uD83C\uDFED' },
-  { name: 'Myanmar Mandalay', region: 'asia', country: 'MM', lat: 21.97, lng: 96.08, hashrate: 140, price: 35, emoji: '\uD83C\uDFED' },
-  { name: 'Bishkek', region: 'asia', country: 'KG', lat: 42.87, lng: 74.59, hashrate: 220, price: 48, emoji: '\uD83C\uDFED' },
-  { name: 'Dushanbe', region: 'asia', country: 'TJ', lat: 38.56, lng: 68.77, hashrate: 200, price: 42, emoji: '\uD83C\uDFED' },
-  { name: 'Ulaanbaatar', region: 'asia', country: 'MN', lat: 47.92, lng: 106.91, hashrate: 170, price: 52, emoji: '\uD83C\uDFED' },
-  { name: 'Islamabad', region: 'asia', country: 'PK', lat: 33.69, lng: 73.04, hashrate: 150, price: 55, emoji: '\uD83C\uDFED' },
-  { name: 'Hanoi', region: 'asia', country: 'VN', lat: 21.03, lng: 105.85, hashrate: 210, price: 60, emoji: '\uD83C\uDFED' },
-  { name: 'Vladivostok', region: 'russia', country: 'RU', lat: 43.12, lng: 131.87, hashrate: 260, price: 72, emoji: '\uD83C\uDFED' },
-  // === MIDDLE EAST (12 sites) ===
-  { name: 'Abu Dhabi', region: 'asia', country: 'AE', lat: 24.45, lng: 54.65, hashrate: 500, price: 150, emoji: '\uD83C\uDFDC' },
-  { name: 'Dubai', region: 'asia', country: 'AE', lat: 25.20, lng: 55.27, hashrate: 450, price: 145, emoji: '\uD83C\uDFDC' },
-  { name: 'Ras Al Khaimah', region: 'asia', country: 'AE', lat: 25.79, lng: 55.94, hashrate: 320, price: 125, emoji: '\uD83C\uDFDC' },
-  { name: 'Riyadh', region: 'asia', country: 'SA', lat: 24.71, lng: 46.68, hashrate: 380, price: 130, emoji: '\uD83C\uDFDC' },
-  { name: 'Dammam', region: 'asia', country: 'SA', lat: 26.43, lng: 50.10, hashrate: 290, price: 110, emoji: '\uD83C\uDFDC' },
-  { name: 'Muscat', region: 'asia', country: 'OM', lat: 23.59, lng: 58.38, hashrate: 240, price: 100, emoji: '\uD83C\uDFDC' },
-  { name: 'Doha', region: 'asia', country: 'QA', lat: 25.29, lng: 51.53, hashrate: 310, price: 120, emoji: '\uD83C\uDFDC' },
-  { name: 'Kuwait City', region: 'asia', country: 'KW', lat: 29.38, lng: 47.99, hashrate: 260, price: 115, emoji: '\uD83C\uDFDC' },
-  { name: 'Tehran', region: 'asia', country: 'IR', lat: 35.69, lng: 51.39, hashrate: 350, price: 45, emoji: '\uD83C\uDFDC' },
-  { name: 'Isfahan', region: 'asia', country: 'IR', lat: 32.65, lng: 51.68, hashrate: 280, price: 40, emoji: '\uD83C\uDFDC' },
-  { name: 'Bahrain Manama', region: 'asia', country: 'BH', lat: 26.23, lng: 50.59, hashrate: 200, price: 105, emoji: '\uD83C\uDFDC' },
-  { name: 'Amman', region: 'asia', country: 'JO', lat: 31.95, lng: 35.93, hashrate: 150, price: 80, emoji: '\uD83C\uDFDC' },
-  // === SOUTH AMERICA (15 sites) ===
-  { name: 'Buenos Aires', region: 'south_america', country: 'AR', lat: -34.60, lng: -58.38, hashrate: 280, price: 70, emoji: '\uD83C\uDF0B' },
-  { name: 'Mendoza', region: 'south_america', country: 'AR', lat: -32.89, lng: -68.83, hashrate: 200, price: 60, emoji: '\uD83C\uDF0B' },
-  { name: 'Sao Paulo', region: 'south_america', country: 'BR', lat: -23.55, lng: -46.63, hashrate: 350, price: 85, emoji: '\uD83C\uDF0B' },
-  { name: 'Manaus', region: 'south_america', country: 'BR', lat: -3.12, lng: -60.02, hashrate: 220, price: 55, emoji: '\uD83C\uDF0B' },
-  { name: 'Itaipu', region: 'south_america', country: 'BR', lat: -25.41, lng: -54.59, hashrate: 400, price: 50, emoji: '\uD83C\uDF0B' },
-  { name: 'Bogota', region: 'south_america', country: 'CO', lat: 4.71, lng: -74.07, hashrate: 190, price: 65, emoji: '\uD83C\uDF0B' },
-  { name: 'Medellin', region: 'south_america', country: 'CO', lat: 6.25, lng: -75.56, hashrate: 170, price: 60, emoji: '\uD83C\uDF0B' },
-  { name: 'Santiago', region: 'south_america', country: 'CL', lat: -33.45, lng: -70.67, hashrate: 240, price: 75, emoji: '\uD83C\uDF0B' },
-  { name: 'Lima', region: 'south_america', country: 'PE', lat: -12.05, lng: -77.04, hashrate: 160, price: 58, emoji: '\uD83C\uDF0B' },
-  { name: 'Caracas', region: 'south_america', country: 'VE', lat: 10.48, lng: -66.90, hashrate: 300, price: 30, emoji: '\uD83C\uDF0B' },
-  { name: 'Maracaibo', region: 'south_america', country: 'VE', lat: 10.63, lng: -71.63, hashrate: 250, price: 28, emoji: '\uD83C\uDF0B' },
-  { name: 'Quito', region: 'south_america', country: 'EC', lat: -0.18, lng: -78.47, hashrate: 140, price: 52, emoji: '\uD83C\uDF0B' },
-  { name: 'Asuncion', region: 'south_america', country: 'PY', lat: -25.26, lng: -57.58, hashrate: 320, price: 35, emoji: '\uD83C\uDF0B' },
-  { name: 'Montevideo', region: 'south_america', country: 'UY', lat: -34.88, lng: -56.17, hashrate: 130, price: 72, emoji: '\uD83C\uDF0B' },
-  { name: 'La Paz', region: 'south_america', country: 'BO', lat: -16.50, lng: -68.15, hashrate: 110, price: 40, emoji: '\uD83C\uDF0B' },
-  // === AFRICA (8 sites) ===
-  { name: 'Nairobi', region: 'africa', country: 'KE', lat: -1.29, lng: 36.82, hashrate: 150, price: 55, emoji: '\uD83C\uDF1E' },
-  { name: 'Lagos', region: 'africa', country: 'NG', lat: 6.52, lng: 3.38, hashrate: 180, price: 50, emoji: '\uD83C\uDF1E' },
-  { name: 'Johannesburg', region: 'africa', country: 'ZA', lat: -26.20, lng: 28.05, hashrate: 220, price: 65, emoji: '\uD83C\uDF1E' },
-  { name: 'Cape Town', region: 'africa', country: 'ZA', lat: -33.93, lng: 18.42, hashrate: 190, price: 62, emoji: '\uD83C\uDF1E' },
-  { name: 'Cairo', region: 'africa', country: 'EG', lat: 30.04, lng: 31.24, hashrate: 170, price: 48, emoji: '\uD83C\uDF1E' },
-  { name: 'Addis Ababa', region: 'africa', country: 'ET', lat: 9.02, lng: 38.75, hashrate: 250, price: 35, emoji: '\uD83C\uDF1E' },
-  { name: 'Accra', region: 'africa', country: 'GH', lat: 5.56, lng: -0.19, hashrate: 130, price: 45, emoji: '\uD83C\uDF1E' },
-  { name: 'Kinshasa', region: 'africa', country: 'CD', lat: -4.44, lng: 15.27, hashrate: 300, price: 25, emoji: '\uD83C\uDF1E' },
-  // === OCEANIA (5 sites) ===
-  { name: 'Sydney', region: 'australia', country: 'AU', lat: -33.87, lng: 151.21, hashrate: 200, price: 110, emoji: '\uD83C\uDFDD' },
-  { name: 'Melbourne', region: 'australia', country: 'AU', lat: -37.81, lng: 144.96, hashrate: 180, price: 105, emoji: '\uD83C\uDFDD' },
-  { name: 'Perth', region: 'australia', country: 'AU', lat: -31.95, lng: 115.86, hashrate: 160, price: 95, emoji: '\uD83C\uDFDD' },
-  { name: 'Auckland', region: 'australia', country: 'NZ', lat: -36.85, lng: 174.76, hashrate: 140, price: 90, emoji: '\uD83C\uDFDD' },
-  { name: 'Queenstown NZ', region: 'australia', country: 'NZ', lat: -45.03, lng: 168.66, hashrate: 120, price: 85, emoji: '\uD83C\uDFDD' },
+  // === GOLD (20 sites) ===
+  { name: 'Muruntau', region: 'asia', country: 'UZ', lat: 41.52, lng: 64.57, resourceType: 'gold', hashrate: 700, price: 185 },
+  { name: 'Carlin Trend', region: 'north_america', country: 'US', lat: 40.72, lng: -116.07, resourceType: 'gold', hashrate: 650, price: 170 },
+  { name: 'Grasberg', region: 'asia', country: 'ID', lat: -4.05, lng: 137.11, resourceType: 'gold', hashrate: 750, price: 200 },
+  { name: 'Olimpiada', region: 'russia', country: 'RU', lat: 58.73, lng: 93.65, resourceType: 'gold', hashrate: 600, price: 155 },
+  { name: 'Cortez', region: 'north_america', country: 'US', lat: 40.17, lng: -116.61, resourceType: 'gold', hashrate: 580, price: 150 },
+  { name: 'Pueblo Viejo', region: 'south_america', country: 'DO', lat: 19.05, lng: -70.17, resourceType: 'gold', hashrate: 550, price: 140 },
+  { name: 'Lihir', region: 'australia', country: 'PG', lat: -3.12, lng: 152.64, resourceType: 'gold', hashrate: 520, price: 135 },
+  { name: 'Kibali', region: 'africa', country: 'CD', lat: 3.01, lng: 29.59, resourceType: 'gold', hashrate: 490, price: 125 },
+  { name: 'Boddington', region: 'australia', country: 'AU', lat: -32.75, lng: 116.38, resourceType: 'gold', hashrate: 470, price: 120 },
+  { name: 'Loulo-Gounkoto', region: 'africa', country: 'ML', lat: 14.43, lng: -11.67, resourceType: 'gold', hashrate: 460, price: 115 },
+  { name: 'Cadia Valley', region: 'australia', country: 'AU', lat: -33.47, lng: 148.99, resourceType: 'gold', hashrate: 450, price: 110 },
+  { name: 'South Deep', region: 'africa', country: 'ZA', lat: -26.42, lng: 27.67, resourceType: 'gold', hashrate: 440, price: 108 },
+  { name: 'Mponeng', region: 'africa', country: 'ZA', lat: -26.41, lng: 27.42, resourceType: 'gold', hashrate: 430, price: 105 },
+  { name: 'Canadian Malartic', region: 'north_america', country: 'CA', lat: 48.13, lng: -78.12, resourceType: 'gold', hashrate: 420, price: 100 },
+  { name: 'Norte Abierto', region: 'south_america', country: 'CL', lat: -27.35, lng: -69.27, resourceType: 'gold', hashrate: 500, price: 130 },
+  { name: 'Obuasi', region: 'africa', country: 'GH', lat: 6.2, lng: -1.67, resourceType: 'gold', hashrate: 380, price: 95 },
+  { name: 'Detour Lake', region: 'north_america', country: 'CA', lat: 50.05, lng: -79.7, resourceType: 'gold', hashrate: 400, price: 98 },
+  { name: 'Yanacocha', region: 'south_america', country: 'PE', lat: -6.98, lng: -78.53, resourceType: 'gold', hashrate: 410, price: 102 },
+  { name: 'Pascua-Lama', region: 'south_america', country: 'CL', lat: -29.32, lng: -70.07, resourceType: 'gold', hashrate: 350, price: 90 },
+  { name: 'Olympic Dam Gold', region: 'australia', country: 'AU', lat: -30.45, lng: 136.88, resourceType: 'gold', hashrate: 480, price: 122 },
+  // === COPPER (20 sites) ===
+  { name: 'Escondida', region: 'south_america', country: 'CL', lat: -24.27, lng: -69.07, resourceType: 'copper', hashrate: 720, price: 190 },
+  { name: 'Collahuasi', region: 'south_america', country: 'CL', lat: -20.98, lng: -68.72, resourceType: 'copper', hashrate: 600, price: 155 },
+  { name: 'Kamoa-Kakula', region: 'africa', country: 'CD', lat: -10.77, lng: 26.32, resourceType: 'copper', hashrate: 680, price: 175 },
+  { name: 'Grasberg Copper', region: 'asia', country: 'ID', lat: -4.05, lng: 137.11, resourceType: 'copper', hashrate: 700, price: 185 },
+  { name: 'Tenke Fungurume', region: 'africa', country: 'CD', lat: -10.62, lng: 26.12, resourceType: 'copper', hashrate: 550, price: 140 },
+  { name: 'El Teniente', region: 'south_america', country: 'CL', lat: -34.09, lng: -70.35, resourceType: 'copper', hashrate: 580, price: 148 },
+  { name: 'Bingham Canyon', region: 'north_america', country: 'US', lat: 40.52, lng: -112.15, resourceType: 'copper', hashrate: 560, price: 145 },
+  { name: 'Cerro Verde', region: 'south_america', country: 'PE', lat: -16.54, lng: -71.6, resourceType: 'copper', hashrate: 530, price: 138 },
+  { name: 'Antamina', region: 'south_america', country: 'PE', lat: -9.54, lng: -77.05, resourceType: 'copper', hashrate: 520, price: 135 },
+  { name: 'Chuquicamata', region: 'south_america', country: 'CL', lat: -22.31, lng: -68.9, resourceType: 'copper', hashrate: 650, price: 168 },
+  { name: 'Los Pelambres', region: 'south_america', country: 'CL', lat: -31.72, lng: -70.5, resourceType: 'copper', hashrate: 480, price: 125 },
+  { name: 'Radomiro Tomic', region: 'south_america', country: 'CL', lat: -22.24, lng: -68.9, resourceType: 'copper', hashrate: 500, price: 130 },
+  { name: 'Morenci', region: 'north_america', country: 'US', lat: 33.07, lng: -109.35, resourceType: 'copper', hashrate: 540, price: 142 },
+  { name: 'Mutanda', region: 'africa', country: 'CD', lat: -10.87, lng: 25.95, resourceType: 'copper', hashrate: 460, price: 118 },
+  { name: 'Kamoto', region: 'africa', country: 'CD', lat: -10.72, lng: 25.44, resourceType: 'copper', hashrate: 450, price: 115 },
+  { name: 'Sentinel', region: 'africa', country: 'ZM', lat: -12.78, lng: 25.52, resourceType: 'copper', hashrate: 440, price: 112 },
+  { name: 'Los Bronces', region: 'south_america', country: 'CL', lat: -33.15, lng: -70.28, resourceType: 'copper', hashrate: 470, price: 122 },
+  { name: 'Las Bambas', region: 'south_america', country: 'PE', lat: -14.05, lng: -72.32, resourceType: 'copper', hashrate: 510, price: 132 },
+  { name: 'Udokan', region: 'russia', country: 'RU', lat: 56.49, lng: 118.37, resourceType: 'copper', hashrate: 400, price: 105 },
+  { name: 'Olympic Dam Copper', region: 'australia', country: 'AU', lat: -30.45, lng: 136.88, resourceType: 'copper', hashrate: 490, price: 128 },
+  // === IRON (15 sites) ===
+  { name: 'Carajas', region: 'south_america', country: 'BR', lat: -6.07, lng: -50.17, resourceType: 'iron', hashrate: 750, price: 160 },
+  { name: 'Hamersley', region: 'australia', country: 'AU', lat: -22.32, lng: 118.37, resourceType: 'iron', hashrate: 700, price: 150 },
+  { name: 'Pilbara', region: 'australia', country: 'AU', lat: -21.95, lng: 118.85, resourceType: 'iron', hashrate: 680, price: 145 },
+  { name: 'Kiruna', region: 'europe', country: 'SE', lat: 67.86, lng: 20.22, resourceType: 'iron', hashrate: 620, price: 135 },
+  { name: 'Mikhailovsky GOK', region: 'russia', country: 'RU', lat: 52.22, lng: 35.39, resourceType: 'iron', hashrate: 580, price: 125 },
+  { name: 'Stoilensky GOK', region: 'russia', country: 'RU', lat: 51.32, lng: 37.85, resourceType: 'iron', hashrate: 560, price: 120 },
+  { name: 'Lebedinsky GOK', region: 'russia', country: 'RU', lat: 51.37, lng: 37.73, resourceType: 'iron', hashrate: 600, price: 130 },
+  { name: 'Minas Gerais', region: 'south_america', country: 'BR', lat: -19.92, lng: -43.94, resourceType: 'iron', hashrate: 650, price: 140 },
+  { name: 'Simandou', region: 'africa', country: 'GN', lat: -8.58, lng: -8.92, resourceType: 'iron', hashrate: 540, price: 115 },
+  { name: 'Sishen', region: 'africa', country: 'ZA', lat: -27.73, lng: 22.98, resourceType: 'iron', hashrate: 520, price: 110 },
+  { name: 'Mount Whaleback', region: 'australia', country: 'AU', lat: -23.36, lng: 119.67, resourceType: 'iron', hashrate: 500, price: 105 },
+  { name: 'Roy Hill', region: 'australia', country: 'AU', lat: -22.58, lng: 119.95, resourceType: 'iron', hashrate: 480, price: 100 },
+  { name: 'Chichester Hub', region: 'australia', country: 'AU', lat: -22.05, lng: 118.62, resourceType: 'iron', hashrate: 470, price: 98 },
+  { name: 'Carol Lake', region: 'north_america', country: 'CA', lat: 52.95, lng: -66.87, resourceType: 'iron', hashrate: 450, price: 95 },
+  { name: 'Kovdorsky GOK', region: 'russia', country: 'RU', lat: 67.56, lng: 30.47, resourceType: 'iron', hashrate: 430, price: 90 },
+  // === RARE METALS (15 sites) ===
+  { name: 'Bayan Obo', region: 'asia', country: 'CN', lat: 41.8, lng: 109.97, resourceType: 'rare_metals', hashrate: 800, price: 250 },
+  { name: 'Mount Weld', region: 'australia', country: 'AU', lat: -28.77, lng: 122.55, resourceType: 'rare_metals', hashrate: 700, price: 220 },
+  { name: 'Mountain Pass', region: 'north_america', country: 'US', lat: 35.47, lng: -115.53, resourceType: 'rare_metals', hashrate: 650, price: 200 },
+  { name: 'Lovozero', region: 'russia', country: 'RU', lat: 67.89, lng: 34.78, resourceType: 'rare_metals', hashrate: 600, price: 185 },
+  { name: 'Tomtor', region: 'russia', country: 'RU', lat: 71.15, lng: 116.35, resourceType: 'rare_metals', hashrate: 580, price: 175 },
+  { name: 'Nolans', region: 'australia', country: 'AU', lat: -22.59, lng: 133.24, resourceType: 'rare_metals', hashrate: 550, price: 165 },
+  { name: 'Steenkampskraal', region: 'africa', country: 'ZA', lat: -31.3, lng: 18.95, resourceType: 'rare_metals', hashrate: 520, price: 155 },
+  { name: 'Kvanefjeld', region: 'europe', country: 'GL', lat: 60.98, lng: -45.98, resourceType: 'rare_metals', hashrate: 500, price: 148 },
+  { name: 'Brown Range', region: 'australia', country: 'AU', lat: -19.12, lng: 127.89, resourceType: 'rare_metals', hashrate: 480, price: 140 },
+  { name: 'Songwe Hill', region: 'africa', country: 'MW', lat: -10.47, lng: 35.62, resourceType: 'rare_metals', hashrate: 460, price: 135 },
+  { name: 'Round Top', region: 'north_america', country: 'US', lat: 31.35, lng: -105.52, resourceType: 'rare_metals', hashrate: 440, price: 128 },
+  { name: 'Wicheeda', region: 'north_america', country: 'CA', lat: 54.22, lng: -122.17, resourceType: 'rare_metals', hashrate: 420, price: 120 },
+  { name: 'Ngualla', region: 'africa', country: 'TZ', lat: -7.94, lng: 31.59, resourceType: 'rare_metals', hashrate: 400, price: 115 },
+  { name: 'Zandkopsdrift', region: 'africa', country: 'ZA', lat: -31.23, lng: 18.08, resourceType: 'rare_metals', hashrate: 380, price: 108 },
+  { name: 'Dubbo', region: 'australia', country: 'AU', lat: -32.25, lng: 148.61, resourceType: 'rare_metals', hashrate: 360, price: 100 },
+  // === OIL & GAS (20 sites) ===
+  { name: 'Ghawar', region: 'asia', country: 'SA', lat: 25.37, lng: 49.4, resourceType: 'oil_gas', hashrate: 900, price: 300 },
+  { name: 'Burgan', region: 'asia', country: 'KW', lat: 28.98, lng: 47.65, resourceType: 'oil_gas', hashrate: 850, price: 280 },
+  { name: 'Safaniya', region: 'asia', country: 'SA', lat: 28.17, lng: 48.75, resourceType: 'oil_gas', hashrate: 800, price: 260 },
+  { name: 'Rumaila', region: 'asia', country: 'IQ', lat: 30.53, lng: 47.33, resourceType: 'oil_gas', hashrate: 780, price: 245 },
+  { name: 'Priobskoye', region: 'russia', country: 'RU', lat: 61.05, lng: 70.18, resourceType: 'oil_gas', hashrate: 750, price: 230 },
+  { name: 'Samotlor', region: 'russia', country: 'RU', lat: 61.18, lng: 76.73, resourceType: 'oil_gas', hashrate: 720, price: 215 },
+  { name: 'Prudhoe Bay', region: 'north_america', country: 'US', lat: 70.25, lng: -148.34, resourceType: 'oil_gas', hashrate: 700, price: 200 },
+  { name: 'Cantarell', region: 'north_america', country: 'MX', lat: 19.88, lng: -91.95, resourceType: 'oil_gas', hashrate: 680, price: 190 },
+  { name: 'Kashagan', region: 'asia', country: 'KZ', lat: 46.25, lng: 51.45, resourceType: 'oil_gas', hashrate: 660, price: 185 },
+  { name: 'Tupi (Lula)', region: 'south_america', country: 'BR', lat: -25.32, lng: -42.79, resourceType: 'oil_gas', hashrate: 640, price: 175 },
+  { name: 'Tengiz', region: 'asia', country: 'KZ', lat: 46.15, lng: 53.35, resourceType: 'oil_gas', hashrate: 620, price: 170 },
+  { name: 'Zakum', region: 'asia', country: 'AE', lat: 24.83, lng: 53.55, resourceType: 'oil_gas', hashrate: 600, price: 165 },
+  { name: 'Hassi Messaoud', region: 'africa', country: 'DZ', lat: 31.67, lng: 6.07, resourceType: 'oil_gas', hashrate: 580, price: 155 },
+  { name: 'Agbami', region: 'africa', country: 'NG', lat: 4.18, lng: 4.82, resourceType: 'oil_gas', hashrate: 560, price: 148 },
+  { name: 'Shaybah', region: 'asia', country: 'SA', lat: 22.52, lng: 54.0, resourceType: 'oil_gas', hashrate: 540, price: 140 },
+  { name: 'Vankor', region: 'russia', country: 'RU', lat: 67.83, lng: 83.58, resourceType: 'oil_gas', hashrate: 520, price: 135 },
+  { name: 'Marlim', region: 'south_america', country: 'BR', lat: -22.37, lng: -40.02, resourceType: 'oil_gas', hashrate: 500, price: 128 },
+  { name: 'Buzzard', region: 'europe', country: 'GB', lat: 57.48, lng: 1.08, resourceType: 'oil_gas', hashrate: 480, price: 120 },
+  { name: 'Karachaganak', region: 'asia', country: 'KZ', lat: 50.17, lng: 51.8, resourceType: 'oil_gas', hashrate: 460, price: 115 },
+  { name: 'Jack-2', region: 'north_america', country: 'US', lat: 26.68, lng: -89.67, resourceType: 'oil_gas', hashrate: 440, price: 108 },
+  // === DIAMONDS (10 sites) ===
+  { name: 'Jwaneng', region: 'africa', country: 'BW', lat: -24.53, lng: 24.73, resourceType: 'diamonds', hashrate: 850, price: 350 },
+  { name: 'Orapa', region: 'africa', country: 'BW', lat: -21.31, lng: 25.37, resourceType: 'diamonds', hashrate: 780, price: 300 },
+  { name: 'Udachny', region: 'russia', country: 'RU', lat: 66.43, lng: 112.35, resourceType: 'diamonds', hashrate: 750, price: 280 },
+  { name: 'Catoca', region: 'africa', country: 'AO', lat: -9.22, lng: 20.2, resourceType: 'diamonds', hashrate: 700, price: 250 },
+  { name: 'Mirny', region: 'russia', country: 'RU', lat: 62.54, lng: 113.96, resourceType: 'diamonds', hashrate: 680, price: 240 },
+  { name: 'Argyle', region: 'australia', country: 'AU', lat: -16.72, lng: 128.39, resourceType: 'diamonds', hashrate: 650, price: 220 },
+  { name: 'Venetia', region: 'africa', country: 'ZA', lat: -22.43, lng: 29.32, resourceType: 'diamonds', hashrate: 620, price: 200 },
+  { name: 'Diavik', region: 'north_america', country: 'CA', lat: 64.5, lng: -110.28, resourceType: 'diamonds', hashrate: 600, price: 190 },
+  { name: 'Ekati', region: 'north_america', country: 'CA', lat: 64.72, lng: -110.62, resourceType: 'diamonds', hashrate: 580, price: 175 },
+  { name: 'Grib', region: 'russia', country: 'RU', lat: 64.98, lng: 40.45, resourceType: 'diamonds', hashrate: 550, price: 160 },
+  // === COAL (10 sites) ===
+  { name: 'Kuzbass', region: 'russia', country: 'RU', lat: 54.0, lng: 86.97, resourceType: 'coal', hashrate: 700, price: 120 },
+  { name: 'Powder River Basin', region: 'north_america', country: 'US', lat: 44.78, lng: -105.5, resourceType: 'coal', hashrate: 680, price: 115 },
+  { name: 'Hunter Valley', region: 'australia', country: 'AU', lat: -32.37, lng: 151.08, resourceType: 'coal', hashrate: 650, price: 110 },
+  { name: 'Kalimantan', region: 'asia', country: 'ID', lat: -1.68, lng: 116.42, resourceType: 'coal', hashrate: 620, price: 105 },
+  { name: 'Mpumalanga', region: 'africa', country: 'ZA', lat: -25.77, lng: 29.45, resourceType: 'coal', hashrate: 600, price: 100 },
+  { name: 'Shanxi Basin', region: 'asia', country: 'CN', lat: 37.87, lng: 112.55, resourceType: 'coal', hashrate: 580, price: 95 },
+  { name: 'Cerrejon', region: 'south_america', country: 'CO', lat: 10.97, lng: -72.65, resourceType: 'coal', hashrate: 550, price: 90 },
+  { name: 'Bowen Basin', region: 'australia', country: 'AU', lat: -22.08, lng: 148.17, resourceType: 'coal', hashrate: 530, price: 85 },
+  { name: 'Ekibastuz', region: 'asia', country: 'KZ', lat: 51.72, lng: 75.32, resourceType: 'coal', hashrate: 500, price: 80 },
+  { name: 'Tavan Tolgoi', region: 'asia', country: 'MN', lat: 43.58, lng: 105.95, resourceType: 'coal', hashrate: 480, price: 75 },
 ];
 
-// Resource types for diverse assignment
-const RESOURCE_TYPES = ['gold', 'copper', 'iron', 'rare_metals', 'oil_gas', 'diamonds', 'coal'];
-const RESOURCE_EMOJIS = {
-  gold: '\u{1F7E1}', copper: '\u{1F7E0}', iron: '\u26AA',
-  rare_metals: '\u2728', oil_gas: '\u{1F6E2}', diamonds: '\u{1F48E}', coal: '\u26AB'
+const RESOURCE_EMOJI = {
+  gold: '\u{1F7E1}',
+  copper: '\u{1F534}',
+  iron: '\u{1F518}',
+  rare_metals: '\u269B',
+  oil_gas: '\u{1F6E2}',
+  diamonds: '\u{1F48E}',
+  coal: '\u26AB'
 };
 
-function assignResource(name, index) {
-  // Assign diverse resources based on index cycling through types
-  return RESOURCE_TYPES[index % RESOURCE_TYPES.length];
-}
-
-function getResourceEmoji(resourceType) {
-  return RESOURCE_EMOJIS[resourceType] || '';
-}
-
-
-
-const RESOURCE_NAMES = {
-  gold: 'Gold Mining',
-  copper: 'Copper Mining',
-  iron: 'Iron Ore Mining',
-  rare_metals: 'Rare Earth Mining',
-  oil_gas: 'Oil & Gas Extraction',
-  diamonds: 'Diamond Mining',
-  coal: 'Coal Mining'
+const RESOURCE_LABELS = {
+  gold: '\u0417\u043E\u043B\u043E\u0442\u043E',
+  copper: '\u041C\u0435\u0434\u044C',
+  iron: '\u0416\u0435\u043B\u0435\u0437\u043E',
+  rare_metals: '\u0420\u0435\u0434\u043A\u0438\u0435 \u043C\u0435\u0442\u0430\u043B\u043B\u044B',
+  oil_gas: '\u041D\u0435\u0444\u0442\u044C \u0438 \u0433\u0430\u0437',
+  diamonds: '\u0410\u043B\u043C\u0430\u0437\u044B',
+  coal: '\u0423\u0433\u043E\u043B\u044C'
 };
 
-function getDescription(name, country, resourceType) {
-  const resName = RESOURCE_NAMES[resourceType] || 'Mining';
-  const descriptions = [
-    `${resName} facility — ${name}, ${country}. Premium extraction site with industrial-grade equipment.`,
-    `${resName} operations at ${name}, ${country}. High-yield deposit with proven reserves.`,
-    `${resName} complex — ${name}, ${country}. Strategic resource extraction point.`,
-    `${resName} site in ${name}, ${country}. World-class deposit with massive output capacity.`
-  ];
-  return descriptions[Math.floor(Math.random() * descriptions.length)];
+function getResourceImage(type) {
+  const map = {
+    gold: '/icons/resources/gold.svg',
+    copper: '/icons/resources/copper.svg',
+    iron: '/icons/resources/iron.svg',
+    rare_metals: '/icons/resources/rare_metals.svg',
+    oil_gas: '/icons/resources/oil_gas.svg',
+    diamonds: '/icons/resources/diamonds.svg',
+    coal: '/icons/resources/coal.svg'
+  };
+  return map[type] || '/icons/resources/gold.svg';
 }
 
-  function getResourceImage(resourceType) {
-    const images = {
-      gold: '/icons/resources/gold.svg',
-      copper: '/icons/resources/copper.svg',
-      iron: '/icons/resources/iron.svg',
-      rare_metals: '/icons/resources/rare_metals.svg',
-      oil_gas: '/icons/resources/oil_gas.svg',
-      diamonds: '/icons/resources/diamonds.svg',
-      coal: '/icons/resources/coal.svg'
-    };
-    return images[resourceType] || '/icons/resources/default.svg';
-  }
+function getDescription(site) {
+  const emoji = RESOURCE_EMOJI[site.resourceType] || '';
+  const label = RESOURCE_LABELS[site.resourceType] || site.resourceType;
+  return `${emoji} ${site.name} — ${label}. ${site.region.replace('_', ' ')} (${site.country}). 1/10 доли месторождения.`;
+}
 
-async function seed() {
+async function seedMiningSites() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB connected for seeding mining sites');
 
-    // Clear existing icons
-    await Icon.deleteMany({});
-    console.log('Cleared existing icons');
-    const icons = MINING_SITES.map((site, index) => ({
-      name: `${site.emoji} ${site.name}`,
-      continent: site.region,
-            imageUrl: getResourceImage(assignResource(site.name, index)),
-            resourceType: assignResource(site.name, index),
-      resourceEmoji: getResourceEmoji(assignResource(site.name, index)),
-      rarity: site.price > 120 ? 'epic' : site.price > 80 ? 'rare' : 'common',
-      isActive: true,
-      stakingRate: Math.round(site.hashrate / 50),
-      shareLabel: 'Полная добыча',
-      price: site.price * 100000000,
-      totalShares: 1,
-      availableShares: 1,
+    await Icon.deleteMany({ category: 'mining' });
+    console.log('Old mining icons removed');
+
+    const icons = MINING_SITES.map((site, i) => ({
+      name: `${RESOURCE_EMOJI[site.resourceType] || ''} ${site.name}`,
+      description: getDescription(site),
+      imageUrl: getResourceImage(site.resourceType),
+      price: site.price,
+      category: 'mining',
+      resourceType: site.resourceType,
+      region: site.region,
       country: site.country,
       lat: site.lat,
       lng: site.lng,
       hashrate: site.hashrate,
-      description: getDescription(site.name, site.country, assignResource(site.name, index)),
-      order: index + 1,
+      shareLabel: '1/10 доли',
+      sortOrder: i + 1
     }));
 
     await Icon.insertMany(icons);
-    console.log(`Seeded ${icons.length} mining sites across ${[...new Set(MINING_SITES.map(s => s.region))].length} regions`);
+    console.log(`${icons.length} mining site icons seeded successfully`);
 
-    // Log stats per region
-    const regions = {};
-    MINING_SITES.forEach(s => {
-      regions[s.region] = (regions[s.region] || 0) + 1;
-    });
-    console.log('Sites per region:', regions);
-
-    process.exit(0);
-  } catch (error) {
-    console.error('Seed error:', error);
+    await mongoose.disconnect();
+    console.log('MongoDB disconnected');
+  } catch (err) {
+    console.error('Seeding error:', err);
     process.exit(1);
   }
 }
 
-seed();
+seedMiningSites();
