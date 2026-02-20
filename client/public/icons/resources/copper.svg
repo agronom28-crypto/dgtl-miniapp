@@ -1,4 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <circle cx="40" cy="40" r="35" fill="#B87333" stroke="#8B4513" stroke-width="3"/>
-  <text x="40" y="48" text-anchor="middle" font-size="28" font-weight="bold" fill="#5C2E00">Cu</text>
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8751A" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#B8650F" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="40" cy="40" r="38" fill="#1A1A1A" stroke="#E8751A" stroke-width="2" opacity="0.95"/>
+  <!-- Smelter body -->
+  <rect x="25" y="18" width="28" height="30" rx="3" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <!-- Smelter chimney -->
+  <rect x="33" y="10" width="6" height="10" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <rect x="37" y="10" width="6" height="8" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <!-- Fire glow -->
+  <ellipse cx="40" cy="40" rx="8" ry="5" fill="#FF6600" opacity="0.4"/>
+  <ellipse cx="40" cy="39" rx="5" ry="3" fill="#E8751A" opacity="0.5"/>
+  <!-- Furnace opening -->
+  <rect x="32" y="34" width="16" height="10" rx="2" fill="none" stroke="#FFA500" stroke-width="1"/>
+  <!-- Copper ingots bottom row -->
+  <rect x="14" y="56" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <rect x="32" y="56" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <rect x="50" y="56" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <!-- Copper ingots top row -->
+  <rect x="22" y="49" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <rect x="42" y="49" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <!-- Copper fill subtle -->
+  <rect x="15" y="57" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
+  <rect x="33" y="57" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
+  <rect x="51" y="57" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
+  <rect x="23" y="50" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
+  <rect x="43" y="50" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
 </svg>
