@@ -7,27 +7,29 @@
   </defs>
   <!-- Background -->
   <circle cx="40" cy="40" r="38" fill="#1A1A1A" stroke="#E8751A" stroke-width="2" opacity="0.95"/>
-  <!-- Smelter body -->
-  <rect x="25" y="18" width="28" height="30" rx="3" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <!-- Smelter chimney -->
-  <rect x="33" y="10" width="6" height="10" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <rect x="37" y="10" width="6" height="8" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <!-- Fire glow -->
-  <ellipse cx="40" cy="40" rx="8" ry="5" fill="#FF6600" opacity="0.4"/>
-  <ellipse cx="40" cy="39" rx="5" ry="3" fill="#E8751A" opacity="0.5"/>
-  <!-- Furnace opening -->
-  <rect x="32" y="34" width="16" height="10" rx="2" fill="none" stroke="#FFA500" stroke-width="1"/>
-  <!-- Copper ingots bottom row -->
-  <rect x="14" y="56" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <rect x="32" y="56" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <rect x="50" y="56" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <!-- Copper ingots top row -->
-  <rect x="22" y="49" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <rect x="42" y="49" width="16" height="8" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
-  <!-- Copper fill subtle -->
-  <rect x="15" y="57" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
-  <rect x="33" y="57" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
-  <rect x="51" y="57" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
-  <rect x="23" y="50" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
-  <rect x="43" y="50" width="14" height="6" rx="1" fill="#E8751A" opacity="0.15"/>
+  <!-- Mountains / open pit outline -->
+  <polyline points="6,52 20,28 32,40 44,22 56,36 68,24 74,52" fill="none" stroke="#E8751A" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Pit terraces -->
+  <path d="M18,52 L26,40 L54,40 L62,52" fill="none" stroke="#E8751A" stroke-width="1" opacity="0.6"/>
+  <path d="M24,52 L30,44 L50,44 L56,52" fill="none" stroke="#E8751A" stroke-width="0.8" opacity="0.4"/>
+  <!-- Excavator body -->
+  <rect x="28" y="52" width="16" height="10" rx="2" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <rect x="29" y="53" width="14" height="8" rx="1" fill="#E8751A" opacity="0.15"/>
+  <!-- Excavator cabin -->
+  <rect x="34" y="47" width="8" height="6" rx="1" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <!-- Excavator boom arm -->
+  <line x1="42" y1="49" x2="56" y2="36" stroke="#FFA500" stroke-width="2"/>
+  <!-- Excavator stick -->
+  <line x1="56" y1="36" x2="62" y2="44" stroke="#FFA500" stroke-width="1.5"/>
+  <!-- Excavator bucket -->
+  <path d="M60,42 L66,44 L64,48 L58,46" fill="none" stroke="#E8751A" stroke-width="1.5"/>
+  <path d="M61,43 L65,44 L63,47 L59,46" fill="#E8751A" opacity="0.15"/>
+  <!-- Tracks -->
+  <ellipse cx="32" cy="64" rx="5" ry="2" fill="none" stroke="#E8751A" stroke-width="1"/>
+  <ellipse cx="40" cy="64" rx="5" ry="2" fill="none" stroke="#E8751A" stroke-width="1"/>
+  <!-- Copper ore chunks -->
+  <circle cx="16" cy="56" r="3" fill="none" stroke="#E8751A" stroke-width="1"/>
+  <circle cx="14" cy="60" r="2" fill="none" stroke="#E8751A" stroke-width="0.8"/>
+  <circle cx="20" cy="60" r="2.5" fill="none" stroke="#E8751A" stroke-width="0.8"/>
+  <circle cx="16" cy="56" r="2" fill="#E8751A" opacity="0.1"/>
 </svg>
