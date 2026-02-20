@@ -2,21 +2,29 @@ const mongoose = require('mongoose');
 
 const iconSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String, default: '' },
     price: { type: Number, required: true },
-    category: { 
-        type: String, 
-        enum: ['oil_rig', 'mine', 'quarry', 'factory', 'other'],
-        default: 'other' 
+    continent: {
+        type: String,
+        enum: ['africa', 'asia', 'europe', 'north_america', 'south_america', 'australia', 'cis'],
+        required: true
     },
-    rarity: { 
-        type: String, 
+    country: { type: String, required: true },
+    resourceType: {
+        type: String,
+        enum: ['gold', 'copper', 'iron', 'rare_metals', 'oil_gas', 'diamonds', 'coal'],
+        required: true
+    },
+    resourceEmoji: { type: String, default: '' },
+    rarity: {
+        type: String,
         enum: ['common', 'rare', 'epic', 'legendary'],
-        default: 'common' 
+        default: 'common'
     },
     isActive: { type: Boolean, default: true },
     stakingRate: { type: Number, default: 10 },
-    description: { type: String, default: '' }
+    description: { type: String, default: '' },
+    shareLabel: { type: String, default: '1/10 доли' }
 }, {
     timestamps: true
 });
