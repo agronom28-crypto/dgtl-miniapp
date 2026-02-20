@@ -1,4 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <circle cx="40" cy="40" r="35" fill="#1A1A1A" stroke="#333" stroke-width="3"/>
-  <text x="40" y="48" text-anchor="middle" font-size="22" font-weight="bold" fill="#4CAF50">OG</text>
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D4380D" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#8B2500" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="40" cy="40" r="38" fill="#1A1A1A" stroke="#D4380D" stroke-width="2" opacity="0.95"/>
+  <!-- Oil derrick tower -->
+  <line x1="30" y1="60" x2="36" y2="18" stroke="#D4380D" stroke-width="1.5"/>
+  <line x1="50" y1="60" x2="44" y2="18" stroke="#D4380D" stroke-width="1.5"/>
+  <line x1="36" y1="18" x2="44" y2="18" stroke="#D4380D" stroke-width="1.5"/>
+  <!-- Cross braces -->
+  <line x1="32" y1="50" x2="48" y2="50" stroke="#D4380D" stroke-width="1" opacity="0.7"/>
+  <line x1="33" y1="40" x2="47" y2="40" stroke="#D4380D" stroke-width="1" opacity="0.7"/>
+  <line x1="34" y1="30" x2="46" y2="30" stroke="#D4380D" stroke-width="1" opacity="0.7"/>
+  <!-- Diagonal braces -->
+  <line x1="32" y1="50" x2="47" y2="40" stroke="#D4380D" stroke-width="0.8" opacity="0.5"/>
+  <line x1="48" y1="50" x2="33" y2="40" stroke="#D4380D" stroke-width="0.8" opacity="0.5"/>
+  <line x1="33" y1="40" x2="46" y2="30" stroke="#D4380D" stroke-width="0.8" opacity="0.5"/>
+  <line x1="47" y1="40" x2="34" y2="30" stroke="#D4380D" stroke-width="0.8" opacity="0.5"/>
+  <!-- Crown block on top -->
+  <rect x="36" y="15" width="8" height="4" rx="1" fill="none" stroke="#FF6633" stroke-width="1.5"/>
+  <!-- Drill line -->
+  <line x1="40" y1="19" x2="40" y2="60" stroke="#FF6633" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>
+  <!-- Base platform -->
+  <rect x="26" y="60" width="28" height="4" rx="1" fill="none" stroke="#D4380D" stroke-width="1.5"/>
+  <rect x="27" y="61" width="26" height="2" rx="0.5" fill="#D4380D" opacity="0.15"/>
+  <!-- Oil barrel -->
+  <rect x="58" y="52" width="10" height="12" rx="2" fill="none" stroke="#D4380D" stroke-width="1.2"/>
+  <rect x="59" y="53" width="8" height="10" rx="1.5" fill="#D4380D" opacity="0.15"/>
+  <line x1="58" y1="56" x2="68" y2="56" stroke="#D4380D" stroke-width="0.8" opacity="0.5"/>
+  <line x1="58" y1="60" x2="68" y2="60" stroke="#D4380D" stroke-width="0.8" opacity="0.5"/>
+  <!-- Flame on top -->
+  <path d="M39,14 Q40,8 41,14" fill="#FF6633" opacity="0.6"/>
+  <path d="M39.5,14 Q40,10 40.5,14" fill="#FFD700" opacity="0.4"/>
+  <!-- Ground line -->
+  <line x1="8" y1="64" x2="72" y2="64" stroke="#D4380D" stroke-width="0.8" opacity="0.3"/>
+  <!-- Oil drops -->
+  <circle cx="15" cy="58" r="2" fill="#D4380D" opacity="0.3"/>
+  <circle cx="12" cy="62" r="1.5" fill="#D4380D" opacity="0.2"/>
+  <circle cx="18" cy="61" r="1.8" fill="#D4380D" opacity="0.25"/>
 </svg>
