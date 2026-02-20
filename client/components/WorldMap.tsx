@@ -55,16 +55,6 @@ const CONTINENT_COLORS: Record<ContinentKey, string> = {
 
 const NEUTRAL_COLOR = '#334455';
 
-const CONTINENT_LABELS: Record<ContinentKey, string> = {
-    north_america: 'N. America',
-    south_america: 'S. America',
-    europe: 'Europe',
-    africa: 'Africa',
-    asia: 'Asia',
-    russia: 'Russia',
-    australia: 'Australia'
-};
-
 // Build reverse lookup: country code -> continent
 const COUNTRY_TO_CONTINENT: Record<string, ContinentKey> = {};
 for (const [continent, codes] of Object.entries(CONTINENT_COUNTRIES)) {
@@ -74,16 +64,6 @@ for (const [continent, codes] of Object.entries(CONTINENT_COUNTRIES)) {
 }
 
 const SVG_URL = 'https://raw.githubusercontent.com/flekschas/simple-world-map/master/world-map.svg';
-
-const LABEL_POSITIONS: Record<ContinentKey, [number, number]> = {
-    north_america: [180, 380],
-    south_america: [260, 560],
-    europe: [470, 340],
-    africa: [470, 500],
-    asia: [620, 420],
-    russia: [580, 310],
-    australia: [680, 560]
-};
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -95,14 +75,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
-
         let cancelled = false;
 
         fetch(SVG_URL)
             .then(r => r.text())
             .then(svgText => {
                 if (cancelled) return;
-
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(svgText, 'image/svg+xml');
                 const svgEl = doc.querySelector('svg');
@@ -190,7 +168,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                     g.setAttribute('data-continent', key);
                     g.style.cursor = 'pointer';
-
                     const isActive = activeContinent === key;
                     g.setAttribute('filter', `url(#glow-${key})`);
 
@@ -208,35 +185,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     g.addEventListener('click', () => {
                         handlePathClick(key as ContinentKey);
                     });
-
                     svg.appendChild(g);
                 });
-
-                // Add continent labels
-                Object.entries(LABEL_POSITIONS).forEach(([key, [x, y]]) => {
-                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', String(x));
-                    text.setAttribute('y', String(y));
-                    text.setAttribute('fill', CONTINENT_COLORS[key as ContinentKey]);
-                    text.setAttribute('font-size', '14');
-                    text.setAttribute('text-anchor', 'middle');
-                    text.setAttribute('font-family', 'sans-serif');
-                    text.setAttribute('opacity', activeContinent === key ? '1' : '0.7');
-                    text.setAttribute('pointer-events', 'none');
-                    text.textContent = CONTINENT_LABELS[key as ContinentKey];
-                    svg.appendChild(text);
-                });
-
-                // Hint text
-                const hint = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                hint.setAttribute('x', '422');
-                hint.setAttribute('y', '690');
-                hint.setAttribute('fill', 'rgba(255,255,255,0.2)');
-                hint.setAttribute('font-size', '10');
-                hint.setAttribute('text-anchor', 'middle');
-                hint.setAttribute('font-family', 'sans-serif');
-                hint.textContent = 'Tap a region to explore mining sites';
-                svg.appendChild(hint);
 
                 container.appendChild(svg);
             })
