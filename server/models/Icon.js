@@ -4,6 +4,7 @@ const iconSchema = new mongoose.Schema({
     name: { type: String, required: true },
     imageUrl: { type: String, default: '' },
     price: { type: Number, required: true },
+    valuationUsd: { type: String, default: '' },
     continent: {
         type: String,
         enum: ['africa', 'asia', 'europe', 'north_america', 'south_america', 'australia', 'russia'],
@@ -24,12 +25,13 @@ const iconSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true },
     stakingRate: { type: Number, default: 10 },
     description: { type: String, default: '' },
-        shareLabel: { type: String, default: 'Полная добыча' },
-            totalShares: { type: Number, default: 1 },
-        availableShares: { type: Number, default: 1 },
+    shareLabel: { type: String, default: '' },
+    totalShares: { type: Number, default: 1 },
+    availableShares: { type: Number, default: 1 },
     lat: { type: Number },
     lng: { type: Number },
     hashrate: { type: Number, default: 0 },
+    realPhotoUrl: { type: String, default: '' },
     order: { type: Number, default: 0 }
 }, {
     timestamps: true
