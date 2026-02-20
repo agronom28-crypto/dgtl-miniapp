@@ -10,7 +10,8 @@ const publicPaths = [
   '/fonts',
   '/images',
   '/auth/error',
-  '/auth/signout'
+  '/auth/signout',
+  '/shop'
 ];
 
 export async function middleware(request: NextRequest) {
@@ -39,4 +40,4 @@ export async function middleware(request: NextRequest) {
   }
 
   return NextResponse.next();
-} 
+}
