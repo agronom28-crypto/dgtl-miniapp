@@ -171,6 +171,9 @@ const Shop: React.FC = () => {
                   <div className={styles.cardEmoji}>
                     {icon.imageUrl ? <img src={icon.imageUrl} alt={icon.name} className={styles.cardImage} /> : (resInfo?.emoji || '⛏')}
                   </div>
+                                      {icon.realPhotoUrl && (
+                      <img src={icon.realPhotoUrl} alt={icon.name} className={styles.cardRealPhoto} />
+                    )}
                   <div className={styles.cardName}>{icon.name}</div>
                   <div className={styles.cardCountry}>
                     {icon.country}
