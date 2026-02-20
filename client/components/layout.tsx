@@ -50,6 +50,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         >
           <img src="/icons/white/periodic-table.svg" alt="Periodic Table" className="w-8 h-8" />
         </a>
+                <a
+          role="tab"
+          className={`tab h-16 ${isActive("/boosts") ? "border-2 border-accent shadow-glow" : ""}`}
+          href="/boosts"
+        >
+          <img src="/icons/white/rocket.svg" alt="Boosts" className="w-8 h-8" />
+        </a>
       </div>
     </div>
   );
