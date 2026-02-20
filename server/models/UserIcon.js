@@ -11,12 +11,14 @@ const userIconSchema = new mongoose.Schema({
         ref: 'Icon',
         required: true
     },
+    shareLabel: { type: String, default: '1/10 доли' },
     purchasedAt: {
         type: Date,
         default: Date.now
     }
 });
 
-userIconSchema.index({ userId: 1, iconId: 1 }, { unique: true });
+// Убран unique — игрок может купить несколько долей одного месторождения
+userIconSchema.index({ userId: 1, iconId: 1 });
 
 module.exports = mongoose.model('UserIcon', userIconSchema);
