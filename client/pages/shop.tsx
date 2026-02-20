@@ -195,6 +195,11 @@ const Shop: React.FC = () => {
                                     <div className={styles.cardShare}>
                                         {icon.shareLabel}
                                     </div>
+                                                            {icon.description && (
+                          <div className={styles.cardDescription}>
+                            {icon.description}
+                          </div>
+                        )}
                                     {owned > 0 && (
                                         <div className={styles.owned}>
                                             ✓ Куплено: {owned}
