@@ -1,4 +1,4 @@
-export type ContinentKey = 'africa' | 'asia' | 'europe' | 'north_america' | 'south_america' | 'australia' | 'cis';
+export type ContinentKey = 'africa' | 'asia' | 'europe' | 'north_america' | 'south_america' | 'australia' | 'russia';
 export type ResourceType = 'gold' | 'copper' | 'iron' | 'rare_metals' | 'oil_gas' | 'diamonds' | 'coal';
 
 export interface IIcon {
@@ -43,15 +43,15 @@ export const CONTINENT_LABELS: Record<ContinentKey, string> = {
     north_america: 'Северная Америка',
     south_america: 'Южная Америка',
     australia: 'Австралия',
-    cis: 'СНГ'
+    russia: 'Россия'
 };
 
 export const RESOURCE_LABELS: Record<ResourceType, { label: string; emoji: string }> = {
     gold: { label: 'Золото', emoji: '🟡' },
-    copper: { label: 'Медь', emoji: '🔴' },
-    iron: { label: 'Железо', emoji: '🔘' },
-    rare_metals: { label: 'Редкие металлы', emoji: '⚛' },
-    oil_gas: { label: 'Нефть и газ', emoji: '🛢' },
+    copper: { label: 'Медь', emoji: '🟠' },
+    iron: { label: 'Железо', emoji: '⚪' },
+    rare_metals: { label: 'Редкие металлы', emoji: '✨' },
+    oil_gas: { label: 'Нефть и газ', emoji: '🟥' },
     diamonds: { label: 'Алмазы', emoji: '💎' },
-    coal: { label: 'Уголь', emoji: '⚫' }
+    coal: { label: 'Уголь', emoji: '▪️' },
 };
