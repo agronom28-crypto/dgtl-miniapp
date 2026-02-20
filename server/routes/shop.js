@@ -4,10 +4,13 @@ const Icon = require('../models/Icon');
 const UserIcon = require('../models/UserIcon');
 const User = require('../models/User');
 
-// Получить все активные иконки для магазина
+// Получить все активные иконки для магазина (с фильтрацией по континенту и типу ресурса)
 router.get('/', async (req, res) => {
     try {
-        const icons = await Icon.find({ isActive: true }).sort({ price: 1 });
+        const filter = { isActive: true };
+        if (req.query.continent) filter.continent = req.query.continent;
+        if (req.query.resourceType) filter.resourceType = req.query.resourceType;
+        const icons = await Icon.find(filter).sort({ price: 1 });
         res.json({ success: true, icons });
     } catch (error) {
         console.error('Error fetching icons:', error);
@@ -15,7 +18,21 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Купить иконку
+// Получить список континентов с количеством месторождений
+router.get('/continents', async (req, res) => {
+    try {
+        const continents = await Icon.aggregate([
+            { $match: { isActive: true } },
+            { $group: { _id: '$continent', count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+        res.json({ success: true, continents });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Купить долю месторождения
 router.post('/buy', async (req, res) => {
     try {
         const { userId, iconId } = req.body;
@@ -34,12 +51,6 @@ router.post('/buy', async (req, res) => {
             return res.status(400).json({ success: false, error: 'Icon is not available' });
         }
 
-        // Проверяем, не куплена ли уже
-        const existing = await UserIcon.findOne({ userId, iconId });
-        if (existing) {
-            return res.status(400).json({ success: false, error: 'Icon already purchased' });
-        }
-
         // Проверяем баланс
         if (user.coins < icon.price) {
             return res.status(400).json({ success: false, error: 'Not enough coins' });
@@ -49,8 +60,12 @@ router.post('/buy', async (req, res) => {
         user.coins -= icon.price;
         await user.save();
 
-        // Создаём запись о покупке
-        const userIcon = new UserIcon({ userId, iconId });
+        // Создаём запись о покупке доли
+        const userIcon = new UserIcon({
+            userId,
+            iconId,
+            shareLabel: icon.shareLabel || '1/10 доли'
+        });
         await userIcon.save();
 
         res.json({ success: true, userIcon, remainingCoins: user.coins });
@@ -60,7 +75,7 @@ router.post('/buy', async (req, res) => {
     }
 });
 
-// Получить иконки пользователя
+// Получить месторождения пользователя
 router.get('/my/:userId', async (req, res) => {
     try {
         const userIcons = await UserIcon.find({ userId: req.params.userId })
