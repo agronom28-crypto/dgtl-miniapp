@@ -162,6 +162,19 @@ function getDescription(name, country, resourceType) {
   return descriptions[Math.floor(Math.random() * descriptions.length)];
 }
 
+  function getResourceImage(resourceType) {
+    const images = {
+      gold: '/icons/resources/gold.png',
+      copper: '/icons/resources/copper.png',
+      iron: '/icons/resources/iron.png',
+      rare_metals: '/icons/resources/rare_metals.png',
+      oil_gas: '/icons/resources/oil_gas.png',
+      diamonds: '/icons/resources/diamonds.png',
+      coal: '/icons/resources/coal.png'
+    };
+    return images[resourceType] || '/icons/resources/default.png';
+  }
+
 async function seed() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -173,6 +186,7 @@ async function seed() {
     const icons = MINING_SITES.map((site, index) => ({
       name: `${site.emoji} ${site.name}`,
       continent: site.region,
+            imageUrl: getResourceImage(assignResource(site.name, index)),
             resourceType: assignResource(site.name, index),
       resourceEmoji: getResourceEmoji(assignResource(site.name, index)),
       rarity: site.price > 120 ? 'epic' : site.price > 80 ? 'rare' : 'common',
