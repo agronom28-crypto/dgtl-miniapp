@@ -164,15 +164,15 @@ function getDescription(name, country, resourceType) {
 
   function getResourceImage(resourceType) {
     const images = {
-      gold: '/icons/resources/gold.png',
-      copper: '/icons/resources/copper.png',
-      iron: '/icons/resources/iron.png',
-      rare_metals: '/icons/resources/rare_metals.png',
-      oil_gas: '/icons/resources/oil_gas.png',
-      diamonds: '/icons/resources/diamonds.png',
-      coal: '/icons/resources/coal.png'
+      gold: '/icons/resources/gold.svg',
+      copper: '/icons/resources/copper.svg',
+      iron: '/icons/resources/iron.svg',
+      rare_metals: '/icons/resources/rare_metals.svg',
+      oil_gas: '/icons/resources/oil_gas.svg',
+      diamonds: '/icons/resources/diamonds.svg',
+      coal: '/icons/resources/coal.svg'
     };
-    return images[resourceType] || '/icons/resources/default.png';
+    return images[resourceType] || '/icons/resources/default.svg';
   }
 
 async function seed() {
@@ -200,7 +200,7 @@ async function seed() {
       lat: site.lat,
       lng: site.lng,
       hashrate: site.hashrate,
-      description: getDescription(site.name, site.country, assignResource(site.name, index)),e.hashrate} PH/s`,
+      description: getDescription(site.name, site.country, assignResource(site.name, index)),
       order: index + 1,
     }));
 
