@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const Level = require('./models/Level'); // Снова импортируем модель Level
+require('dotenv').config();
 
 // Local MongoDB connection string
-const MONGODB_URI = 'mongodb://localhost:27017/dgtl_miniapp';
+  const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dgtl_miniapp';
 const PORT = process.env.PORT || 5001;
 
 const app = express();
