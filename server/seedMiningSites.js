@@ -140,6 +140,28 @@ function getResourceEmoji(resourceType) {
 }
 
 
+
+const RESOURCE_NAMES = {
+  gold: 'Gold Mining',
+  copper: 'Copper Mining',
+  iron: 'Iron Ore Mining',
+  rare_metals: 'Rare Earth Mining',
+  oil_gas: 'Oil & Gas Extraction',
+  diamonds: 'Diamond Mining',
+  coal: 'Coal Mining'
+};
+
+function getDescription(name, country, resourceType) {
+  const resName = RESOURCE_NAMES[resourceType] || 'Mining';
+  const descriptions = [
+    `${resName} facility — ${name}, ${country}. Premium extraction site with industrial-grade equipment.`,
+    `${resName} operations at ${name}, ${country}. High-yield deposit with proven reserves.`,
+    `${resName} complex — ${name}, ${country}. Strategic resource extraction point.`,
+    `${resName} site in ${name}, ${country}. World-class deposit with massive output capacity.`
+  ];
+  return descriptions[Math.floor(Math.random() * descriptions.length)];
+}
+
 async function seed() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -148,7 +170,6 @@ async function seed() {
     // Clear existing icons
     await Icon.deleteMany({});
     console.log('Cleared existing icons');
-
     const icons = MINING_SITES.map((site, index) => ({
       name: `${site.emoji} ${site.name}`,
       continent: site.region,
@@ -157,15 +178,15 @@ async function seed() {
       rarity: site.price > 120 ? 'epic' : site.price > 80 ? 'rare' : 'common',
       isActive: true,
       stakingRate: Math.round(site.hashrate / 50),
-      shareLabel: '1/10 доли',
-      price: site.price,
-      totalShares: 10,
-      availableShares: 10,
+      shareLabel: 'Полная добыча',
+      price: site.price * 100000000,
+      totalShares: 1,
+      availableShares: 1,
       country: site.country,
       lat: site.lat,
       lng: site.lng,
       hashrate: site.hashrate,
-      description: `Mining facility in ${site.name}, ${site.country}. Hashrate: ${site.hashrate} PH/s`,
+      description: getDescription(site.name, site.country, assignResource(site.name, index)),e.hashrate} PH/s`,
       order: index + 1,
     }));
 
