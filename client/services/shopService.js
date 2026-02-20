@@ -3,10 +3,13 @@ import axios from 'axios';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export const shopService = {
-    // Получить все иконки магазина
-    getIcons: async () => {
+    // Получить все месторождения магазина
+    getIcons: async (continent, resourceType) => {
         try {
-            const response = await axios.get('/api/shop');
+            const params = {};
+            if (continent) params.continent = continent;
+            if (resourceType) params.resourceType = resourceType;
+            const response = await axios.get('/api/shop', { params });
             return response.data;
         } catch (error) {
             console.error('Error fetching icons:', error);
@@ -14,7 +17,18 @@ export const shopService = {
         }
     },
 
-    // Купить иконку
+    // Получить список континентов
+    getContinents: async () => {
+        try {
+            const response = await axios.get('/api/shop/continents');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching continents:', error);
+            throw error;
+        }
+    },
+
+    // Купить долю месторождения
     buyIcon: async (userId, iconId) => {
         try {
             const response = await axios.post('/api/shop/buy', { userId, iconId });
@@ -25,7 +39,7 @@ export const shopService = {
         }
     },
 
-    // Получить купленные иконки пользователя
+    // Получить купленные месторождения пользователя
     getMyIcons: async (userId) => {
         try {
             const response = await axios.get(`/api/shop/my/${userId}`);
