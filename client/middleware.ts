@@ -6,6 +6,11 @@ import { getToken } from 'next-auth/jwt';
 const publicPaths = [
   '/_next',
   '/api/auth',
+  '/api/shop',
+  '/api/users',
+  '/api/staking',
+  '/api/minerals',
+  '/api/levels',
   '/static',
   '/fonts',
   '/images',
