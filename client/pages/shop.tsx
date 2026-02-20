@@ -155,7 +155,6 @@ const Shop: React.FC = () => {
                 <div className={styles.coins}>
                     💰 {userData?.coins?.toLocaleString() || 0} монет
                 </div>
-
                 <div className={styles.tabs}>
                     {RESOURCE_FILTERS.map(f => (
                         <button
@@ -180,7 +179,7 @@ const Shop: React.FC = () => {
                             return (
                                 <div key={icon._id} className={styles.card}>
                                     <div className={styles.cardEmoji}>
-                            {icon.imageUrl ? <img src={icon.imageUrl} alt={icon.name} className={styles.cardImage} /> : (resInfo?.emoji || '⛏')}
+                                        {icon.imageUrl ? <img src={icon.imageUrl} alt={icon.name} className={styles.cardImage} /> : (resInfo?.emoji || '⛏')}
                                     </div>
                                     <div className={styles.cardName}>{icon.name}</div>
                                     <div className={styles.cardCountry}>
@@ -189,17 +188,19 @@ const Shop: React.FC = () => {
                                     <div className={styles.cardResource}>
                                         {resInfo?.label || icon.resourceType}
                                     </div>
+                                    {icon.valuationUsd && (
+                                        <div className={styles.cardValuation}>
+                                            💵 {icon.valuationUsd}
+                                        </div>
+                                    )}
                                     <div className={styles.cardRate}>
                                         +{icon.stakingRate}/час
                                     </div>
-                                    <div className={styles.cardShare}>
-                                        {icon.shareLabel}
-                                    </div>
-                                                            {icon.description && (
-                          <div className={styles.cardDescription}>
-                            {icon.description}
-                          </div>
-                        )}
+                                    {icon.description && (
+                                        <div className={styles.cardDescription}>
+                                            {icon.description}
+                                        </div>
+                                    )}
                                     {owned > 0 && (
                                         <div className={styles.owned}>
                                             ✓ Куплено: {owned}
