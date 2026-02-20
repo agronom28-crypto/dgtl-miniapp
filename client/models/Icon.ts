@@ -16,6 +16,12 @@ export interface IIcon {
     isActive: boolean;
     shareLabel: string;
     createdAt: Date;
+        totalShares: number;
+    availableShares: number;
+    lat?: number;
+    lng?: number;
+    hashrate: number;
+    order: number;
 }
 
 export interface IUserIcon {

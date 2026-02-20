@@ -24,7 +24,13 @@ const iconSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true },
     stakingRate: { type: Number, default: 10 },
     description: { type: String, default: '' },
-    shareLabel: { type: String, default: '1/10 доли' }
+    shareLabel: { type: String, default: '1/10 доли' },
+        totalShares: { type: Number, default: 10 },
+    availableShares: { type: Number, default: 10 },
+    lat: { type: Number },
+    lng: { type: Number },
+    hashrate: { type: Number, default: 0 },
+    order: { type: Number, default: 0 }
 }, {
     timestamps: true
 });

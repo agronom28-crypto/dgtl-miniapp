@@ -123,6 +123,23 @@ const MINING_SITES = [
   { name: 'Queenstown NZ', region: 'australia', country: 'NZ', lat: -45.03, lng: 168.66, hashrate: 120, price: 85, emoji: '\uD83C\uDFDD' },
 ];
 
+// Resource types for diverse assignment
+const RESOURCE_TYPES = ['gold', 'copper', 'iron', 'rare_metals', 'oil_gas', 'diamonds', 'coal'];
+const RESOURCE_EMOJIS = {
+  gold: '\u{1F7E1}', copper: '\u{1F7E0}', iron: '\u26AA',
+  rare_metals: '\u2728', oil_gas: '\u{1F6E2}', diamonds: '\u{1F48E}', coal: '\u26AB'
+};
+
+function assignResource(name, index) {
+  // Assign diverse resources based on index cycling through types
+  return RESOURCE_TYPES[index % RESOURCE_TYPES.length];
+}
+
+function getResourceEmoji(resourceType) {
+  return RESOURCE_EMOJIS[resourceType] || '';
+}
+
+
 async function seed() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -135,9 +152,9 @@ async function seed() {
     const icons = MINING_SITES.map((site, index) => ({
       name: `${site.emoji} ${site.name}`,
       continent: site.region,
-            resourceType: site.resource || 'gold',
-      resourceEmoji: site.resourceEmoji || '',
-      rarity: site.rarity || (site.price > 120 ? 'epic' : site.price > 80 ? 'rare' : 'common'),
+            resourceType: assignResource(site.name, index),
+      resourceEmoji: getResourceEmoji(assignResource(site.name, index)),
+      rarity: site.price > 120 ? 'epic' : site.price > 80 ? 'rare' : 'common',
       isActive: true,
       stakingRate: Math.round(site.hashrate / 50),
       shareLabel: '1/10 доли',
