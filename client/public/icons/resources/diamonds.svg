@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="d" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#B3E5FC"/>
+      <stop offset="50%" stop-color="#81D4FA"/>
+      <stop offset="100%" stop-color="#B3E5FC"/>
+    </linearGradient>
+  </defs>
+  <circle cx="40" cy="40" r="35" fill="url(#d)" stroke="#4FC3F7" stroke-width="3"/>
+  <text x="40" y="48" text-anchor="middle" font-size="22" font-weight="bold" fill="#0277BD">DM</text>
+</svg>
