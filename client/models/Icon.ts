@@ -1,25 +1,32 @@
+export type ContinentKey = 'africa' | 'asia' | 'europe' | 'north_america' | 'south_america' | 'australia' | 'cis';
+export type ResourceType = 'gold' | 'copper' | 'iron' | 'rare_metals' | 'oil_gas' | 'diamonds' | 'coal';
+
 export interface IIcon {
     _id: string;
     name: string;
     description: string;
     imageUrl: string;
+    continent: ContinentKey;
+    country: string;
+    resourceType: ResourceType;
+    resourceEmoji: string;
     rarity: 'common' | 'rare' | 'epic' | 'legendary';
     price: number;
-    starsPrice: number;
-    stakingBonus: number;
+    stakingRate: number;
     isActive: boolean;
+    shareLabel: string;
     createdAt: Date;
-  }
-  
-  export interface IUserIcon {
+}
+
+export interface IUserIcon {
     _id: string;
-    telegramId: number;
+    userId: string;
     iconId: string | IIcon;
-    isEquipped: boolean;
-    acquiredAt: Date;
-  }
-  
-  export interface IStakedIcon {
+    shareLabel: string;
+    purchasedAt: Date;
+}
+
+export interface IStakedIcon {
     _id: string;
     telegramId: number;
     iconId: string | IIcon;
@@ -27,5 +34,24 @@ export interface IIcon {
     unstakeAt: Date | null;
     rewardsClaimed: number;
     isActive: boolean;
-  }
-  
+}
+
+export const CONTINENT_LABELS: Record<ContinentKey, string> = {
+    africa: 'Африка',
+    asia: 'Азия',
+    europe: 'Европа',
+    north_america: 'Северная Америка',
+    south_america: 'Южная Америка',
+    australia: 'Австралия',
+    cis: 'СНГ'
+};
+
+export const RESOURCE_LABELS: Record<ResourceType, { label: string; emoji: string }> = {
+    gold: { label: 'Золото', emoji: '🟡' },
+    copper: { label: 'Медь', emoji: '🔴' },
+    iron: { label: 'Железо', emoji: '🔘' },
+    rare_metals: { label: 'Редкие металлы', emoji: '⚛' },
+    oil_gas: { label: 'Нефть и газ', emoji: '🛢' },
+    diamonds: { label: 'Алмазы', emoji: '💎' },
+    coal: { label: 'Уголь', emoji: '⚫' }
+};
