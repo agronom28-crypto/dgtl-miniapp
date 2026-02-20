@@ -5,7 +5,7 @@ const Level = require('./models/Level'); // Снова импортируем м
 
 // Local MongoDB connection string
 const MONGODB_URI = 'mongodb://localhost:27017/dgtl_miniapp';
-const PORT = 3001;
+const PORT = process.env.PORT || 5001;
 
 const app = express();
 
