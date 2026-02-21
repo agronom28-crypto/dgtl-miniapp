@@ -21,32 +21,33 @@ const publicPaths = [
   '/shop'
   '/staking',
   '/authpage',
+        '/payment',
+    '/boosts',
+    '/collection',
+    '/friends',
+    '/tasks',
 ];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip middleware for public paths and files
-  if (publicPaths.some(path => pathname.startsWith(path)) || pathname.includes('.')) {
+  // Allow public paths
+  if (publicPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
-  // Check if we're in Telegram Mini App environment
-  const userAgent = request.headers.get('user-agent') || '';
-  const isTelegramWebApp = userAgent.includes('TelegramWebApp');
-
-  // Get the token
+  // Check authentication
   const token = await getToken({ req: request });
 
-  // If on auth page, always allow access
-  if (pathname === '/authpage') {
-    return NextResponse.next();
-  }
-
-  // If not authenticated, redirect to auth
   if (!token) {
-    return NextResponse.redirect(new URL('/authpage', request.url));
+    const signInUrl = new URL('/authpage', request.url);
+    signInUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+};
