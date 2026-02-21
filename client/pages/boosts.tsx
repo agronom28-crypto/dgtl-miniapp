@@ -5,6 +5,7 @@ import axios from "axios";
 import { IUserState } from '../models/User';
 import { IBoostCard } from '../models/Boosts';
 import { showNotification } from '../lib/notifications';
+import { getTranslations, Lang } from '../lib/i18n';
 
 interface MineralCard {
   imageUrl: string;
@@ -23,59 +24,46 @@ const minerals: MineralCard[] = [
 
 const Store: React.FC = () => {
   const { data: session } = useSession();
+  const [lang, setLang] = useState<Lang>('ru');
+  const t = getTranslations(lang);
+
   const [boostCards, setBoostCards] = useState<IBoostCard[]>([]);
   const [isBoostsLoading, setIsBoostsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<IUserState | null>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [buyingId, setBuyingId] = useState<string | null>(null);
 
-  function triggerSuccess(msg?: string) {
-    showNotification(msg || 'Purchase was successful!', 'success');
-  }
-  function triggerError(msg?: string) {
-    showNotification(msg || 'Not enough tokens!', 'error');
-  }
+  useEffect(() => {
+    const savedLang = localStorage.getItem('app_lang') as Lang;
+    if (savedLang) setLang(savedLang);
+  }, []);
 
-  // Fetch Boost Cards
+  const toggleLang = () => {
+    const newLang = lang === 'ru' ? 'en' : 'ru';
+    setLang(newLang);
+    localStorage.setItem('app_lang', newLang);
+  };
+
   useEffect(() => {
     const fetchBoostCards = async () => {
       try {
         const response = await axios.get("/api/boost-cards");
         setBoostCards(Array.isArray(response.data) ? response.data : []);
-      } catch (err) {
-        console.error("Error fetching boost cards:", err);
-        setError("Failed to load boost cards.");
-      } finally {
-        setIsBoostsLoading(false);
-      }
+      } catch (err) { console.error(err); } finally { setIsBoostsLoading(false); }
     };
     fetchBoostCards();
   }, []);
 
-  // Fetch User Data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const res = await fetch('/api/user/data');
-        if (!res.ok) throw new Error('Failed to fetch user data');
-        const data = await res.json();
-        setUserData(data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError('Failed to load user data.');
-      } finally {
-        setIsUserDataLoading(false);
-      }
+        if (res.ok) setUserData(await res.json());
+      } catch (err) { console.error(err); } finally { setIsUserDataLoading(false); }
     };
-    if (session) {
-      fetchUserData();
-    } else {
-      setIsUserDataLoading(false);
-    }
+    if (session) fetchUserData(); else setIsUserDataLoading(false);
   }, [session]);
 
-  // Покупка буста за монеты
   const handlePurchase = async (boostId: string) => {
     setBuyingId(boostId + '-coins');
     try {
@@ -86,23 +74,15 @@ const Store: React.FC = () => {
       });
       if (response.ok) {
         const boostPrice = boostCards.find((b) => b.id === boostId)?.price || 0;
-        setUserData((prev) => prev
-          ? { ...prev, coins: prev.coins - boostPrice, boosts: { ...prev.boosts, [boostId]: (prev.boosts[boostId] || 0) + 1 } }
-          : prev);
-        triggerSuccess('Boost purchased for coins!');
+        setUserData((p) => p ? { ...p, coins: p.coins - boostPrice, boosts: { ...p.boosts, [boostId]: (p.boosts[boostId] || 0) + 1 } } : p);
+        showNotification(t.boosts_buy_success, 'success');
       } else {
         const data = await response.json();
-        triggerError(data.message || 'Not enough coins!');
+        showNotification(data.message || t.boosts_no_coins, 'error');
       }
-    } catch (error) {
-      console.error(error);
-      triggerError();
-    } finally {
-      setBuyingId(null);
-    }
+    } catch (err) { showNotification(t.boosts_no_coins, 'error'); } finally { setBuyingId(null); }
   };
 
-  // Покупка буста за Stars
   const handlePurchaseStars = async (boostId: string) => {
     setBuyingId(boostId + '-stars');
     try {
@@ -115,23 +95,15 @@ const Store: React.FC = () => {
         const data = await response.json();
         if (data.invoiceUrl) {
           window.open(data.invoiceUrl, '_blank');
-          triggerSuccess('Stars invoice created! Complete payment in Telegram.');
-        } else {
-          triggerSuccess('Stars payment initiated!');
-        }
+          showNotification(t.boosts_stars_success, 'success');
+        } else showNotification(t.boosts_initiated, 'success');
       } else {
         const data = await response.json();
-        triggerError(data.message || 'Stars payment failed!');
+        showNotification(data.message || t.boosts_stars_fail, 'error');
       }
-    } catch (error) {
-      console.error(error);
-      triggerError('Stars payment error');
-    } finally {
-      setBuyingId(null);
-    }
+    } catch (err) { showNotification(t.boosts_stars_error, 'error'); } finally { setBuyingId(null); }
   };
 
-  // Покупка Mineral Card за монеты
   const handleMineralPurchase = async (symbol: string, price: number) => {
     setBuyingId('mineral-' + symbol + '-coins');
     try {
@@ -141,19 +113,12 @@ const Store: React.FC = () => {
         body: JSON.stringify({ boostId: 'mineral-' + symbol.toLowerCase() }),
       });
       if (response.ok) {
-        setUserData((prev) => prev ? { ...prev, coins: prev.coins - price } : prev);
-        triggerSuccess(`${symbol} mineral card purchased!`);
-      } else {
-        triggerError('Not enough coins!');
-      }
-    } catch (error) {
-      triggerError();
-    } finally {
-      setBuyingId(null);
-    }
+        setUserData((p) => p ? { ...p, coins: p.coins - price } : p);
+        showNotification(`${symbol} ${t.boosts_mineral_success}`, 'success');
+      } else showNotification(t.boosts_no_coins, 'error');
+    } catch (err) { showNotification(t.boosts_not_enough, 'error'); } finally { setBuyingId(null); }
   };
 
-  // Покупка Mineral Card за Stars
   const handleMineralPurchaseStars = async (symbol: string) => {
     setBuyingId('mineral-' + symbol + '-stars');
     try {
@@ -164,112 +129,65 @@ const Store: React.FC = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        if (data.invoiceUrl) {
-          window.open(data.invoiceUrl, '_blank');
-          triggerSuccess('Stars invoice created!');
-        }
-      } else {
-        triggerError('Stars payment failed!');
-      }
-    } catch (error) {
-      triggerError('Stars payment error');
-    } finally {
-      setBuyingId(null);
-    }
+        if (data.invoiceUrl) window.open(data.invoiceUrl, '_blank');
+        showNotification(t.boosts_stars_success, 'success');
+      } else showNotification(t.boosts_stars_fail, 'error');
+    } catch (err) { showNotification(t.boosts_stars_error, 'error'); } finally { setBuyingId(null); }
   };
 
   const isLoading = isBoostsLoading || isUserDataLoading;
 
   return (
     <Layout>
-      <div className="flex flex-col min-h-screen pb-20">
-        <div className="text-center p-5">
-          <h1 className="text-3xl font-bold p-2">🚀 Store</h1>
-          <p className="p-2">Purchase boosts and collect minerals to accelerate your progress!</p>
-          {userData && (
-            <p className="text-sm text-yellow-400 font-semibold">💰 Balance: {userData.coins?.toLocaleString()} GTL</p>
-          )}
+      <div className=\"flex flex-col min-h-screen pb-20\">
+        <div className=\"text-center p-5\">
+          <div className=\"flex justify-between items-center px-4\">
+            <h1 className=\"text-3xl font-bold\">{t.boosts_title}</h1>
+            <button onClick={toggleLang} className=\"px-3 py-1 bg-gray-700 rounded text-xs text-white\">{lang === 'ru' ? 'EN' : 'RU'}</button>
+          </div>
+          <p className=\"p-2\">{t.boosts_subtitle}</p>
+          {userData && <p className=\"text-sm text-yellow-400 font-semibold\">💰 {t.boosts_balance}: {userData.coins?.toLocaleString()} GTL</p>}
         </div>
 
-        {/* Boost Cards Section */}
-        <div className="card bg-neutral text-white p-5 shadow-lg m-3">
-          <h2 className="card-title text-center mb-4">Boost Cards</h2>
-          {isLoading ? (
-            <div className="flex flex-col gap-4">
-              {[1, 2, 3].map((index) => (
-                <div key={index} className="flex items-center rounded-xl bg-secondary p-4 text-white">
-                  <div className="skeleton mr-4 h-20 w-20 rounded-xl"></div>
-                  <div className="flex flex-col gap-2.5">
-                    <div className="skeleton h-4 w-20"></div>
-                    <div className="skeleton h-4 w-28"></div>
-                    <div className="w-38 skeleton h-4"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : boostCards.length === 0 ? (
-            <p className="text-center text-gray-400 py-4">No boost cards available</p>
-          ) : (
-            <div className="flex flex-col gap-4">
+        <div className=\"card bg-neutral text-white p-5 shadow-lg m-3\">
+          <h2 className=\"card-title text-center mb-4\">{t.boosts_section}</h2>
+          {isLoading ? <div className=\"skeleton h-20 w-full rounded-xl\"></div> : boostCards.length === 0 ? <p className=\"text-center text-gray-400\">{t.boosts_no_cards}</p> : (
+            <div className=\"flex flex-col gap-4\">
               {boostCards.map((card) => (
-                <div key={card.id} className="flex items-center bg-secondary text-white p-4 rounded-xl">
-                  <img src={card.imageUrl} alt={card.title} className="w-16 h-16 object-contain mr-4 rounded-xl" />
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg">{card.title}</h3>
-                    <p className="text-xs text-gray-300 mb-1">{(card as any).description}</p>
-                    <p className="text-sm font-semibold">💰 {card.price} GTL</p>
-                    <p className="text-sm font-semibold text-yellow-400">⭐ {(card as any).starsPrice} Stars</p>
-                    <p className="text-xs text-gray-400">Owned: {userData?.boosts?.[card.id] || 0}</p>
-                  </div>
-                  <div className="flex flex-col gap-2 ml-2">
-                    <button
-                      className="btn btn-sm btn-base-100 rounded-xl border-2 text-xs"
-                      disabled={buyingId === card.id + '-coins'}
-                      onClick={() => handlePurchase(card.id)}>
-                      {buyingId === card.id + '-coins' ? '...' : '💰 Buy'}
-                    </button>
-                    <button
-                      className="btn btn-sm btn-warning rounded-xl text-xs"
-                      disabled={buyingId === card.id + '-stars'}
-                      onClick={() => handlePurchaseStars(card.id)}>
-                      {buyingId === card.id + '-stars' ? '...' : '⭐ Stars'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                <div key={card.id} className=\"flex items-center bg-secondary text-white p-4 rounded-xl\">
+                  <img src={card.imageUrl} alt={card.title} className=\"w-16 h-16 object-contain mr-4 rounded-xl\" />
+                  <div className=\"flex-1\">
+                    <h3 className=\"font-bold text-lg\">{card.title}</h3>
+                    <p className=\"text-sm font-semibold\">💰 {card.price} GTL</p>
+                    <p className=\"text-sm font-semibold text-yellow-400\">⭐ {(card as any).starsPrice} Stars</p>
+                    <p className=\"text-xs text-gray-400\">{t.boosts_owned}: {userData?.boosts?.[card.id] || 0}</p>
+          ))}
+    </div>
+  )
+}
+</div>
+
+    </div>
+  )
+}
+
           )}
         </div>
 
-        {/* Mineral Cards Section */}
-        <div className="card bg-neutral text-white p-5 shadow-lg m-3">
-          <h2 className="card-title text-center mb-4">Mineral Cards</h2>
-          <div className="flex flex-col gap-4">
-            {minerals.map((mineral, index) => (
-              <div key={index} className="flex items-center bg-secondary text-white p-4 rounded-xl">
-                <img
-                  src={mineral.imageUrl}
-                  alt={mineral.name}
-                  className="w-16 h-16 object-contain mr-4 rounded-xl"
-                />
-                <div className="flex-1">
-                  <p className="font-bold text-lg">{mineral.name} ({mineral.symbol})</p>
-                  <p className="text-sm font-semibold">💰 {mineral.price} GTL</p>
-                  <p className="text-sm font-semibold text-yellow-400">⭐ {mineral.starsPrice} Stars</p>
+        <div className=\"card bg-neutral text-white p-5 shadow-lg m-3\">
+          <h2 className=\"card-title text-center mb-4\">{t.boosts_minerals}</h2>
+          <div className=\"flex flex-col gap-4\">
+            {minerals.map((m, i) => (
+              <div key={i} className=\"flex items-center bg-secondary text-white p-4 rounded-xl\">
+                <img src={m.imageUrl} alt={m.name} className=\"w-16 h-16 object-contain mr-4 rounded-xl\" />
+                <div className=\"flex-1\">
+                  <p className=\"font-bold text-lg\">{m.name} ({m.symbol})</p>
+                  <p className=\"text-sm font-semibold\">💰 {m.price} GTL</p>
+                  <p className=\"text-sm font-semibold text-yellow-400\">⭐ {m.starsPrice} Stars</p>
                 </div>
-                <div className="flex flex-col gap-2 ml-2">
-                  <button
-                    className="btn btn-sm btn-base-100 rounded-xl border-2 text-xs"
-                    disabled={buyingId === 'mineral-' + mineral.symbol + '-coins'}
-                    onClick={() => handleMineralPurchase(mineral.symbol, mineral.price)}>
-                    {buyingId === 'mineral-' + mineral.symbol + '-coins' ? '...' : '💰 Buy'}
-                  </button>
-                  <button
-                    className="btn btn-sm btn-warning rounded-xl text-xs"
-                    disabled={buyingId === 'mineral-' + mineral.symbol + '-stars'}
-                    onClick={() => handleMineralPurchaseStars(mineral.symbol)}>
-                    {buyingId === 'mineral-' + mineral.symbol + '-stars' ? '...' : '⭐ Stars'}
-                  </button>
+                <div className=\"flex flex-col gap-2 ml-2\">
+                  <button className=\"btn btn-sm btn-base-100 rounded-xl\" disabled={buyingId === 'mineral-' + m.symbol + '-coins'} onClick={() => handleMineralPurchase(m.symbol, m.price)}>{buyingId === 'mineral-' + m.symbol + '-coins' ? '...' : t.boosts_buy}</button>
+                  <button className=\"btn btn-sm btn-warning rounded-xl\" disabled={buyingId === 'mineral-' + m.symbol + '-stars'} onClick={() => handleMineralPurchaseStars(m.symbol)}>{buyingId === 'mineral-' + m.symbol + '-stars' ? '...' : t.boosts_stars}</button>
                 </div>
               </div>
             ))}
@@ -279,5 +197,4 @@ const Store: React.FC = () => {
     </Layout>
   );
 };
-
 export default Store;
