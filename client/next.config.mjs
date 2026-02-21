@@ -15,13 +15,21 @@ const nextConfig = {
         source: '/api/users/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/users/:path*`,
       },
-            {
+      {
         source: '/api/staking/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/staking/:path*`,
       },
       {
         source: '/api/staking',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/staking`,
+      },
+      {
+        source: '/api/admin/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/:path*`,
+      },
+      {
+        source: '/api/admin',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin`,
       },
       {
         source: '/api/stars/:path*',
