@@ -20,6 +20,16 @@ const RESOURCE_FILTERS: { key: string; label: string; emoji: string }[] = [
   { key: 'coal', label: 'Уголь', emoji: '⚫' },
 ];
 
+const RESOURCE_ICON_URLS: Record<string, string> = {
+  gold: '/icons/resources/gold.svg',
+  copper: '/icons/resources/copper.svg',
+  iron: '/icons/resources/iron.svg',
+  rare_metals: '/icons/resources/rare_metals.svg',
+  oil_gas: '/icons/resources/oil_gas.svg',
+  diamonds: '/icons/resources/diamonds.svg',
+  coal: '/icons/resources/coal.svg',
+};
+
 const Shop: React.FC = () => {
   const { data: session } = useSession();
   const [icons, setIcons] = useState<IIcon[]>([]);
@@ -169,7 +179,7 @@ const Shop: React.FC = () => {
               return (
                 <div key={icon._id} className={styles.card}>
                   <div className={styles.cardEmoji}>
-                    {icon.imageUrl ? <img src={icon.imageUrl} alt={icon.name} className={styles.cardImage} /> : (resInfo?.emoji || '⛏')}
+                                        <img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || ''} alt={icon.name} className={styles.cardImage} />
                   </div>
                                       {icon.realPhotoUrl && (
                       <img src={icon.realPhotoUrl} alt={icon.name} className={styles.cardRealPhoto} />
