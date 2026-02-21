@@ -3,6 +3,7 @@ const router = express.Router();
 const Icon = require('../models/Icon');
 const UserIcon = require('../models/UserIcon');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // Получить все иконки (включая неактивные)
 router.get('/icons', async (req, res) => {
@@ -128,6 +129,110 @@ router.get('/icons/update-prices', async (req, res) => {
             updated++;
         }
         res.json({ success: true, updated, total: icons.length, message: 'Updated starsPrice and stakingRate for all icons' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Seed boost cards в коллекцию boosts-cards
+router.get('/seed-boosts', async (req, res) => {
+    try {
+        const db = mongoose.connection.db;
+        const collection = db.collection('boosts-cards');
+
+        const boostCards = [
+            {
+                id: 'hashrate-boost-s',
+                title: 'Hashrate Boost S',
+                description: 'Increases your hashrate by 10% for 24 hours',
+                price: 500,
+                starsPrice: 25,
+                imageUrl: '/icons/rare_metals.svg',
+                effect: 'hashrate',
+                multiplier: 1.1,
+                durationHours: 24,
+                availability: true
+            },
+            {
+                id: 'hashrate-boost-m',
+                title: 'Hashrate Boost M',
+                description: 'Increases your hashrate by 25% for 48 hours',
+                price: 1200,
+                starsPrice: 60,
+                imageUrl: '/icons/gold.svg',
+                effect: 'hashrate',
+                multiplier: 1.25,
+                durationHours: 48,
+                availability: true
+            },
+            {
+                id: 'hashrate-boost-l',
+                title: 'Hashrate Boost L',
+                description: 'Doubles your hashrate for 72 hours',
+                price: 3000,
+                starsPrice: 150,
+                imageUrl: '/icons/diamonds.svg',
+                effect: 'hashrate',
+                multiplier: 2.0,
+                durationHours: 72,
+                availability: true
+            },
+            {
+                id: 'income-boost',
+                title: 'Income Boost',
+                description: 'Increases all passive income by 50% for 12 hours',
+                price: 800,
+                starsPrice: 40,
+                imageUrl: '/icons/oil_gas.svg',
+                effect: 'income',
+                multiplier: 1.5,
+                durationHours: 12,
+                availability: true
+            },
+            {
+                id: 'mining-boost',
+                title: 'Mining Speed Boost',
+                description: 'Accelerates mining rewards collection by 2x',
+                price: 2000,
+                starsPrice: 100,
+                imageUrl: '/icons/coal.svg',
+                effect: 'mining',
+                multiplier: 2.0,
+                durationHours: 48,
+                availability: true
+            },
+            {
+                id: 'lucky-boost',
+                title: 'Lucky Boost',
+                description: 'Chance to get double rewards on every collection',
+                price: 1500,
+                starsPrice: 75,
+                imageUrl: '/icons/copper.svg',
+                effect: 'luck',
+                multiplier: 2.0,
+                durationHours: 24,
+                availability: true
+            }
+        ];
+
+        // Upsert: вставить если нет, обновить если есть
+        let inserted = 0;
+        let updated = 0;
+        for (const boost of boostCards) {
+            const result = await collection.updateOne(
+                { id: boost.id },
+                { $set: boost },
+                { upsert: true }
+            );
+            if (result.upsertedCount > 0) inserted++;
+            else updated++;
+        }
+
+        res.json({
+            success: true,
+            message: `Boost cards seeded: ${inserted} inserted, ${updated} updated`,
+            total: boostCards.length
+        });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
