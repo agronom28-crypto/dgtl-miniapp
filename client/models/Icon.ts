@@ -12,6 +12,7 @@ export interface IIcon {
     resourceEmoji: string;
     rarity: 'common' | 'rare' | 'epic' | 'legendary';
     price: number;
+    starsPrice?: number;
     valuationUsd?: string;
     realPhotoUrl?: string;
     stakingRate: number;
