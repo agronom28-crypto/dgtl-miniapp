@@ -143,6 +143,7 @@ async function seedMiningSites() {
       imageUrl: RESOURCE_ICONS[site.resourceType] || '/icons/resources/gold.svg',
       share: '1/10',
       isActive: true,
+      starsPrice: Math.max(1, Math.round(site.price / 2)),
     }));
     await Icon.insertMany(sites);
     console.log(`Seeded ${sites.length} mining sites`);
