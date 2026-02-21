@@ -18,14 +18,14 @@ const publicPaths = [
   '/images',
   '/auth/error',
   '/auth/signout',
-  '/shop'
+  '/shop',
   '/staking',
   '/authpage',
-        '/payment',
-    '/boosts',
-    '/collection',
-    '/friends',
-    '/tasks',
+  '/payment',
+  '/boosts',
+  '/collection',
+  '/friends',
+  '/tasks',
 ];
 
 export async function middleware(request: NextRequest) {
