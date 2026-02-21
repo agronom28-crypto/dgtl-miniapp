@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const stakingService = {
     // Поставить иконку в стейкинг
-    stakeIcon: async (userId, iconId) => {
+    stake: async (userId, iconId) => {
         try {
             const response = await axios.post('/api/staking/stake', { userId, iconId });
             return response.data;
@@ -13,9 +13,9 @@ export const stakingService = {
     },
 
     // Снять иконку из стейкинга
-    unstakeIcon: async (userId, iconId) => {
+    unstake: async (userId, stakedIconId) => {
         try {
-            const response = await axios.post('/api/staking/unstake', { userId, iconId });
+            const response = await axios.post('/api/staking/unstake', { userId, iconId: stakedIconId });
             return response.data;
         } catch (error) {
             console.error('Error unstaking icon:', error);
@@ -23,25 +23,25 @@ export const stakingService = {
         }
     },
 
-    // Собрать пассивный доход
-    claimEarnings: async (userId) => {
+    // Собрать пассивный доход (по userId — суммарно)
+    claimRewards: async (userId, stakedIconId) => {
         try {
-            const response = await axios.post('/api/staking/claim', { userId });
+            const response = await axios.post('/api/staking/claim', { userId, stakedIconId });
             return response.data;
         } catch (error) {
-            console.error('Error claiming earnings:', error);
+            console.error('Error claiming rewards:', error);
             throw error;
         }
     },
 
-    // Получить активные стейки
-    getActiveStakes: async (userId) => {
+    // Получить активные стейки пользователя
+    getUserStaking: async (userId) => {
         try {
             const response = await axios.get(`/api/staking/active/${userId}`);
-            return response.data;
+            return { stakedIcons: response.data.stakes || [] };
         } catch (error) {
             console.error('Error fetching stakes:', error);
-            throw error;
+            return { stakedIcons: [] };
         }
     },
 
