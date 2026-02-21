@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { IUserState } from '../models/User';
 import { IIcon, IUserIcon, ContinentKey, CONTINENT_LABELS, RESOURCE_LABELS, ResourceType } from '../models/Icon';
 import { shopService } from '../services/shopService';
+import { starsService } from '../services/starsService';
 import { showNotification } from '../lib/notifications';
 import styles from '../styles/Shop.module.css';
 import WorldMap from '../components/WorldMap';
@@ -39,6 +40,7 @@ const Shop: React.FC = () => {
   const [activeResource, setActiveResource] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
   const [buyingId, setBuyingId] = useState<string | null>(null);
+  const [buyingStarsId, setBuyingStarsId] = useState<string | null>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -100,6 +102,51 @@ const Shop: React.FC = () => {
       showNotification(msg);
     } finally {
       setBuyingId(null);
+    }
+  };
+
+  const handleBuyWithStars = async (icon: IIcon) => {
+    const telegramId = (session?.user as any)?.telegramId;
+    if (!telegramId) {
+      showNotification('Авторизуйтесь для покупки');
+      return;
+    }
+    if (!icon.starsPrice) {
+      showNotification('Оплата Stars недоступна для этого лота');
+      return;
+    }
+    try {
+      setBuyingStarsId(icon._id);
+      // Create invoice on backend
+      const result = await starsService.createInvoice({
+        telegramId,
+        itemType: 'icon',
+        itemId: icon._id,
+        title: icon.name,
+        description: `Доля месторождения: ${icon.name}`,
+        starsPrice: icon.starsPrice,
+        imageUrl: icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || '',
+      });
+      if (!result.success || !result.invoiceLink) {
+        showNotification(result.error || 'Ошибка создания инвойса');
+        return;
+      }
+      // Open invoice in Telegram
+      const status = await starsService.openInvoice(result.invoiceLink);
+      if (status === 'paid') {
+        showNotification('Оплата Stars прошла успешно!');
+        await loadUserData();
+        await loadIcons();
+      } else if (status === 'cancelled') {
+        showNotification('Оплата отменена');
+      } else {
+        showNotification('Ошибка оплаты: ' + status);
+      }
+    } catch (error: any) {
+      const msg = error?.response?.data?.error || 'Ошибка оплаты Stars';
+      showNotification(msg);
+    } finally {
+      setBuyingStarsId(null);
     }
   };
 
@@ -166,7 +213,6 @@ const Shop: React.FC = () => {
             </button>
           ))}
         </div>
-
         {isLoading ? (
           <div className={styles.loading}>Загрузка...</div>
         ) : icons.length === 0 ? (
@@ -179,11 +225,11 @@ const Shop: React.FC = () => {
               return (
                 <div key={icon._id} className={styles.card}>
                   <div className={styles.cardEmoji}>
-                                        <img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || ''} alt={icon.name} className={styles.cardImage} />
+                    <img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || ''} alt={icon.name} className={styles.cardImage} />
                   </div>
-                                      {icon.realPhotoUrl && (
-                      <img src={icon.realPhotoUrl} alt={icon.name} className={styles.cardRealPhoto} />
-                    )}
+                  {icon.realPhotoUrl && (
+                    <img src={icon.realPhotoUrl} alt={icon.name} className={styles.cardRealPhoto} />
+                  )}
                   <div className={styles.cardName}>{icon.name}</div>
                   <div className={styles.cardCountry}>
                     {icon.country}
@@ -216,6 +262,15 @@ const Shop: React.FC = () => {
                   >
                     {buyingId === icon._id ? '...' : `${icon.price.toLocaleString()} монет`}
                   </button>
+                  {icon.starsPrice && (
+                    <button
+                      className={styles.buyStarsButton}
+                      onClick={() => handleBuyWithStars(icon)}
+                      disabled={buyingStarsId === icon._id}
+                    >
+                      {buyingStarsId === icon._id ? '...' : `⭐ ${icon.starsPrice} Stars`}
+                    </button>
+                  )}
                 </div>
               );
             })}
