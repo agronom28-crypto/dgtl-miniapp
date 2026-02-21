@@ -40,7 +40,7 @@ const Store: React.FC = () => {
     const fetchBoostCards = async () => {
       try {
         const response = await axios.get("/api/boost-cards");
-        setBoostCards(response.data);
+                setBoostCards(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("Error fetching boost cards:", err);
         setError("Failed to load boost cards.");
