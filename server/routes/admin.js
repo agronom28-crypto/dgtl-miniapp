@@ -24,6 +24,7 @@ router.post('/icons', async (req, res) => {
             totalShares, availableShares, valuationUsd, realPhotoUrl,
             isActive, lat, lng, order
         } = req.body;
+
         const icon = new Icon({
             name, imageUrl, price, continent, country, resourceType,
             rarity: rarity || 'common',
@@ -38,6 +39,7 @@ router.post('/icons', async (req, res) => {
             lat, lng,
             order: order || 0
         });
+
         await icon.save();
         res.json({ success: true, icon });
     } catch (error) {
@@ -139,7 +141,6 @@ router.get('/seed-boosts', async (req, res) => {
     try {
         const db = mongoose.connection.db;
         const collection = db.collection('boosts-cards');
-
         const boostCards = [
             {
                 id: 'hashrate-boost-s',
@@ -147,7 +148,7 @@ router.get('/seed-boosts', async (req, res) => {
                 description: 'Increases your hashrate by 10% for 24 hours',
                 price: 500,
                 starsPrice: 25,
-                imageUrl: '/icons/rare_metals.svg',
+                imageUrl: '/icons/resources/rare_metals.svg',
                 effect: 'hashrate',
                 multiplier: 1.1,
                 durationHours: 24,
@@ -159,7 +160,7 @@ router.get('/seed-boosts', async (req, res) => {
                 description: 'Increases your hashrate by 25% for 48 hours',
                 price: 1200,
                 starsPrice: 60,
-                imageUrl: '/icons/gold.svg',
+                imageUrl: '/icons/resources/gold.svg',
                 effect: 'hashrate',
                 multiplier: 1.25,
                 durationHours: 48,
@@ -171,7 +172,7 @@ router.get('/seed-boosts', async (req, res) => {
                 description: 'Doubles your hashrate for 72 hours',
                 price: 3000,
                 starsPrice: 150,
-                imageUrl: '/icons/diamonds.svg',
+                imageUrl: '/icons/resources/diamonds.svg',
                 effect: 'hashrate',
                 multiplier: 2.0,
                 durationHours: 72,
@@ -183,7 +184,7 @@ router.get('/seed-boosts', async (req, res) => {
                 description: 'Increases all passive income by 50% for 12 hours',
                 price: 800,
                 starsPrice: 40,
-                imageUrl: '/icons/oil_gas.svg',
+                imageUrl: '/icons/resources/oil_gas.svg',
                 effect: 'income',
                 multiplier: 1.5,
                 durationHours: 12,
@@ -195,7 +196,7 @@ router.get('/seed-boosts', async (req, res) => {
                 description: 'Accelerates mining rewards collection by 2x',
                 price: 2000,
                 starsPrice: 100,
-                imageUrl: '/icons/coal.svg',
+                imageUrl: '/icons/resources/coal.svg',
                 effect: 'mining',
                 multiplier: 2.0,
                 durationHours: 48,
@@ -207,14 +208,13 @@ router.get('/seed-boosts', async (req, res) => {
                 description: 'Chance to get double rewards on every collection',
                 price: 1500,
                 starsPrice: 75,
-                imageUrl: '/icons/copper.svg',
+                imageUrl: '/icons/resources/copper.svg',
                 effect: 'luck',
                 multiplier: 2.0,
                 durationHours: 24,
                 availability: true
             }
         ];
-
         // Upsert: вставить если нет, обновить если есть
         let inserted = 0;
         let updated = 0;
@@ -227,7 +227,6 @@ router.get('/seed-boosts', async (req, res) => {
             if (result.upsertedCount > 0) inserted++;
             else updated++;
         }
-
         res.json({
             success: true,
             message: `Boost cards seeded: ${inserted} inserted, ${updated} updated`,
@@ -251,6 +250,18 @@ router.get('/git-pull', (req, res) => {
     });
 });
 
+// Reseed mining sites
+router.get('/reseed-mining-sites', (req, res) => {
+    const { exec } = require('child_process');
+    const path = require('path');
+    const seedScript = path.join(__dirname, '../seedMiningSites.js');
+    exec('node ' + seedScript, (error, stdout, stderr) => {
+        if (error) {
+            return res.json({ success: false, error: error.message, stderr });
+        }
+        res.json({ success: true, stdout, message: 'Mining sites re-seeded successfully.' });
+    });
+});
 
 // Fix boost card imageUrls to use correct paths
 router.get('/fix-boost-images', async (req, res) => {
@@ -275,4 +286,5 @@ router.get('/fix-boost-images', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
 module.exports = router;
