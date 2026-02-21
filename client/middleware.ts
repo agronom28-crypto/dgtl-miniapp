@@ -13,6 +13,7 @@ const publicPaths = [
   '/api/levels',
   '/api/stars',
   '/api/admin',
+      '/api/boost-cards',
   '/static',
   '/fonts',
   '/images',
