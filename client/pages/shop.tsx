@@ -31,6 +31,46 @@ const RESOURCE_ICON_URLS: Record<string, string> = {
   coal: '/icons/resources/coal.svg',
 };
 
+const COUNTRY_NAMES: Record<string, string> = {
+  'UZ': 'Узбекистан',
+  'US': 'США',
+  'ID': 'Индонезия',
+  'RU': 'Россия',
+  'DO': 'Доминикана',
+  'PG': 'Папуа — Новая Гвинея',
+  'CD': 'ДР Конго',
+  'AU': 'Австралия',
+  'ML': 'Мали',
+  'ZA': 'ЮАР',
+  'CA': 'Канада',
+  'CL': 'Чили',
+  'GH': 'Гана',
+  'PE': 'Перу',
+  'ZM': 'Замбия',
+  'BR': 'Бразилия',
+  'SE': 'Швеция',
+  'UA': 'Украина',
+  'CG': 'Республика Конго',
+  'GN': 'Гвинея',
+  'IN': 'Индия',
+  'CN': 'Китай',
+  'GL': 'Гренландия',
+  'TZ': 'Танзания',
+  'BI': 'Бурунди',
+  'MW': 'Малави',
+  'SA': 'Саудовская Аравия',
+  'KW': 'Кувейт',
+  'IQ': 'Ирак',
+  'KZ': 'Казахстан',
+  'AE': 'ОАЭ',
+  'MX': 'Мексика',
+  'QA': 'Катар',
+  'DZ': 'Алжир',
+  'BW': 'Ботсвана',
+  'AO': 'Ангола',
+  'LS': 'Лесото'
+};
+
 const Shop: React.FC = () => {
   const { data: session } = useSession();
   const [icons, setIcons] = useState<IIcon[]>([]);
@@ -117,7 +157,6 @@ const Shop: React.FC = () => {
     }
     try {
       setBuyingStarsId(icon._id);
-      // Create invoice on backend
       const result = await starsService.createInvoice({
         telegramId,
         itemType: 'icon',
@@ -131,7 +170,6 @@ const Shop: React.FC = () => {
         showNotification(result.error || 'Ошибка создания инвойса');
         return;
       }
-      // Open invoice in Telegram
       const status = await starsService.openInvoice(result.invoiceLink);
       if (status === 'paid') {
         showNotification('Оплата Stars прошла успешно!');
@@ -151,7 +189,7 @@ const Shop: React.FC = () => {
   };
 
   const getOwnedCount = (iconId: string) => {
-    return myIcons.filter(ui =>
+    return myIcons.filter(ui => 
       (typeof ui.iconId === 'string' ? ui.iconId : (ui.iconId as IIcon)._id) === iconId
     ).length;
   };
@@ -166,7 +204,6 @@ const Shop: React.FC = () => {
     setIcons([]);
   };
 
-  // Карта мира — главный экран
   if (!activeContinent) {
     return (
       <Layout>
@@ -189,7 +226,6 @@ const Shop: React.FC = () => {
     );
   }
 
-  // Список месторождений по региону
   return (
     <Layout>
       <div className={styles.container}>
@@ -232,10 +268,13 @@ const Shop: React.FC = () => {
                   )}
                   <div className={styles.cardName}>{icon.name}</div>
                   <div className={styles.cardCountry}>
-                    {icon.country}
+                    {COUNTRY_NAMES[icon.country] || icon.country}
                   </div>
                   <div className={styles.cardResource}>
                     {resInfo?.label || icon.resourceType}
+                  </div>
+                  <div className={styles.cardShare}>
+                    1/10 доли
                   </div>
                   {icon.valuationUsd && (
                     <div className={styles.cardValuation}>
