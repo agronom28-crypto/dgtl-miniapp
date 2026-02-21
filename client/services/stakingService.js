@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const stakingService = {
-    // Поставить иконку в стейкинг
+    // Поставить долю в стейкинг
     stake: async (userId, iconId) => {
         try {
             const response = await axios.post('/api/staking/stake', { userId, iconId });
@@ -12,10 +12,10 @@ export const stakingService = {
         }
     },
 
-    // Снять иконку из стейкинга
+    // Снять долю из стейкинга (по _id записи стейка)
     unstake: async (userId, stakedIconId) => {
         try {
-            const response = await axios.post('/api/staking/unstake', { userId, iconId: stakedIconId });
+            const response = await axios.post('/api/staking/unstake', { userId, stakedIconId });
             return response.data;
         } catch (error) {
             console.error('Error unstaking icon:', error);
@@ -23,10 +23,10 @@ export const stakingService = {
         }
     },
 
-    // Собрать пассивный доход (по userId — суммарно)
-    claimRewards: async (userId, stakedIconId) => {
+    // Собрать пассивный доход (все активные стейки)
+    claimRewards: async (userId) => {
         try {
-            const response = await axios.post('/api/staking/claim', { userId, stakedIconId });
+            const response = await axios.post('/api/staking/claim', { userId });
             return response.data;
         } catch (error) {
             console.error('Error claiming rewards:', error);
@@ -38,21 +38,21 @@ export const stakingService = {
     getUserStaking: async (userId) => {
         try {
             const response = await axios.get(`/api/staking/active/${userId}`);
-            return { stakedIcons: response.data.stakes || [] };
+            return { stakedIcons: response.data.stakedIcons || [] };
         } catch (error) {
             console.error('Error fetching stakes:', error);
             return { stakedIcons: [] };
         }
     },
 
-    // Получить накопленный доход
+    // Получить накопленный доход (без сбора)
     getEarnings: async (userId) => {
         try {
             const response = await axios.get(`/api/staking/earnings/${userId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching earnings:', error);
-            throw error;
+            return { pendingEarnings: 0, activeStakes: 0 };
         }
-    }
+    },
 };
