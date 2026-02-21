@@ -134,7 +134,7 @@ const MINING_SITES = [
 
 async function seedMiningSites() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/dgtl_miniapp');
     console.log('Connected to MongoDB');
     await Icon.deleteMany({});
     console.log('Cleared existing icons');
@@ -144,6 +144,7 @@ async function seedMiningSites() {
       share: '1/10',
       isActive: true,
       starsPrice: Math.max(1, Math.round(site.price / 2)),
+        stakingRate: site.hashrate,
     }));
     await Icon.insertMany(sites);
     console.log(`Seeded ${sites.length} mining sites`);
