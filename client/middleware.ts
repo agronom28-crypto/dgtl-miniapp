@@ -11,12 +11,16 @@ const publicPaths = [
   '/api/staking',
   '/api/minerals',
   '/api/levels',
+  '/api/stars',
+  '/api/admin',
   '/static',
   '/fonts',
   '/images',
   '/auth/error',
   '/auth/signout',
   '/shop'
+  '/staking',
+  '/authpage',
 ];
 
 export async function middleware(request: NextRequest) {
