@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-
 export const shopService = {
     // Получить все месторождения магазина
     getIcons: async (continent, resourceType) => {
@@ -39,7 +37,7 @@ export const shopService = {
         }
     },
 
-    // Получить купленные месторождения пользователя
+    // Получить купленные месторождения пользователя (по _id)
     getMyIcons: async (userId) => {
         try {
             const response = await axios.get(`/api/shop/my/${userId}`);
@@ -48,5 +46,16 @@ export const shopService = {
             console.error('Error fetching user icons:', error);
             throw error;
         }
-    }
+    },
+
+    // Получить купленные месторождения пользователя (алиас для стейкинга — userId = _id)
+    getUserIcons: async (userId) => {
+        try {
+            const response = await axios.get(`/api/shop/my/${userId}`);
+            return response.data.userIcons || [];
+        } catch (error) {
+            console.error('Error fetching user icons:', error);
+            return [];
+        }
+    },
 };
