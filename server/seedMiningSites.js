@@ -2,6 +2,16 @@ const mongoose = require('mongoose');
 const Icon = require('./models/Icon');
 require('dotenv').config();
 
+const RESOURCE_ICONS = {
+  gold: '/icons/resources/gold.svg',
+  copper: '/icons/resources/copper.svg',
+  iron: '/icons/resources/iron.svg',
+  rare_metals: '/icons/resources/rare_metals.svg',
+  oil_gas: '/icons/resources/oil_gas.svg',
+  diamonds: '/icons/resources/diamonds.svg',
+  coal: '/icons/resources/coal.svg',
+};
+
 const MINING_SITES = [
 // === GOLD (20) ===
 { name: 'Muruntau', continent: 'asia', country: 'UZ', lat: 41.52, lng: 64.57, resourceType: 'gold', hashrate: 700, price: 185, valuationUsd: '$68,000,000,000', description: 'Muruntau, Uzbekistan. Largest open-pit gold mine in the world.' },
@@ -141,6 +151,7 @@ const seedMiningSites = async () => {
       price: site.price,
       valuationUsd: site.valuationUsd,
       description: site.description,
+              imageUrl: RESOURCE_ICONS[site.resourceType],
       });
     }
   console.log('Seeded ' + MINING_SITES.length + ' mining sites');
