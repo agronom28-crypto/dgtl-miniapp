@@ -251,4 +251,28 @@ router.get('/git-pull', (req, res) => {
     });
 });
 
+
+// Fix boost card imageUrls to use correct paths
+router.get('/fix-boost-images', async (req, res) => {
+    try {
+        const db = mongoose.connection.db;
+        const collection = db.collection('boosts-cards');
+        const imageMap = {
+            'hashrate-boost-s': '/icons/resources/rare_metals.svg',
+            'hashrate-boost-m': '/icons/resources/gold.svg',
+            'hashrate-boost-l': '/icons/resources/diamonds.svg',
+            'income-boost': '/icons/resources/oil_gas.svg',
+            'mining-boost': '/icons/resources/coal.svg',
+            'lucky-boost': '/icons/resources/copper.svg'
+        };
+        let updated = 0;
+        for (const [id, imageUrl] of Object.entries(imageMap)) {
+            await collection.updateOne({ id }, { $set: { imageUrl } });
+            updated++;
+        }
+        res.json({ success: true, message: `Updated imageUrl for ${updated} boost cards` });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 module.exports = router;
