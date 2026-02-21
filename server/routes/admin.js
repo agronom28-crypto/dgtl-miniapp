@@ -133,4 +133,17 @@ router.get('/icons/update-prices', async (req, res) => {
     }
 });
 
+// Git pull - обновить код с GitHub
+router.get('/git-pull', (req, res) => {
+    const { exec } = require('child_process');
+    const path = require('path');
+    const projectRoot = path.join(__dirname, '../../');
+    exec('cd ' + projectRoot + ' && git pull origin master', (error, stdout, stderr) => {
+        if (error) {
+            return res.json({ success: false, error: error.message, stderr });
+        }
+        res.json({ success: true, stdout, message: 'Git pull completed. Restart servers to apply.' });
+    });
+});
+
 module.exports = router;
