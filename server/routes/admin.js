@@ -96,4 +96,24 @@ router.get('/users', async (req, res) => {
     }
 });
 
+// Обновить starsPrice и stakingRate для всех существующих иконок
+router.post('/icons/update-prices', async (req, res) => {
+    try {
+        const icons = await Icon.find({});
+        let updated = 0;
+        for (const icon of icons) {
+            const needsUpdate = (!icon.starsPrice || icon.starsPrice === 0) || (icon.stakingRate === 10 && icon.hashrate > 0);
+            if (needsUpdate) {
+                const starsPrice = icon.starsPrice && icon.starsPrice > 0 ? icon.starsPrice : Math.max(1, Math.round(icon.price / 2));
+                const stakingRate = icon.hashrate > 0 ? icon.hashrate : icon.stakingRate;
+                await Icon.findByIdAndUpdate(icon._id, { starsPrice, stakingRate });
+                updated++;
+            }
+        }
+        res.json({ success: true, updated, total: icons.length });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;
