@@ -16,6 +16,7 @@ const publicPaths = [
   '/static',
   '/fonts',
   '/images',
+    '/icons',
   '/auth/error',
   '/auth/signout',
   '/shop',
