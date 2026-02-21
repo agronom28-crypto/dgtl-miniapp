@@ -51,10 +51,12 @@ const shopRoutes = require('./routes/shop');
 const stakingRoutes = require('./routes/staking');
 const adminRoutes = require('./routes/admin');
 const starsRoutes = require('./routes/stars');
+const boostsRoutes = require('./routes/boosts');
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/minerals', mineralRoutes);
+app.use('/api/boosts', boostsRoutes);
 app.use('/api/levels', levelRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/staking', stakingRoutes);
