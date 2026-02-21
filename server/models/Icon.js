@@ -5,6 +5,7 @@ const iconSchema = new mongoose.Schema({
     imageUrl: { type: String, default: '' },
     price: { type: Number, required: true },
     valuationUsd: { type: String, default: '' },
+    starsPrice: { type: Number, default: 0 },
     continent: {
         type: String,
         enum: ['africa', 'asia', 'europe', 'north_america', 'south_america', 'australia', 'russia'],
