@@ -18,7 +18,7 @@ export interface IIcon {
     isActive: boolean;
     shareLabel: string;
     createdAt: Date;
-        totalShares: number;
+    totalShares: number;
     availableShares: number;
     lat?: number;
     lng?: number;
@@ -36,11 +36,10 @@ export interface IUserIcon {
 
 export interface IStakedIcon {
     _id: string;
-    telegramId: number;
+    userId: string;
     iconId: string | IIcon;
     stakedAt: Date;
-    unstakeAt: Date | null;
-    rewardsClaimed: number;
+    lastClaimAt: Date;
     isActive: boolean;
 }
 
