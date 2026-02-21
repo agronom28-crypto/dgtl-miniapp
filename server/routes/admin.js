@@ -116,4 +116,21 @@ router.post('/icons/update-prices', async (req, res) => {
     }
 });
 
+// GET версия update-prices (для вызова из браузера)
+router.get('/icons/update-prices', async (req, res) => {
+    try {
+        const icons = await Icon.find({});
+        let updated = 0;
+        for (const icon of icons) {
+            const starsPrice = icon.starsPrice && icon.starsPrice > 0 ? icon.starsPrice : Math.max(1, Math.round(icon.price / 2));
+            const stakingRate = icon.hashrate > 0 ? icon.hashrate : icon.stakingRate;
+            await Icon.findByIdAndUpdate(icon._id, { starsPrice, stakingRate });
+            updated++;
+        }
+        res.json({ success: true, updated, total: icons.length, message: 'Updated starsPrice and stakingRate for all icons' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;
