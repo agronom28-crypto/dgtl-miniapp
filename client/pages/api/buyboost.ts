@@ -20,19 +20,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const serverUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-    // First get the user's _id from server using telegramId
-    const userRes = await fetch(`${serverUrl}/api/users/telegram/${session.user.telegramId}`);
+    // Get the user's _id from Express server by telegramId
+    const userRes = await fetch(`${serverUrl}/api/users/${session.user.telegramId}`);
     if (!userRes.ok) {
       return res.status(404).json({ message: 'User not found. Please try again.' });
     }
     const userData = await userRes.json();
-    const userId = userData._id || userData.user?._id;
+    // users.js returns { success: true, user }
+    const userId = userData.user?._id || userData._id;
 
     if (!userId) {
       return res.status(404).json({ message: 'User not found. Please try again.' });
     }
 
-    // Now call Express to buy the boost
+    // Call Express to buy the boost
     const buyRes = await fetch(`${serverUrl}/api/boosts/buy`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
