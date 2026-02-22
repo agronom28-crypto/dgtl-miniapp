@@ -6,7 +6,7 @@ import { IIcon, IUserIcon, ContinentKey, CONTINENT_LABELS, RESOURCE_LABELS, Reso
 import { shopService } from '../services/shopService';
 import { starsService } from '../services/starsService';
 import { showNotification } from '../lib/notifications';
-import { getTranslations, Lang } from '../lib/i18n';
+import { getTranslations, getCountryName, Lang } from '../lib/i18n';
 import styles from '../styles/Shop.module.css';
 import WorldMap from '../components/WorldMap';
 import axios from 'axios';
@@ -19,16 +19,6 @@ const RESOURCE_ICON_URLS: Record<string, string> = {
   oil_gas: '/icons/resources/oil_gas.svg',
   diamonds: '/icons/resources/diamonds.svg',
   coal: '/icons/resources/coal.svg',
-};
-
-const COUNTRY_NAMES_RU: Record<string, string> = {
-  'UZ': 'Узбекистан', 'US': 'США', 'ID': 'Индонезия', 'RU': 'Россия', 'DO': 'Доминикана',
-  'PG': 'Папуа — Новая Гвинея', 'CD': 'ДР Конго', 'AU': 'Австралия', 'ML': 'Мали', 'ZA': 'ЮАР',
-  'CA': 'Канада', 'CL': 'Чили', 'GH': 'Гана', 'PE': 'Перу', 'ZM': 'Замбия', 'BR': 'Бразилия',
-  'SE': 'Швеция', 'UA': 'Украина', 'CG': 'Республика Конго', 'GN': 'Гвинея', 'IN': 'Индия',
-  'CN': 'Китай', 'GL': 'Гренландия', 'TZ': 'Танзания', 'BI': 'Бурунди', 'MW': 'Малави',
-  'SA': 'Саудовская Аравия', 'KW': 'Кувейт', 'IQ': 'Ирак', 'KZ': 'Казахстан', 'AE': 'ОАЭ',
-  'MX': 'Мексика', 'QA': 'Катар', 'DZ': 'Алжир', 'BW': 'Ботсвана', 'AO': 'Ангола', 'LS': 'Лесото'
 };
 
 const Shop: React.FC = () => {
@@ -167,9 +157,9 @@ const Shop: React.FC = () => {
                 <div key={icon._id} className={styles.card}>
                   <div className={styles.cardEmoji}><img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || ''} alt={icon.name} className={styles.cardImage} /></div>
                   <div className={styles.cardName}>{icon.name}</div>
-                  <div className={styles.cardCountry}>{lang === 'ru' ? (COUNTRY_NAMES_RU[icon.country] || icon.country) : icon.country}</div>
+                  <div className={styles.cardCountry}>{getCountryName(lang, icon.country)}</div>
                   <div className={styles.cardShare}>{t.shop_share}</div>
-                  <div className={styles.cardRate}>+{icon.stakingRate}/час</div>
+                  <div className={styles.cardRate}>+{icon.stakingRate}{t.shop_per_hour}</div>
                   {owned > 0 && <div className={styles.owned}>{t.shop_owned_label}: {owned}</div>}
                   <button className={styles.buyButton} onClick={() => handleBuy(icon._id)} disabled={buyingId === icon._id || (userData?.coins || 0) < icon.price}>
                     {buyingId === icon._id ? '...' : `${icon.price.toLocaleString()} ${t.shop_coins}`}
