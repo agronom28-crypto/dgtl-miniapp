@@ -9,6 +9,7 @@ import ChemicalBadge from '../components/ChemicalBadge';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Head from 'next/head';
+import { getTranslations, Lang } from '../lib/i18n';
 
 const Index = () => {
   const { data: session, status } = useSession();
@@ -17,49 +18,49 @@ const Index = () => {
   const [userData, setUserData] = useState<IUser | null>(null);
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lang, setLang] = useState<Lang>('ru');
+  const t = getTranslations(lang);
 
-  console.log('[Index Page Render] Status:', status, 'Loading State:', loading, 'UserData:', userData ? `${userData.username}/${userData.firstName}` : 'null');
+  useEffect(() => {
+    const savedLang = localStorage.getItem('app_lang') as Lang;
+    if (savedLang) setLang(savedLang);
+  }, []);
 
   const fetchLevels = useCallback(async () => {
-    console.log('[Index Page] fetchLevels called');
     setLoading(true);
     try {
       const response = await axios.get('/api/leveldata');
       let levelsData = response.data;
-      console.log('[Client Index Page] Fetched levels data for UI:', JSON.stringify(levelsData, null, 2));
       if (levelsData.length < 13) {
         const filled = [...levelsData];
         for (let i = levelsData.length; i < 13; i++) {
           filled.push({
-            name: `Level ${i+1}`,
+            name: `Level ${i + 1}`,
             badges: [],
             backgroundUrl: '',
-            order: i+1,
+            order: i + 1,
             availability: false
           });
         }
         levelsData = filled;
       }
       setLevels(levelsData);
-      console.log('[Index Page] fetchLevels success');
     } catch (error) {
       console.error('Error fetching levels:', error);
       toast.error('Could not load levels.');
       setLevels([]);
     } finally {
-      console.log('[Index Page] fetchLevels finally');
+      setLoading(false);
     }
   }, []);
 
   const fetchUserData = useCallback(async () => {
-    console.log('[Index Page] fetchUserData called. Session:', session ? 'exists' : 'null');
     if (session?.user?.telegramId) {
       setLoading(true);
       try {
         const res = await fetch('/api/user/data');
         if (!res.ok) throw new Error('Failed to fetch user data');
         const data = await res.json();
-        console.log('[Index Page] UserData fetched:', data);
         setUserData(data);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -67,25 +68,20 @@ const Index = () => {
         setUserData(null);
       } finally {
         setLoading(false);
-        console.log('[Index Page] fetchUserData finally, setLoading(false)');
       }
     } else {
-      console.log('[Index Page] fetchUserData: No session or telegramId, setLoading(false)');
       setLoading(false);
       setUserData(null);
     }
   }, [session]);
 
   useEffect(() => {
-    console.log('[Index Page] useEffect [status, fetchUserData] triggered. Status:', status);
     if (status === 'authenticated') {
       fetchUserData();
     } else if (status === 'unauthenticated') {
-      console.log('[Index Page] Status unauthenticated, redirecting to /authpage and setLoading(false).');
       setLoading(false);
       router.replace('/authpage');
     } else if (status === 'loading') {
-      console.log('[Index Page] Session status is loading, ensuring setLoading(true)');
       setLoading(true);
     }
   }, [status, router, fetchUserData]);
@@ -94,32 +90,29 @@ const Index = () => {
     fetchLevels();
   }, [fetchLevels]);
 
-  console.log('[Index Page] PRE-RETURN. Status:', status, 'Loading State:', loading, 'UserData:', userData ? `${userData.username}/${userData.firstName}` : 'null');
-
   if (status === 'loading' || loading) {
-    console.log('[Index Page] Rendering LOADING spinner.');
     return (
-      <Layout>
+      <>
         <Head>
           <title>Home | DGTL P2E Game</title>
         </Head>
-        <div className="flex items-center justify-center h-screen w-screen bg-base-100">
-          <div className="loading loading-spinner loading-lg mb-4"></div>
+        <div className="flex items-center justify-center h-screen">
+          <span className="loading loading-spinner loading-lg"></span>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (!userData) {
     return (
-      <Layout>
+      <>
         <Head>
           <title>Home | DGTL P2E Game</title>
         </Head>
-        <div className="flex items-center justify-center h-screen w-screen bg-base-100">
-          <p className="text-lg text-red-500">Failed to load user data. Please try again.</p>
+        <div className="flex items-center justify-center h-screen">
+          <p>{t.home_error}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -128,76 +121,60 @@ const Index = () => {
       <Head>
         <title>Home | DGTL P2E Game</title>
       </Head>
-      <div className="container mx-auto px-4 py-8 pb-24">
-        {/* Main Card */}
-        <div className="card bg-neutral shadow-xl mb-3">
-          <div className="card-body text-white p-4">
-            <h2 className="card-title text-2xl">{userData?.username || userData?.firstName || 'Player'}</h2>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="stats bg-neutral text-primary-content">
-          <div className="stat">
-            <div className="stat-title">Account balance</div>
-            <div className="stat-value text-white text-3xl">{typeof userData.coins === 'number' ? userData.coins.toFixed(2) : userData.coins} GTL</div>
-          </div>
-          <div className="stat">
-            <div className="stat-title">Level</div>
-            {/* Assuming userData has a level field or you derive from levels */}
-            <div className="stat-value text-white text-5xl">1</div>
-          </div>
-        </div>
-
-        {/* Levels Section */}
-        <div className="card bg-neutral mt-4">
-          <div className="card-body p-4 text-white">
-            <h2 className="card-title text-xl mb-3">Levels</h2>
-            {levels.length > 0 ? (
-            levels.map((level) => (
-              <div 
-                key={level.order} 
-                className={`relative rounded-lg mb-2 shadow-inner overflow-hidden ${level.availability ? 'bg-neutral-content' : 'bg-base-100'}`
-              }>
-                {level.availability ? (
-                  <>
-                    {/* Badges */}
-                    <div className="flex absolute top-2 left-2 flex-wrap gap-2 z-10">
-                      {level.badges.map((badge, i) => (
-                        <ChemicalBadge key={i} element={badge} />
-                      ))}
-                    </div>
-                    
-                    {/* Level background image */}
-                    <img
-                      src={level.menuImageUrl || level.backgroundUrl || '/default-level-bg.jpg'}
-                      alt={level.name}
-                      className="h-[150px] w-full object-cover"
-                    />
-
-                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent flex items-center justify-between">
-                      <div>
-                        <h2 className="text-lg font-bold text-white">{level.name}</h2>
-                      </div>
-                      <Link href={`/game?level=${level.order}`}>
-                        <button className="btn btn-md border-2 border-accent shadow-glow">Play</button>
-                      </Link>
-                    </div>
-                  </>
-                ) : (
-                  /* Locked state */
-                  <div className="h-[150px] flex items-center justify-center rounded-lg shadow-inner overflow-hidden bg-base-100 border-2 border-accent">
-                    <span className="text-white text-xl font-bold">Locked</span>
-                  </div>
-                )}
+      <div className="flex flex-col min-h-screen pb-20">
+        <div className="p-4">
+          <div className="card bg-base-100 shadow-xl border-2 border-accent">
+            <div className="card-body">
+              <h2 className="card-title text-2xl font-bold">
+                {userData?.username || userData?.firstName || 'Player'}
+              </h2>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="flex flex-col">
+                  <span className="text-sm opacity-70">{t.home_balance}</span>
+                  <span className="text-xl font-mono text-accent">
+                    {typeof userData.coins === 'number' ? userData.coins.toFixed(2) : userData.coins} GTL
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm opacity-70">{t.home_level}</span>
+                  <span className="text-xl font-bold">1</span>
+                </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center py-10">
-              <p className="text-xl text-gray-500">No levels available at the moment. Please check back later.</p>
             </div>
-          )}
+          </div>
 
+          <h3 className="text-xl font-bold mt-8 mb-4">{t.home_levels}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {levels.length > 0 ? (
+              levels.map((level) => (
+                <div key={level.order} className="card bg-base-200 shadow-lg overflow-hidden border border-white/10">
+                  {level.availability ? (
+                    <>
+                      <div className="absolute top-2 right-2 flex gap-1">
+                        {level.badges.map((badge, i) => (
+                          <ChemicalBadge key={i} symbol={badge.symbol} name={badge.name} color={badge.color} />
+                        ))}
+                      </div>
+                      {level.backgroundUrl && (
+                        <figure><img src={level.backgroundUrl} alt={level.name} /></figure>
+                      )}
+                      <div className="card-body p-4">
+                        <h2 className="card-title">{level.name}</h2>
+                        <div className="card-actions justify-end mt-4">
+                          <button className="btn btn-accent btn-sm">{t.home_play}</button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="card-body p-8 items-center justify-center bg-black/40">
+                      <span className="text-lg opacity-50">{t.home_locked}</span>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="opacity-50">{t.home_no_levels}</p>
+            )}
           </div>
         </div>
       </div>
