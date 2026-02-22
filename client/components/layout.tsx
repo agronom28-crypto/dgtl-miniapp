@@ -20,7 +20,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const newLang: Lang = lang === 'ru' ? 'en' : 'ru';
     setLang(newLang);
     localStorage.setItem('app_lang', newLang);
-        window.location.reload();
+    window.location.reload();
   };
 
   return (
@@ -34,6 +34,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {lang === 'ru' ? 'EN' : 'RU'}
         </button>
       </div>
+
       {/* Main content */}
       <div className="flex-grow">{children}</div>
 
@@ -82,7 +83,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           className={`tab h-16 ${isActive("/boosts") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/boosts"
         >
-          <img src="/icons/white/boosts.svg" alt="Boosts" className="w-8 h-8" />
+          <img src="/icons/white/rocket.svg" alt="Boosts" className="w-8 h-8" />
         </a>
       </div>
     </div>
