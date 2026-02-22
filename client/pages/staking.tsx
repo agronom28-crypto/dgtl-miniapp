@@ -119,9 +119,9 @@ const StakingPage = () => {
     <Layout>
       <Head><title>{t.staking_page_title}</title></Head>
       <div style={{ padding: '16px', maxWidth: '480px', margin: '0 auto' }}>
-        <div className=\"flex justify-between items-center mb-4\">
+        <div className="flex justify-between items-center mb-4">
           <h1>{t.staking_title}</h1>
-          <button onClick={toggleLang} className=\"px-3 py-1 bg-gray-700 rounded text-xs\">{lang === 'ru' ? 'EN' : 'RU'}</button>
+          <button onClick={toggleLang} className="px-3 py-1 bg-gray-700 rounded text-xs">{lang === 'ru' ? 'EN' : 'RU'}</button>
         </div>
         <p style={{ color: '#aaa', marginBottom: '16px' }}>{t.staking_subtitle}</p>
         
