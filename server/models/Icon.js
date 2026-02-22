@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongoose = require('mongoose');
 
 const iconSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -40,18 +39,6 @@ const iconSchema = new mongoose.Schema({
   order: { type: Number, default: 0 }
 }, {
   timestamps: true
-});
-
-module.exports = mongoose.model('Icon', iconSchema);
-    totalShares: { type: Number, default: 1 },
-    availableShares: { type: Number, default: 1 },
-    lat: { type: Number },
-    lng: { type: Number },
-    hashrate: { type: Number, default: 0 },
-    realPhotoUrl: { type: String, default: '' },
-    order: { type: Number, default: 0 }
-}, {
-    timestamps: true
 });
 
 module.exports = mongoose.model('Icon', iconSchema);
