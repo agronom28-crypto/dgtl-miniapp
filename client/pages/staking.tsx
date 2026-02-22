@@ -9,7 +9,7 @@ import Head from 'next/head';
 import axios from 'axios';
 
 const StakingPage = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [lang, setLang] = useState<Lang>('ru');
   const t = getTranslations(lang);
   const getIconName = (icon: IIcon | null) => {
@@ -29,11 +29,21 @@ const StakingPage = () => {
     if (savedLang) setLang(savedLang);
   }, []);
 
+  // Fix: handle case when session is loaded but no telegramId
+  useEffect(() => {
+    if (status !== 'loading' && !telegramId) {
+      setLoading(false);
+    }
+  }, [status, telegramId]);
+
   useEffect(() => {
     if (!telegramId) return;
     axios.get(`/api/users/${telegramId}`).then(res => {
       if (res.data.success) setUserId(res.data.user._id);
-    }).catch(err => console.error('Failed to load user:', err));
+    }).catch(err => {
+      console.error('Failed to load user:', err);
+      setLoading(false);
+    });
   }, [telegramId]);
 
   const loadData = useCallback(async () => {
@@ -95,11 +105,13 @@ const StakingPage = () => {
     const diff = now.getTime() - new Date(stakedAt).getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    return lang === 'ru' ? `${hours}ч ${minutes}м` : `${hours}h ${minutes}m`;
+    return lang === 'ru' ? `${hours}\u0447 ${minutes}\u043c` : `${hours}h ${minutes}m`;
   };
 
   const activeStakes = stakedIcons.filter(si => si.isActive);
-  const stakedIconIds = activeStakes.map(si => typeof si.iconId === 'string' ? si.iconId : (si.iconId as IIcon)._id);
+  const stakedIconIds = activeStakes.map(si =>
+    typeof si.iconId === 'string' ? si.iconId : (si.iconId as IIcon)._id
+  );
   const availableForStaking = userIcons.filter(ui => {
     const iconId = typeof ui.iconId === 'string' ? ui.iconId : (ui.iconId as IIcon)._id;
     return !stakedIconIds.includes(iconId);
@@ -109,38 +121,60 @@ const StakingPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div style={{ textAlign: 'center', padding: '40px', color: '#aaa' }}>{t.staking_loading}</div>
+        <div className="flex items-center justify-center h-screen">
+          <span className="loading loading-spinner loading-lg"></span>
+          <p className="ml-2">{t.staking_loading}</p>
+        </div>
       </Layout>
     );
   }
 
   return (
     <>
-      <Head><title>{t.staking_page_title}</title></Head>
+      <Head>
+        <title>{t.staking_page_title}</title>
+      </Head>
       <Layout>
-        <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px' }}>
-          <h1 style={{ textAlign: 'center', fontSize: '1.5rem', marginBottom: 4 }}>{t.staking_title}</h1>
-          <p style={{ textAlign: 'center', color: '#aaa', fontSize: '0.85rem', marginBottom: 16 }}>{t.staking_subtitle}</p>
+        <div className="p-4">
+          <h1 className="text-2xl font-bold mb-2">{t.staking_title}</h1>
+          <p className="text-sm opacity-70 mb-4">{t.staking_subtitle}</p>
 
           {activeStakes.length > 0 && (
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <h2 style={{ fontSize: '1.1rem' }}>{t.staking_active}</h2>
-                <button onClick={handleClaim} style={{ background: '#4caf50', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 16px', cursor: 'pointer' }}>{t.staking_claim}</button>
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-lg font-bold">{t.staking_active}</h2>
+                <button
+                  onClick={handleClaim}
+                  className="btn btn-sm btn-accent"
+                >
+                  {t.staking_claim}
+                </button>
               </div>
               {activeStakes.map((si) => {
                 const icon = typeof si.iconId === 'string' ? null : si.iconId as IIcon;
                 return (
-                  <div key={si._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a1a2e', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
-                    <div>
-                      <div style={{ fontWeight: 600 }}>{getIconName(icon)}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#aaa' }}>{t.staking_staked_label}: {getStakingDuration(si.stakedAt)}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ color: '#4caf50', fontWeight: 600 }}>+{icon?.stakingRate || 10}{t.shop_per_hour}</span>
-                      <button onClick={() => handleUnstake(si._id)} style={{ background: '#e53935', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer' }}>
-                        {t.staking_unstake}
-                      </button>
+                  <div key={si._id} className="card bg-base-200 shadow mb-2">
+                    <div className="card-body p-3 flex-row items-center justify-between">
+                      <div>
+                        <p className="font-bold">{getIconName(icon)}</p>
+                        <p className="text-xs opacity-60">
+                          {t.staking_staked_label}: {getStakingDuration(si.stakedAt)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-green-400">
+                          +{icon?.stakingRate || 10}{t.shop_per_hour}
+                        </span>
+                        <button
+                          onClick={() => handleUnstake(si._id)}
+                          style={{
+                            background: '#e53935', color: 'white', border: 'none',
+                            borderRadius: '8px', padding: '6px 12px', cursor: 'pointer'
+                          }}
+                        >
+                          {t.staking_unstake}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -148,27 +182,40 @@ const StakingPage = () => {
             </div>
           )}
 
-          <h2 style={{ fontSize: '1.1rem', marginBottom: 8 }}>{t.staking_available}</h2>
+          <h2 className="text-lg font-bold mb-2">{t.staking_available}</h2>
           {availableForStaking.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#777', padding: 20 }}>
+            <p className="opacity-50">
               {userIcons.length === 0 ? t.staking_empty_all : t.staking_empty_all_staked}
-            </div>
+            </p>
           ) : (
-            <div>
+            <div className="space-y-2">
               {availableForStaking.map((ui) => {
                 const icon = typeof ui.iconId === 'string' ? null : ui.iconId as IIcon;
                 if (!icon) return null;
                 return (
-                  <div key={ui._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a1a2e', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
-                    <div>
-                      <div style={{ fontWeight: 600 }}>{getIconName(icon)}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#aaa' }}>{getCountryName(lang, icon.country)}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ color: '#4caf50', fontWeight: 600 }}>+{icon.stakingRate}{t.shop_per_hour}</span>
-                      <button onClick={() => handleStake(icon._id)} disabled={staking === icon._id} style={{ background: staking === icon._id ? '#555' : '#1976d2', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 16px', cursor: staking === icon._id ? 'default' : 'pointer' }}>
-                        {staking === icon._id ? '...' : t.staking_stake_btn}
-                      </button>
+                  <div key={icon._id} className="card bg-base-200 shadow">
+                    <div className="card-body p-3 flex-row items-center justify-between">
+                      <div>
+                        <p className="font-bold">{getIconName(icon)}</p>
+                        <p className="text-xs opacity-60">{getCountryName(lang, icon.country)}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-green-400">
+                          +{icon.stakingRate}{t.shop_per_hour}
+                        </span>
+                        <button
+                          onClick={() => handleStake(icon._id)}
+                          disabled={staking === icon._id}
+                          style={{
+                            background: staking === icon._id ? '#555' : '#1976d2',
+                            color: 'white', border: 'none',
+                            borderRadius: '8px', padding: '6px 16px',
+                            cursor: staking === icon._id ? 'default' : 'pointer'
+                          }}
+                        >
+                          {staking === icon._id ? '...' : t.staking_stake_btn}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
