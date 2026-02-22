@@ -11,6 +11,7 @@ export const COUNTRY_NAMES: Record<Lang, Record<string, string>> = {
     MW: 'Малави', SA: 'Саудовская Аравия', KW: 'Кувейт', IQ: 'Ирак',
     KZ: 'Казахстан', AE: 'ОАЭ', MX: 'Мексика', QA: 'Катар', DZ: 'Алжир',
     BW: 'Ботсвана', AO: 'Ангола', LS: 'Лесото',
+        GA: 'Габон', NA: 'Намибия', CO: 'Колумбия', BO: 'Боливия',
   },
   en: {
     UZ: 'Uzbekistan', US: 'United States', ID: 'Indonesia', RU: 'Russia', DO: 'Dominican Republic',
@@ -21,6 +22,7 @@ export const COUNTRY_NAMES: Record<Lang, Record<string, string>> = {
     MW: 'Malawi', SA: 'Saudi Arabia', KW: 'Kuwait', IQ: 'Iraq',
     KZ: 'Kazakhstan', AE: 'UAE', MX: 'Mexico', QA: 'Qatar', DZ: 'Algeria',
     BW: 'Botswana', AO: 'Angola', LS: 'Lesotho',
+        GA: 'Gabon', NA: 'Namibia', CO: 'Colombia', BO: 'Bolivia',
   },
 };
 
