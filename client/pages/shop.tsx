@@ -61,11 +61,6 @@ const Shop: React.FC = () => {
     if (savedLang) setLang(savedLang);
   }, []);
 
-  const toggleLang = () => {
-    const newLang = lang === 'ru' ? 'en' : 'ru';
-    setLang(newLang);
-    localStorage.setItem('app_lang', newLang);
-  };
 
   useEffect(() => {
     if (session?.user) loadUserData();
@@ -141,10 +136,7 @@ const Shop: React.FC = () => {
     return (
       <Layout>
         <div className={styles.container}>
-          <div className=\"flex justify-between items-center mb-4\">
             <h1 className={styles.title}>{t.shop_title}</h1>
-            <button onClick={toggleLang} className=\"px-3 py-1 bg-gray-700 rounded text-xs\">{lang === 'ru' ? 'EN' : 'RU'}</button>
-          </div>
           <div className={styles.coins}>💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}</div>
           <WorldMap onSelect={(c) => setActiveContinent(c)} activeContinent={null} />
           <div className={styles.mapHint}>{t.shop_map_hint}</div>
@@ -157,10 +149,7 @@ const Shop: React.FC = () => {
   return (
     <Layout>
       <div className={styles.container}>
-        <div className=\"flex justify-between mb-2\">
           <button className={styles.backButton} onClick={() => { setActiveContinent(null); setIcons([]); }}>{t.shop_back}</button>
-          <button onClick={toggleLang} className=\"px-3 py-1 bg-gray-700 rounded text-xs\">{lang === 'ru' ? 'EN' : 'RU'}</button>
-        </div>
         <h1 className={styles.title}>{lang === 'ru' ? CONTINENT_LABELS[activeContinent] : (t as any)[`continent_${activeContinent}`]}</h1>
         <div className={styles.coins}>💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}</div>
         <div className={styles.tabs}>
