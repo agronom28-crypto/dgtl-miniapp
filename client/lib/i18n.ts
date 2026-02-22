@@ -1,4 +1,52 @@
 export type Lang = 'ru' | 'en';
+
+// ======= COUNTRY NAMES (37 стран) =======
+export const COUNTRY_NAMES: Record<Lang, Record<string, string>> = {
+  ru: {
+    UZ: 'Узбекистан', US: 'США', ID: 'Индонезия', RU: 'Россия', DO: 'Доминикана',
+    PG: 'Папуа — Новая Гвинея', CD: 'ДР Конго', AU: 'Австралия', ML: 'Мали',
+    ZA: 'ЮАР', CA: 'Канада', CL: 'Чили', GH: 'Гана', PE: 'Перу', ZM: 'Замбия',
+    BR: 'Бразилия', SE: 'Швеция', UA: 'Украина', CG: 'Конго', GN: 'Гвинея',
+    IN: 'Индия', CN: 'Китай', GL: 'Гренландия', TZ: 'Танзания', BI: 'Бурунди',
+    MW: 'Малави', SA: 'Саудовская Аравия', KW: 'Кувейт', IQ: 'Ирак',
+    KZ: 'Казахстан', AE: 'ОАЭ', MX: 'Мексика', QA: 'Катар', DZ: 'Алжир',
+    BW: 'Ботсвана', AO: 'Ангола', LS: 'Лесото',
+  },
+  en: {
+    UZ: 'Uzbekistan', US: 'United States', ID: 'Indonesia', RU: 'Russia', DO: 'Dominican Republic',
+    PG: 'Papua New Guinea', CD: 'DR Congo', AU: 'Australia', ML: 'Mali',
+    ZA: 'South Africa', CA: 'Canada', CL: 'Chile', GH: 'Ghana', PE: 'Peru', ZM: 'Zambia',
+    BR: 'Brazil', SE: 'Sweden', UA: 'Ukraine', CG: 'Congo', GN: 'Guinea',
+    IN: 'India', CN: 'China', GL: 'Greenland', TZ: 'Tanzania', BI: 'Burundi',
+    MW: 'Malawi', SA: 'Saudi Arabia', KW: 'Kuwait', IQ: 'Iraq',
+    KZ: 'Kazakhstan', AE: 'UAE', MX: 'Mexico', QA: 'Qatar', DZ: 'Algeria',
+    BW: 'Botswana', AO: 'Angola', LS: 'Lesotho',
+  },
+};
+
+export function getCountryName(lang: Lang, code: string): string {
+  return COUNTRY_NAMES[lang][code] || code;
+}
+
+// ======= MINERAL NAMES =======
+export const MINERAL_NAMES: Record<Lang, Record<string, string>> = {
+  ru: {
+    Carbon: 'Углерод', Gold: 'Золото', Arsenic: 'Мышьяк', Silver: 'Серебро',
+    Platinum: 'Платина', Copper: 'Медь', Iron: 'Железо', Nickel: 'Никель',
+    Titanium: 'Титан', Lithium: 'Литий', Cobalt: 'Кобальт', Uranium: 'Уран',
+  },
+  en: {
+    Carbon: 'Carbon', Gold: 'Gold', Arsenic: 'Arsenic', Silver: 'Silver',
+    Platinum: 'Platinum', Copper: 'Copper', Iron: 'Iron', Nickel: 'Nickel',
+    Titanium: 'Titanium', Lithium: 'Lithium', Cobalt: 'Cobalt', Uranium: 'Uranium',
+  },
+};
+
+export function getMineralName(lang: Lang, name: string): string {
+  return MINERAL_NAMES[lang][name] || name;
+}
+
+// ======= TRANSLATIONS =======
 export const translations = {
   ru: {
     // Shop
@@ -20,6 +68,8 @@ export const translations = {
     shop_error: 'Ошибка покупки',
     shop_error_stars: 'Ошибка оплаты Stars',
     shop_invoice_error: 'Ошибка создания инвойса',
+    shop_per_hour: '/час',
+
     // Staking
     staking_title: 'Стейкинг',
     staking_subtitle: 'Застейкайте доли месторождений и получайте пассивный доход',
@@ -36,6 +86,7 @@ export const translations = {
     staking_claim_success: 'монет!',
     staking_claim_prefix: 'Собрано',
     staking_page_title: 'Стейкинг — DGTL',
+
     // Boosts
     boosts_title: '🚀 Магазин',
     boosts_subtitle: 'Покупайте бусты и минералы для ускорения прогресса!',
@@ -54,6 +105,7 @@ export const translations = {
     boosts_stars_error: 'Ошибка при оплате Stars',
     boosts_mineral_success: 'минеральная карточка куплена!',
     boosts_not_enough: 'Недостаточно токенов!',
+
     // Resource filters
     filter_all: 'Все',
     filter_gold: 'Золото',
@@ -63,6 +115,7 @@ export const translations = {
     filter_oil: 'Нефть',
     filter_diamonds: 'Алмазы',
     filter_coal: 'Уголь',
+
     // Continent labels
     continent_africa: 'Африка',
     continent_asia: 'Азия',
@@ -71,6 +124,7 @@ export const translations = {
     continent_south_america: 'Южная Америка',
     continent_australia: 'Австралия',
     continent_russia: 'Россия',
+
     // Index (Home)
     home_loading: 'Загрузка...',
     home_error: 'Не удалось загрузить данные пользователя. Пожалуйста, попробуйте снова.',
@@ -80,6 +134,10 @@ export const translations = {
     home_play: 'Играть',
     home_locked: 'Закрыто',
     home_no_levels: 'Нет доступных уровней на данный момент. Пожалуйста, зайдите позже.',
+    home_load_levels_error: 'Не удалось загрузить уровни.',
+    home_load_user_error: 'Не удалось загрузить данные пользователя.',
+    home_level_placeholder: 'Уровень',
+
     // Payment
     payment_title: 'Покупка за Stars',
     payment_subtitle: 'Оплата через Telegram Stars',
@@ -88,12 +146,15 @@ export const translations = {
     payment_success: 'Покупка совершена!',
     payment_error: 'Не удалось создать счёт',
     payment_tg_alert: 'Откройте через Telegram',
+
     // Friends
     friends_title: '👥 Пригласить друзей',
     friends_subtitle: 'Получайте бонусы вместе с друзьями 🎁💸',
     friends_invite_card: 'Пригласи друга!',
     friends_invite_desc: 'Получите +1,000 за каждого приглашенного друга',
     friends_btn: 'Пригласить друзей',
+    friends_frens_count: 'друзей',
+
     // Tasks
     tasks_title: '👣 Присоединяйтесь',
     tasks_subtitle: 'Вступайте в сообщество GTL в соцсетях для получения новостей и бонусов! 🎁💸',
@@ -120,6 +181,8 @@ export const translations = {
     shop_error: 'Purchase error',
     shop_error_stars: 'Stars payment error',
     shop_invoice_error: 'Invoice creation error',
+    shop_per_hour: '/hr',
+
     // Staking
     staking_title: 'Staking',
     staking_subtitle: 'Stake your mining shares and earn passive income',
@@ -136,6 +199,7 @@ export const translations = {
     staking_claim_success: 'coins!',
     staking_claim_prefix: 'Claimed',
     staking_page_title: 'Staking — DGTL',
+
     // Boosts
     boosts_title: '🚀 Store',
     boosts_subtitle: 'Purchase boosts and collect minerals to accelerate your progress!',
@@ -154,6 +218,7 @@ export const translations = {
     boosts_stars_error: 'Stars payment error',
     boosts_mineral_success: 'mineral card purchased!',
     boosts_not_enough: 'Not enough tokens!',
+
     // Resource filters
     filter_all: 'All',
     filter_gold: 'Gold',
@@ -163,6 +228,7 @@ export const translations = {
     filter_oil: 'Oil & Gas',
     filter_diamonds: 'Diamonds',
     filter_coal: 'Coal',
+
     // Continent labels
     continent_africa: 'Africa',
     continent_asia: 'Asia',
@@ -171,6 +237,7 @@ export const translations = {
     continent_south_america: 'South America',
     continent_australia: 'Australia',
     continent_russia: 'Russia',
+
     // Index (Home)
     home_loading: 'Loading...',
     home_error: 'Failed to load user data. Please try again.',
@@ -180,6 +247,10 @@ export const translations = {
     home_play: 'Play',
     home_locked: 'Locked',
     home_no_levels: 'No levels available at the moment. Please check back later.',
+    home_load_levels_error: 'Could not load levels.',
+    home_load_user_error: 'Could not load user data.',
+    home_level_placeholder: 'Level',
+
     // Payment
     payment_title: 'Purchase with Stars',
     payment_subtitle: 'Payment via Telegram Stars',
@@ -188,12 +259,15 @@ export const translations = {
     payment_success: 'Purchase successful!',
     payment_error: 'Failed to create invoice',
     payment_tg_alert: 'Open via Telegram',
+
     // Friends
     friends_title: '👥 Invite Friends',
     friends_subtitle: 'Earn bonuses with your friends 🎁💸',
     friends_invite_card: 'Invite a friend!',
     friends_invite_desc: 'Get +1,000 for every invited friend',
     friends_btn: 'Invite Friends',
+    friends_frens_count: 'frens',
+
     // Tasks
     tasks_title: '👣 Join Us',
     tasks_subtitle: 'Join the GTL community on social media for the latest updates and exclusive bonuses! 🎁💸',
@@ -201,6 +275,7 @@ export const translations = {
     tasks_open: 'Open',
   },
 };
+
 export function getTranslations(lang: Lang) {
   return translations[lang];
 }
