@@ -287,4 +287,17 @@ router.get('/fix-boost-images', async (req, res) => {
     }
 });
 
+// Clear Next.js cache and touch staking file to trigger recompile
+router.get('/clear-cache', (req, res) => {
+    const { exec } = require('child_process');
+    const path = require('path');
+    const clientDir = path.join(__dirname, '../../client');
+    exec('rm -rf ' + clientDir + '/.next && touch ' + clientDir + '/pages/staking.tsx', (error, stdout, stderr) => {
+        if (error) {
+            return res.json({ success: false, error: error.message, stderr });
+        }
+        res.json({ success: true, message: 'Cache cleared and staking.tsx touched. Next.js should recompile.' });
+    });
+});
+
 module.exports = router;
