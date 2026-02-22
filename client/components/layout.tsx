@@ -20,7 +20,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const newLang: Lang = lang === 'ru' ? 'en' : 'ru';
     setLang(newLang);
     localStorage.setItem('app_lang', newLang);
-    router.replace(router.asPath);
+        window.location.reload();
   };
 
   return (
