@@ -104,7 +104,7 @@ const StakingPage = () => {
     const iconId = typeof ui.iconId === 'string' ? ui.iconId : (ui.iconId as IIcon)._id;
     return !stakedIconIds.includes(iconId);
   });
-
+ // loading state
     if (loading) return (<Layout><div style={{ textAlign: 'center', padding: '40px' }}>{t.staking_loading}</div></Layout>);
 
   return (
