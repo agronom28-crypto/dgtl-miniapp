@@ -35,7 +35,7 @@ const Index = () => {
         const filled = [...levelsData];
         for (let i = levelsData.length; i < 13; i++) {
           filled.push({
-            name: `Level ${i + 1}`,
+            name: `${t.home_level_placeholder} ${i + 1}`,
             badges: [],
             backgroundUrl: '',
             order: i + 1,
@@ -47,7 +47,7 @@ const Index = () => {
       setLevels(levelsData);
     } catch (error) {
       console.error('Error fetching levels:', error);
-      toast.error('Could not load levels.');
+      toast.error(t.home_load_levels_error);
       setLevels([]);
     } finally {
       setLoading(false);
@@ -64,7 +64,7 @@ const Index = () => {
         setUserData(data);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        toast.error('Could not load user data.');
+        toast.error(t.home_load_user_error);
         setUserData(null);
       } finally {
         setLoading(false);
@@ -181,5 +181,4 @@ const Index = () => {
     </Layout>
   );
 };
-
 export default Index;
