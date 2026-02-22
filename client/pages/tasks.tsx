@@ -45,13 +45,13 @@ const socialNetworks: SocialNetwork[] = [
     name: "Tiktok",
     logo: "/tiktok.svg",
     points: "500",
-    url: "https://www.instagram.com",
+    url: "https://www.tiktok.com",
   },
   {
     name: "Telegram",
     logo: "/telegram.svg",
     points: "500",
-    url: "https://www.instagram.com",
+    url: "https://t.me/dgtl_community",
   },
 ];
 
@@ -63,13 +63,11 @@ const SocialCard: React.FC<SocialCardProps> = ({ name, logo, points, url, follow
         <div className="flex-shrink-0 w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
           <img src={logo} alt={name} className="w-8 h-8" />
         </div>
-
         {/* Points Section */}
         <div className="flex-grow ml-4">
           <h3 className="font-bold text-lg">{followText} {name}</h3>
           <p className="text-accent font-mono">+{points} GTL</p>
         </div>
-
         {/* Redirect Button */}
         <button
           onClick={() => window.open(url, "_blank")}
@@ -118,5 +116,4 @@ const Index: React.FC = () => {
     </Layout>
   );
 };
-
 export default Index;
