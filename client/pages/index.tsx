@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import Layout from '../components/layout';
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
-import { IUser } from '../models/User';
-import { ILevel } from '../models/Level';
+import type { IUser } from '../models/User';
+import type { ILevel } from '../models/Level';
 import ChemicalBadge from '../components/ChemicalBadge';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -27,7 +27,6 @@ const Index = () => {
   }, []);
 
   const fetchLevels = useCallback(async () => {
-    setLoading(true);
     try {
       const response = await axios.get('/api/leveldata');
       let levelsData = response.data;
@@ -35,7 +34,7 @@ const Index = () => {
         const filled = [...levelsData];
         for (let i = levelsData.length; i < 13; i++) {
           filled.push({
-            name: `${t.home_level_placeholder} ${i + 1}`,
+            name: `Level ${i + 1}`,
             badges: [],
             backgroundUrl: '',
             order: i + 1,
@@ -47,7 +46,6 @@ const Index = () => {
       setLevels(levelsData);
     } catch (error) {
       console.error('Error fetching levels:', error);
-      toast.error(t.home_load_levels_error);
       setLevels([]);
     } finally {
       setLoading(false);
@@ -64,7 +62,6 @@ const Index = () => {
         setUserData(data);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        toast.error(t.home_load_user_error);
         setUserData(null);
       } finally {
         setLoading(false);
@@ -147,12 +144,12 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {levels.length > 0 ? (
               levels.map((level) => (
-                <div key={level.order} className="card bg-base-200 shadow-lg overflow-hidden border border-white/10">
+                <div key={level.order} className="card bg-base-200 shadow-lg overflow-hidden">
                   {level.availability ? (
                     <>
                       <div className="absolute top-2 right-2 flex gap-1">
                         {level.badges.map((badge, i) => (
-                          <ChemicalBadge key={i} symbol={badge.symbol} name={badge.name} color={badge.color} />
+                          <ChemicalBadge key={i} element={typeof badge === 'string' ? badge : badge.symbol || ''} />
                         ))}
                       </div>
                       {level.backgroundUrl && (
@@ -166,7 +163,7 @@ const Index = () => {
                       </div>
                     </>
                   ) : (
-                    <div className="card-body p-8 items-center justify-center bg-black/40">
+                    <div className="card-body p-8 items-center justify-center bg-black/20">
                       <span className="text-lg opacity-50">{t.home_locked}</span>
                     </div>
                   )}
@@ -181,4 +178,5 @@ const Index = () => {
     </Layout>
   );
 };
+
 export default Index;
