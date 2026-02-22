@@ -12,6 +12,10 @@ const StakingPage = () => {
   const { data: session } = useSession();
   const [lang, setLang] = useState<Lang>('ru');
   const t = getTranslations(lang);
+  const getIconName = (icon: IIcon | null) => {
+    if (!icon) return 'Item';
+    return lang === 'en' ? (icon.nameEn || icon.name) : icon.name;
+  };
 
   const [userIcons, setUserIcons] = useState<IUserIcon[]>([]);
   const [stakedIcons, setStakedIcons] = useState<IStakedIcon[]>([]);
@@ -70,7 +74,9 @@ const StakingPage = () => {
     try {
       await stakingService.unstake(userId, stakedIconId);
       await loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleClaim = async () => {
@@ -103,73 +109,76 @@ const StakingPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          {t.staking_loading}
-        </div>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#aaa' }}>{t.staking_loading}</div>
       </Layout>
     );
   }
 
   return (
-    <Layout>
+    <>
       <Head><title>{t.staking_page_title}</title></Head>
-      <div style={{ padding: '16px', maxWidth: '480px', margin: '0 auto' }}>
-        <h1>{t.staking_title}</h1>
-        <p style={{ color: '#aaa', marginBottom: '16px' }}>{t.staking_subtitle}</p>
+      <Layout>
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px' }}>
+          <h1 style={{ textAlign: 'center', fontSize: '1.5rem', marginBottom: 4 }}>{t.staking_title}</h1>
+          <p style={{ textAlign: 'center', color: '#aaa', fontSize: '0.85rem', marginBottom: 16 }}>{t.staking_subtitle}</p>
 
-        {activeStakes.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h2 style={{ margin: 0 }}>{t.staking_active}</h2>
-              <button onClick={handleClaim} style={{ background: '#4CAF50', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: 'pointer' }}>
-                {t.staking_claim}
-              </button>
+          {activeStakes.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <h2 style={{ fontSize: '1.1rem' }}>{t.staking_active}</h2>
+                <button onClick={handleClaim} style={{ background: '#4caf50', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 16px', cursor: 'pointer' }}>{t.staking_claim}</button>
+              </div>
+              {activeStakes.map((si) => {
+                const icon = typeof si.iconId === 'string' ? null : si.iconId as IIcon;
+                return (
+                  <div key={si._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a1a2e', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{getIconName(icon)}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#aaa' }}>{t.staking_staked_label}: {getStakingDuration(si.stakedAt)}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ color: '#4caf50', fontWeight: 600 }}>+{icon?.stakingRate || 10}{t.shop_per_hour}</span>
+                      <button onClick={() => handleUnstake(si._id)} style={{ background: '#e53935', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer' }}>
+                        {t.staking_unstake}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            {activeStakes.map((si) => {
-              const icon = typeof si.iconId === 'string' ? null : si.iconId as IIcon;
-              return (
-                <div key={si._id} style={{ background: '#1a1a2e', border: '1px solid #333', borderRadius: '12px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontWeight: 'bold' }}>{icon?.name || 'Item'}</div>
-                    <div style={{ color: '#aaa', fontSize: '12px' }}>{t.staking_staked_label}: {getStakingDuration(si.stakedAt)}</div>
-                    <div style={{ color: '#4CAF50', fontSize: '12px' }}>+{icon?.stakingRate || 10}{t.shop_per_hour}</div>
-                  </div>
-                  <button onClick={() => handleUnstake(si._id)} style={{ background: '#e53935', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer' }}>
-                    {t.staking_unstake}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
+          )}
 
-        <h2>{t.staking_available}</h2>
-        {availableForStaking.length === 0 ? (
-          <div style={{ color: '#aaa', textAlign: 'center', padding: '24px' }}>
-            {userIcons.length === 0 ? t.staking_empty_all : t.staking_empty_all_staked}
-          </div>
-        ) : (
-          <div>
-            {availableForStaking.map((ui) => {
-              const icon = typeof ui.iconId === 'string' ? null : ui.iconId as IIcon;
-              if (!icon) return null;
-              return (
-                <div key={ui._id} style={{ background: '#1a1a2e', border: '1px solid #333', borderRadius: '12px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontWeight: 'bold' }}>{icon.name}</div>
-                    <div style={{ color: '#aaa', fontSize: '12px' }}>{getCountryName(lang, icon.country)}</div>
-                    <div style={{ color: '#4CAF50', fontSize: '12px' }}>+{icon.stakingRate}{t.shop_per_hour}</div>
+          <h2 style={{ fontSize: '1.1rem', marginBottom: 8 }}>{t.staking_available}</h2>
+          {availableForStaking.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#777', padding: 20 }}>
+              {userIcons.length === 0 ? t.staking_empty_all : t.staking_empty_all_staked}
+            </div>
+          ) : (
+            <div>
+              {availableForStaking.map((ui) => {
+                const icon = typeof ui.iconId === 'string' ? null : ui.iconId as IIcon;
+                if (!icon) return null;
+                return (
+                  <div key={ui._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a1a2e', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{getIconName(icon)}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#aaa' }}>{getCountryName(lang, icon.country)}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ color: '#4caf50', fontWeight: 600 }}>+{icon.stakingRate}{t.shop_per_hour}</span>
+                      <button onClick={() => handleStake(icon._id)} disabled={staking === icon._id} style={{ background: staking === icon._id ? '#555' : '#1976d2', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 16px', cursor: staking === icon._id ? 'default' : 'pointer' }}>
+                        {staking === icon._id ? '...' : t.staking_stake_btn}
+                      </button>
+                    </div>
                   </div>
-                  <button onClick={() => handleStake(icon._id)} disabled={staking === icon._id} style={{ background: staking === icon._id ? '#555' : '#1976d2', color: 'white', border: 'none', borderRadius: '8px', padding: '6px 16px', cursor: staking === icon._id ? 'default' : 'pointer' }}>
-                    {staking === icon._id ? '...' : t.staking_stake_btn}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </Layout>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </Layout>
+    </>
   );
 };
+
 export default StakingPage;
