@@ -105,7 +105,7 @@ const StakingPage = () => {
     return !stakedIconIds.includes(iconId);
   });
 
-  if (loading) return <Layout><div style={{ textAlign: 'center', padding: '40px' }}>{t.staking_loading}</div></Layout>;
+    if (loading) return (<Layout><div style={{ textAlign: 'center', padding: '40px' }}>{t.staking_loading}</div></Layout>);
 
   return (
     <Layout>
