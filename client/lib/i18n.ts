@@ -1,5 +1,4 @@
 export type Lang = 'ru' | 'en';
-
 export const translations = {
   ru: {
     // Shop
@@ -72,6 +71,34 @@ export const translations = {
     continent_south_america: 'Южная Америка',
     continent_australia: 'Австралия',
     continent_russia: 'Россия',
+    // Index (Home)
+    home_loading: 'Загрузка...',
+    home_error: 'Не удалось загрузить данные пользователя. Пожалуйста, попробуйте снова.',
+    home_balance: 'Баланс аккаунта',
+    home_level: 'Уровень',
+    home_levels: 'Уровни',
+    home_play: 'Играть',
+    home_locked: 'Закрыто',
+    home_no_levels: 'Нет доступных уровней на данный момент. Пожалуйста, зайдите позже.',
+    // Payment
+    payment_title: 'Покупка за Stars',
+    payment_subtitle: 'Оплата через Telegram Stars',
+    payment_empty: 'Нет товаров для покупки за Stars',
+    payment_buy: 'Купить',
+    payment_success: 'Покупка совершена!',
+    payment_error: 'Не удалось создать счёт',
+    payment_tg_alert: 'Откройте через Telegram',
+    // Friends
+    friends_title: '👥 Пригласить друзей',
+    friends_subtitle: 'Получайте бонусы вместе с друзьями 🎁💸',
+    friends_invite_card: 'Пригласи друга!',
+    friends_invite_desc: 'Получите +1,000 за каждого приглашенного друга',
+    friends_btn: 'Пригласить друзей',
+    // Tasks
+    tasks_title: '👣 Присоединяйтесь',
+    tasks_subtitle: 'Вступайте в сообщество GTL в соцсетях для получения новостей и бонусов! 🎁💸',
+    tasks_follow: 'Подпишитесь на GTL в',
+    tasks_open: 'Открыть',
   },
   en: {
     // Shop
@@ -144,9 +171,36 @@ export const translations = {
     continent_south_america: 'South America',
     continent_australia: 'Australia',
     continent_russia: 'Russia',
+    // Index (Home)
+    home_loading: 'Loading...',
+    home_error: 'Failed to load user data. Please try again.',
+    home_balance: 'Account balance',
+    home_level: 'Level',
+    home_levels: 'Levels',
+    home_play: 'Play',
+    home_locked: 'Locked',
+    home_no_levels: 'No levels available at the moment. Please check back later.',
+    // Payment
+    payment_title: 'Purchase with Stars',
+    payment_subtitle: 'Payment via Telegram Stars',
+    payment_empty: 'No items available for Stars purchase',
+    payment_buy: 'Buy',
+    payment_success: 'Purchase successful!',
+    payment_error: 'Failed to create invoice',
+    payment_tg_alert: 'Open via Telegram',
+    // Friends
+    friends_title: '👥 Invite Friends',
+    friends_subtitle: 'Earn bonuses with your friends 🎁💸',
+    friends_invite_card: 'Invite a friend!',
+    friends_invite_desc: 'Get +1,000 for every invited friend',
+    friends_btn: 'Invite Friends',
+    // Tasks
+    tasks_title: '👣 Join Us',
+    tasks_subtitle: 'Join the GTL community on social media for the latest updates and exclusive bonuses! 🎁💸',
+    tasks_follow: 'Follow GTL on',
+    tasks_open: 'Open',
   },
 };
-
 export function getTranslations(lang: Lang) {
   return translations[lang];
 }
