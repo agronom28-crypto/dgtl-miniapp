@@ -46,6 +46,32 @@ export function getMineralName(lang: Lang, name: string): string {
   return MINERAL_NAMES[lang][name] || name;
 }
 
+// ======= BOOST CARD NAMES =======
+export const BOOST_NAMES: Record<Lang, Record<string, string>> = {
+  ru: {
+    'Hashrate Boost S': 'Буст хешрейта S',
+    'Hashrate Boost M': 'Буст хешрейта M',
+    'Hashrate Boost L': 'Буст хешрейта L',
+    'Income Boost': 'Буст дохода',
+    'Speed Boost': 'Буст скорости',
+    'Lucky Boost': 'Буст удачи',
+    'Shield Boost': 'Буст защиты',
+  },
+  en: {
+    'Hashrate Boost S': 'Hashrate Boost S',
+    'Hashrate Boost M': 'Hashrate Boost M',
+    'Hashrate Boost L': 'Hashrate Boost L',
+    'Income Boost': 'Income Boost',
+    'Speed Boost': 'Speed Boost',
+    'Lucky Boost': 'Lucky Boost',
+    'Shield Boost': 'Shield Boost',
+  },
+};
+
+export function getBoostName(lang: Lang, title: string): string {
+  return BOOST_NAMES[lang][title] || title;
+}
+
 // ======= TRANSLATIONS =======
 export const translations = {
   ru: {
@@ -69,7 +95,6 @@ export const translations = {
     shop_error_stars: 'Ошибка оплаты Stars',
     shop_invoice_error: 'Ошибка создания инвойса',
     shop_per_hour: '/час',
-
     // Staking
     staking_title: 'Стейкинг',
     staking_subtitle: 'Застейкайте доли месторождений и получайте пассивный доход',
@@ -86,7 +111,6 @@ export const translations = {
     staking_claim_success: 'монет!',
     staking_claim_prefix: 'Собрано',
     staking_page_title: 'Стейкинг — DGTL',
-
     // Boosts
     boosts_title: '🚀 Магазин',
     boosts_subtitle: 'Покупайте бусты и минералы для ускорения прогресса!',
@@ -105,7 +129,6 @@ export const translations = {
     boosts_stars_error: 'Ошибка при оплате Stars',
     boosts_mineral_success: 'минеральная карточка куплена!',
     boosts_not_enough: 'Недостаточно токенов!',
-
     // Resource filters
     filter_all: 'Все',
     filter_gold: 'Золото',
@@ -115,7 +138,6 @@ export const translations = {
     filter_oil: 'Нефть',
     filter_diamonds: 'Алмазы',
     filter_coal: 'Уголь',
-
     // Continent labels
     continent_africa: 'Африка',
     continent_asia: 'Азия',
@@ -124,7 +146,6 @@ export const translations = {
     continent_south_america: 'Южная Америка',
     continent_australia: 'Австралия',
     continent_russia: 'Россия',
-
     // Index (Home)
     home_loading: 'Загрузка...',
     home_error: 'Не удалось загрузить данные пользователя. Пожалуйста, попробуйте снова.',
@@ -137,7 +158,6 @@ export const translations = {
     home_load_levels_error: 'Не удалось загрузить уровни.',
     home_load_user_error: 'Не удалось загрузить данные пользователя.',
     home_level_placeholder: 'Уровень',
-
     // Payment
     payment_title: 'Покупка за Stars',
     payment_subtitle: 'Оплата через Telegram Stars',
@@ -146,7 +166,6 @@ export const translations = {
     payment_success: 'Покупка совершена!',
     payment_error: 'Не удалось создать счёт',
     payment_tg_alert: 'Откройте через Telegram',
-
     // Friends
     friends_title: '👥 Пригласить друзей',
     friends_subtitle: 'Получайте бонусы вместе с друзьями 🎁💸',
@@ -154,7 +173,6 @@ export const translations = {
     friends_invite_desc: 'Получите +1,000 за каждого приглашенного друга',
     friends_btn: 'Пригласить друзей',
     friends_frens_count: 'друзей',
-
     // Tasks
     tasks_title: '👣 Присоединяйтесь',
     tasks_subtitle: 'Вступайте в сообщество GTL в соцсетях для получения новостей и бонусов! 🎁💸',
@@ -182,7 +200,6 @@ export const translations = {
     shop_error_stars: 'Stars payment error',
     shop_invoice_error: 'Invoice creation error',
     shop_per_hour: '/hr',
-
     // Staking
     staking_title: 'Staking',
     staking_subtitle: 'Stake your mining shares and earn passive income',
@@ -199,7 +216,6 @@ export const translations = {
     staking_claim_success: 'coins!',
     staking_claim_prefix: 'Claimed',
     staking_page_title: 'Staking — DGTL',
-
     // Boosts
     boosts_title: '🚀 Store',
     boosts_subtitle: 'Purchase boosts and collect minerals to accelerate your progress!',
@@ -218,7 +234,6 @@ export const translations = {
     boosts_stars_error: 'Stars payment error',
     boosts_mineral_success: 'mineral card purchased!',
     boosts_not_enough: 'Not enough tokens!',
-
     // Resource filters
     filter_all: 'All',
     filter_gold: 'Gold',
@@ -228,7 +243,6 @@ export const translations = {
     filter_oil: 'Oil & Gas',
     filter_diamonds: 'Diamonds',
     filter_coal: 'Coal',
-
     // Continent labels
     continent_africa: 'Africa',
     continent_asia: 'Asia',
@@ -237,7 +251,6 @@ export const translations = {
     continent_south_america: 'South America',
     continent_australia: 'Australia',
     continent_russia: 'Russia',
-
     // Index (Home)
     home_loading: 'Loading...',
     home_error: 'Failed to load user data. Please try again.',
@@ -250,7 +263,6 @@ export const translations = {
     home_load_levels_error: 'Could not load levels.',
     home_load_user_error: 'Could not load user data.',
     home_level_placeholder: 'Level',
-
     // Payment
     payment_title: 'Purchase with Stars',
     payment_subtitle: 'Payment via Telegram Stars',
@@ -259,7 +271,6 @@ export const translations = {
     payment_success: 'Purchase successful!',
     payment_error: 'Failed to create invoice',
     payment_tg_alert: 'Open via Telegram',
-
     // Friends
     friends_title: '👥 Invite Friends',
     friends_subtitle: 'Earn bonuses with your friends 🎁💸',
@@ -267,7 +278,6 @@ export const translations = {
     friends_invite_desc: 'Get +1,000 for every invited friend',
     friends_btn: 'Invite Friends',
     friends_frens_count: 'frens',
-
     // Tasks
     tasks_title: '👣 Join Us',
     tasks_subtitle: 'Join the GTL community on social media for the latest updates and exclusive bonuses! 🎁💸',
