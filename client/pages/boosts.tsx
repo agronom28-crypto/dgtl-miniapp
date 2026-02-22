@@ -5,7 +5,7 @@ import axios from "axios";
 import { IUserState } from '../models/User';
 import { IBoostCard } from '../models/Boosts';
 import { showNotification } from '../lib/notifications';
-import { getTranslations, getMineralName, Lang } from '../lib/i18n';
+import { getTranslations, getMineralName, getBoostName, Lang } from '../lib/i18n';
 
 interface MineralCard {
   imageUrl: string;
@@ -63,7 +63,6 @@ const Store: React.FC = () => {
     };
     if (session) fetchUserData(); else setIsUserDataLoading(false);
   }, [session]);
-
   const handlePurchase = async (boostId: string) => {
     setBuyingId(boostId + '-coins');
     try {
@@ -136,7 +135,6 @@ const Store: React.FC = () => {
   };
 
   const isLoading = isBoostsLoading || isUserDataLoading;
-
   return (
     <Layout>
       <div className="flex flex-col min-h-screen pb-20">
@@ -155,9 +153,9 @@ const Store: React.FC = () => {
             <div className="flex flex-col gap-4">
               {boostCards.map((card) => (
                 <div key={card.id} className="flex items-center bg-secondary text-white p-4 rounded-xl">
-                  <img src={card.imageUrl} alt={card.title} className="w-16 h-16 object-contain mr-4 rounded-xl" />
+                  <img src={card.imageUrl} alt={getBoostName(lang, card.title)} className="w-16 h-16 object-contain mr-4 rounded-xl" />
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg">{card.title}</h3>
+                    <h3 className="font-bold text-lg">{getBoostName(lang, card.title)}</h3>
                     <p className="text-sm font-semibold">💰 {card.price} GTL</p>
                     <p className="text-sm font-semibold text-yellow-400">⭐ {(card as any).starsPrice} Stars</p>
                     <p className="text-xs text-gray-400">{t.boosts_owned}: {userData?.boosts?.[card.id] || 0}</p>
@@ -195,4 +193,5 @@ const Store: React.FC = () => {
     </Layout>
   );
 };
+
 export default Store;
