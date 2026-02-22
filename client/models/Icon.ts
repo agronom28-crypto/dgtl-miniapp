@@ -4,7 +4,9 @@ export type ResourceType = 'gold' | 'copper' | 'iron' | 'rare_metals' | 'oil_gas
 export interface IIcon {
     _id: string;
     name: string;
+        nameEn?: string;
     description: string;
+        descriptionEn?: string;
     imageUrl: string;
     continent: ContinentKey;
     country: string;
@@ -18,6 +20,7 @@ export interface IIcon {
     stakingRate: number;
     isActive: boolean;
     shareLabel: string;
+        shareLabelEn?: string;
     createdAt: Date;
     totalShares: number;
     availableShares: number;
