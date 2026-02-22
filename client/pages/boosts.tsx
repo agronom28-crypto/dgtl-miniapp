@@ -38,12 +38,6 @@ const Store: React.FC = () => {
     if (savedLang) setLang(savedLang);
   }, []);
 
-  const toggleLang = () => {
-    const newLang = lang === 'ru' ? 'en' : 'ru';
-    setLang(newLang);
-    localStorage.setItem('app_lang', newLang);
-  };
-
   useEffect(() => {
     const fetchBoostCards = async () => {
       try {
@@ -63,6 +57,7 @@ const Store: React.FC = () => {
     };
     if (session) fetchUserData(); else setIsUserDataLoading(false);
   }, [session]);
+
   const handlePurchase = async (boostId: string) => {
     setBuyingId(boostId + '-coins');
     try {
@@ -135,16 +130,14 @@ const Store: React.FC = () => {
   };
 
   const isLoading = isBoostsLoading || isUserDataLoading;
+
   return (
     <Layout>
       <div className="flex flex-col min-h-screen pb-20">
         <div className="text-center p-5">
-          <div className="flex justify-between items-center px-4">
-            <h1 className="text-3xl font-bold">{t.boosts_title}</h1>
-            <button onClick={toggleLang} className="px-3 py-1 bg-gray-700 rounded text-xs text-white">{lang === 'ru' ? 'EN' : 'RU'}</button>
-          </div>
+          <h1 className="text-3xl font-bold">{t.boosts_title}</h1>
           <p className="p-2">{t.boosts_subtitle}</p>
-          {userData && <p className="text-sm text-yellow-400 font-semibold">💰 {t.boosts_balance}: {userData.coins?.toLocaleString()} GTL</p>}
+          {userData && <p className="text-sm text-yellow-400 font-semibold">{t.boosts_balance}: {userData.coins?.toLocaleString()} GTL</p>}
         </div>
 
         <div className="card bg-neutral text-white p-5 shadow-lg m-3">
@@ -156,8 +149,8 @@ const Store: React.FC = () => {
                   <img src={card.imageUrl} alt={getBoostName(lang, card.title)} className="w-16 h-16 object-contain mr-4 rounded-xl" />
                   <div className="flex-1">
                     <h3 className="font-bold text-lg">{getBoostName(lang, card.title)}</h3>
-                    <p className="text-sm font-semibold">💰 {card.price} GTL</p>
-                    <p className="text-sm font-semibold text-yellow-400">⭐ {(card as any).starsPrice} Stars</p>
+                    <p className="text-sm font-semibold">{card.price} GTL</p>
+                    <p className="text-sm font-semibold text-yellow-400">{(card as any).starsPrice} Stars</p>
                     <p className="text-xs text-gray-400">{t.boosts_owned}: {userData?.boosts?.[card.id] || 0}</p>
                   </div>
                   <div className="flex flex-col gap-2 ml-2">
@@ -178,8 +171,8 @@ const Store: React.FC = () => {
                 <img src={m.imageUrl} alt={m.name} className="w-16 h-16 object-contain mr-4 rounded-xl" />
                 <div className="flex-1">
                   <p className="font-bold text-lg">{getMineralName(lang, m.name)} ({m.symbol})</p>
-                  <p className="text-sm font-semibold">💰 {m.price} GTL</p>
-                  <p className="text-sm font-semibold text-yellow-400">⭐ {m.starsPrice} Stars</p>
+                  <p className="text-sm font-semibold">{m.price} GTL</p>
+                  <p className="text-sm font-semibold text-yellow-400">{m.starsPrice} Stars</p>
                 </div>
                 <div className="flex flex-col gap-2 ml-2">
                   <button className="btn btn-sm btn-base-100 rounded-xl" disabled={buyingId === 'mineral-' + m.symbol + '-coins'} onClick={() => handleMineralPurchase(m.symbol, m.price)}>{buyingId === 'mineral-' + m.symbol + '-coins' ? '...' : t.boosts_buy}</button>
