@@ -47,6 +47,12 @@ const Index: React.FC = () => {
     { name: "Eve", coins: 1100 }
   ];
 
+  const handleInvite = () => {
+    const botUsername = 'dgtl_mini_bot';
+    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${encodeURIComponent(lang === 'ru' ? 'Присоединяйся к DGTL!' : 'Join DGTL!')}`;
+    window.open(shareUrl, '_blank');
+  };
+
   return (
     <Layout>
       <div className="flex flex-col min-h-screen pb-20">
@@ -66,7 +72,7 @@ const Index: React.FC = () => {
                   {t.friends_invite_desc}
                 </p>
                 <div className="mt-4">
-                  <span className="text-xl font-bold text-accent">5 frens</span>
+                  <span className="text-xl font-bold text-accent">5 {t.friends_frens_count}</span>
                 </div>
               </div>
             </div>
@@ -92,7 +98,7 @@ const Index: React.FC = () => {
 
         {/* Invite Button */}
         <div className="fixed bottom-24 left-0 right-0 p-4">
-          <button className="btn btn-primary w-full text-lg shadow-lg">
+          <button onClick={handleInvite} className="btn btn-primary w-full text-lg shadow-lg">
             {t.friends_btn}
           </button>
         </div>
@@ -100,5 +106,4 @@ const Index: React.FC = () => {
     </Layout>
   );
 };
-
 export default Index;
