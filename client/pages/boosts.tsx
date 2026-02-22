@@ -5,7 +5,7 @@ import axios from "axios";
 import { IUserState } from '../models/User';
 import { IBoostCard } from '../models/Boosts';
 import { showNotification } from '../lib/notifications';
-import { getTranslations, Lang } from '../lib/i18n';
+import { getTranslations, getMineralName, Lang } from '../lib/i18n';
 
 interface MineralCard {
   imageUrl: string;
@@ -139,55 +139,53 @@ const Store: React.FC = () => {
 
   return (
     <Layout>
-      <div className=\"flex flex-col min-h-screen pb-20\">
-        <div className=\"text-center p-5\">
-          <div className=\"flex justify-between items-center px-4\">
-            <h1 className=\"text-3xl font-bold\">{t.boosts_title}</h1>
-            <button onClick={toggleLang} className=\"px-3 py-1 bg-gray-700 rounded text-xs text-white\">{lang === 'ru' ? 'EN' : 'RU'}</button>
+      <div className="flex flex-col min-h-screen pb-20">
+        <div className="text-center p-5">
+          <div className="flex justify-between items-center px-4">
+            <h1 className="text-3xl font-bold">{t.boosts_title}</h1>
+            <button onClick={toggleLang} className="px-3 py-1 bg-gray-700 rounded text-xs text-white">{lang === 'ru' ? 'EN' : 'RU'}</button>
           </div>
-          <p className=\"p-2\">{t.boosts_subtitle}</p>
-          {userData && <p className=\"text-sm text-yellow-400 font-semibold\">💰 {t.boosts_balance}: {userData.coins?.toLocaleString()} GTL</p>}
+          <p className="p-2">{t.boosts_subtitle}</p>
+          {userData && <p className="text-sm text-yellow-400 font-semibold">💰 {t.boosts_balance}: {userData.coins?.toLocaleString()} GTL</p>}
         </div>
 
-        <div className=\"card bg-neutral text-white p-5 shadow-lg m-3\">
-          <h2 className=\"card-title text-center mb-4\">{t.boosts_section}</h2>
-          {isLoading ? <div className=\"skeleton h-20 w-full rounded-xl\"></div> : boostCards.length === 0 ? <p className=\"text-center text-gray-400\">{t.boosts_no_cards}</p> : (
-            <div className=\"flex flex-col gap-4\">
+        <div className="card bg-neutral text-white p-5 shadow-lg m-3">
+          <h2 className="card-title text-center mb-4">{t.boosts_section}</h2>
+          {isLoading ? <div className="skeleton h-20 w-full rounded-xl"></div> : boostCards.length === 0 ? <p className="text-center text-gray-400">{t.boosts_no_cards}</p> : (
+            <div className="flex flex-col gap-4">
               {boostCards.map((card) => (
-                <div key={card.id} className=\"flex items-center bg-secondary text-white p-4 rounded-xl\">
-                  <img src={card.imageUrl} alt={card.title} className=\"w-16 h-16 object-contain mr-4 rounded-xl\" />
-                  <div className=\"flex-1\">
-                    <h3 className=\"font-bold text-lg\">{card.title}</h3>
-                    <p className=\"text-sm font-semibold\">💰 {card.price} GTL</p>
-                    <p className=\"text-sm font-semibold text-yellow-400\">⭐ {(card as any).starsPrice} Stars</p>
-                    <p className=\"text-xs text-gray-400\">{t.boosts_owned}: {userData?.boosts?.[card.id] || 0}</p>
-          ))}
-    </div>
-  )
-}
-</div>
-
-    </div>
-  )
-}
-
+                <div key={card.id} className="flex items-center bg-secondary text-white p-4 rounded-xl">
+                  <img src={card.imageUrl} alt={card.title} className="w-16 h-16 object-contain mr-4 rounded-xl" />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg">{card.title}</h3>
+                    <p className="text-sm font-semibold">💰 {card.price} GTL</p>
+                    <p className="text-sm font-semibold text-yellow-400">⭐ {(card as any).starsPrice} Stars</p>
+                    <p className="text-xs text-gray-400">{t.boosts_owned}: {userData?.boosts?.[card.id] || 0}</p>
+                  </div>
+                  <div className="flex flex-col gap-2 ml-2">
+                    <button className="btn btn-sm btn-base-100 rounded-xl" disabled={buyingId === card.id + '-coins'} onClick={() => handlePurchase(card.id)}>{buyingId === card.id + '-coins' ? '...' : t.boosts_buy}</button>
+                    <button className="btn btn-sm btn-warning rounded-xl" disabled={buyingId === card.id + '-stars'} onClick={() => handlePurchaseStars(card.id)}>{buyingId === card.id + '-stars' ? '...' : t.boosts_stars}</button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
-        <div className=\"card bg-neutral text-white p-5 shadow-lg m-3\">
-          <h2 className=\"card-title text-center mb-4\">{t.boosts_minerals}</h2>
-          <div className=\"flex flex-col gap-4\">
+        <div className="card bg-neutral text-white p-5 shadow-lg m-3">
+          <h2 className="card-title text-center mb-4">{t.boosts_minerals}</h2>
+          <div className="flex flex-col gap-4">
             {minerals.map((m, i) => (
-              <div key={i} className=\"flex items-center bg-secondary text-white p-4 rounded-xl\">
-                <img src={m.imageUrl} alt={m.name} className=\"w-16 h-16 object-contain mr-4 rounded-xl\" />
-                <div className=\"flex-1\">
-                  <p className=\"font-bold text-lg\">{m.name} ({m.symbol})</p>
-                  <p className=\"text-sm font-semibold\">💰 {m.price} GTL</p>
-                  <p className=\"text-sm font-semibold text-yellow-400\">⭐ {m.starsPrice} Stars</p>
+              <div key={i} className="flex items-center bg-secondary text-white p-4 rounded-xl">
+                <img src={m.imageUrl} alt={m.name} className="w-16 h-16 object-contain mr-4 rounded-xl" />
+                <div className="flex-1">
+                  <p className="font-bold text-lg">{getMineralName(lang, m.name)} ({m.symbol})</p>
+                  <p className="text-sm font-semibold">💰 {m.price} GTL</p>
+                  <p className="text-sm font-semibold text-yellow-400">⭐ {m.starsPrice} Stars</p>
                 </div>
-                <div className=\"flex flex-col gap-2 ml-2\">
-                  <button className=\"btn btn-sm btn-base-100 rounded-xl\" disabled={buyingId === 'mineral-' + m.symbol + '-coins'} onClick={() => handleMineralPurchase(m.symbol, m.price)}>{buyingId === 'mineral-' + m.symbol + '-coins' ? '...' : t.boosts_buy}</button>
-                  <button className=\"btn btn-sm btn-warning rounded-xl\" disabled={buyingId === 'mineral-' + m.symbol + '-stars'} onClick={() => handleMineralPurchaseStars(m.symbol)}>{buyingId === 'mineral-' + m.symbol + '-stars' ? '...' : t.boosts_stars}</button>
+                <div className="flex flex-col gap-2 ml-2">
+                  <button className="btn btn-sm btn-base-100 rounded-xl" disabled={buyingId === 'mineral-' + m.symbol + '-coins'} onClick={() => handleMineralPurchase(m.symbol, m.price)}>{buyingId === 'mineral-' + m.symbol + '-coins' ? '...' : t.boosts_buy}</button>
+                  <button className="btn btn-sm btn-warning rounded-xl" disabled={buyingId === 'mineral-' + m.symbol + '-stars'} onClick={() => handleMineralPurchaseStars(m.symbol)}>{buyingId === 'mineral-' + m.symbol + '-stars' ? '...' : t.boosts_stars}</button>
                 </div>
               </div>
             ))}
