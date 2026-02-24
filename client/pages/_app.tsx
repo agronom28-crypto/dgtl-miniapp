@@ -34,16 +34,18 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       </Head>
       {showDevBanner && (
         <div style={{
-          background: '#ff9800',
-          color: '#000',
-          textAlign: 'center',
-          padding: '6px 12px',
-          fontSize: '12px',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 9999
+              background: '#ff9800',
+              color: '#000',
+              textAlign: 'center',
+              padding: '4px 16px',
+              fontSize: '11px',
+              position: 'fixed',
+              top: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              borderRadius: '0 0 8px 8px',
+              zIndex: 9999,
+              whiteSpace: 'nowrap'
         }}>
           Dev mode - open in Telegram for full functionality
         </div>
