@@ -20,13 +20,11 @@ const RESOURCE_ICON_URLS: Record<string, string> = {
   diamonds: '/icons/resources/diamonds.svg',
   coal: '/icons/resources/coal.svg',
 };
-
 const Shop: React.FC = () => {
   const { data: session } = useSession();
   const [lang, setLang] = useState<Lang>('ru');
   const t = getTranslations(lang);
   const getIconName = (icon: IIcon) => lang === 'en' ? (icon.nameEn || icon.name) : icon.name;
-
   const RESOURCE_FILTERS = [
     { key: 'all', label: t.filter_all, emoji: '' },
     { key: 'gold', label: t.filter_gold, emoji: '🟡' },
@@ -37,7 +35,6 @@ const Shop: React.FC = () => {
     { key: 'diamonds', label: t.filter_diamonds, emoji: '💎' },
     { key: 'coal', label: t.filter_coal, emoji: '⚫' },
   ];
-
   const [icons, setIcons] = useState<IIcon[]>([]);
   const [myIcons, setMyIcons] = useState<IUserIcon[]>([]);
   const [userData, setUserData] = useState<IUserState | null>(null);
@@ -46,20 +43,16 @@ const Shop: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [buyingStarsId, setBuyingStarsId] = useState<string | null>(null);
-
   useEffect(() => {
     const savedLang = localStorage.getItem('app_lang') as Lang;
     if (savedLang) setLang(savedLang);
   }, []);
-
   useEffect(() => {
     if (session?.user) loadUserData();
   }, [session]);
-
   useEffect(() => {
     if (activeContinent) loadIcons();
   }, [activeContinent, activeResource]);
-
   const loadUserData = async () => {
     try {
       const telegramId = (session?.user as any)?.telegramId;
@@ -74,7 +67,6 @@ const Shop: React.FC = () => {
       console.error(err);
     }
   };
-
   const loadIcons = async () => {
     try {
       setIsLoading(true);
@@ -86,7 +78,6 @@ const Shop: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const handleBuy = async (iconId: string) => {
     if (!userData?._id) return showNotification(t.shop_auth);
     try {
@@ -103,7 +94,6 @@ const Shop: React.FC = () => {
       setBuyingId(null);
     }
   };
-
   const handleBuyWithStars = async (icon: IIcon) => {
     const telegramId = (session?.user as any)?.telegramId;
     if (!telegramId) return showNotification(t.shop_auth);
@@ -136,22 +126,20 @@ const Shop: React.FC = () => {
       setBuyingStarsId(null);
     }
   };
-
   const getOwnedCount = (iconId: string) => {
     return myIcons.filter(ui => (typeof ui.iconId === 'string' ? ui.iconId : (ui.iconId as IIcon)._id) === iconId).length;
   };
-
   if (!activeContinent) {
     return (
       <Layout>
-        <div className={styles.shopContainer}>
-          <h1 className={styles.shopTitle}>{t.shop_title}</h1>
-          <div className={styles.balanceRow}>
+        <div className={styles.container}>
+          <h1 className={styles.title}>{t.shop_title}</h1>
+          <div className={styles.coins}>
             💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}
           </div>
           <WorldMap onSelect={(c) => setActiveContinent(c)} activeContinent={null} />
           <p className={styles.mapHint}>{t.shop_map_hint}</p>
-          {myIcons.length > 0 && 
+          {myIcons.length > 0 &&
             <div className={styles.ownedSection}>
               <h3>{t.shop_owned}: {myIcons.length}</h3>
             </div>
@@ -160,49 +148,46 @@ const Shop: React.FC = () => {
       </Layout>
     );
   }
-
   return (
     <Layout>
-      <div className={styles.shopContainer}>
-        <button className={styles.backBtn} onClick={() => { setActiveContinent(null); setIcons([]); }}>{t.shop_back}</button>
-        <h1 className={styles.shopTitle}>
+      <div className={styles.container}>
+        <button className={styles.backButton} onClick={() => { setActiveContinent(null); setIcons([]); }}>{t.shop_back}</button>
+        <h1 className={styles.title}>
           {lang === 'ru' ? CONTINENT_LABELS[activeContinent] : (t as any)[`continent_${activeContinent}`]}
         </h1>
-        <div className={styles.balanceRow}>
+        <div className={styles.coins}>
           💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}
         </div>
-
-        <div className={styles.filterRow}>
+        <div className={styles.tabs}>
           {RESOURCE_FILTERS.map(f => (
-            <button key={f.key} className={`${styles.filterBtn} ${activeResource === f.key ? styles.filterActive : ''}`} onClick={() => setActiveResource(f.key)}>
+            <button key={f.key} className={`${styles.tab} ${activeResource === f.key ? styles.tabActive : ''}`} onClick={() => setActiveResource(f.key)}>
               {f.emoji} {f.label}
             </button>
           ))}
         </div>
-
-        {isLoading ? 
+        {isLoading ?
           <div className={styles.loading}>{t.shop_loading}</div>
         : icons.length === 0 ?
-          <div className={styles.empty}>{t.shop_empty}</div>
+          <div className={styles.loading}>{t.shop_empty}</div>
         : (
-          <div className={styles.iconGrid}>
+          <div className={styles.grid}>
             {icons.map(icon => {
               const owned = getOwnedCount(icon._id);
               return (
-                <div key={icon._id} className={styles.iconCard}>
-                  <img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || '/icons/resources/gold.svg'} alt={getIconName(icon)} className={styles.iconImage} />
-                  <div className={styles.iconName}>{getIconName(icon)}</div>
-                  <div className={styles.iconCountry}>{getCountryName(lang, icon.country)}</div>
-                  <div className={styles.iconShare}>{t.shop_share}</div>
-                  <div className={styles.iconRate}>+{icon.stakingRate}{t.shop_per_hour}</div>
-                  {owned > 0 && 
-                    <div className={styles.ownedBadge}>{t.shop_owned_label}: {owned}</div>
+                <div key={icon._id} className={styles.card}>
+                  <img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || '/icons/resources/gold.svg'} alt={getIconName(icon)} className={styles.cardImage} />
+                  <div className={styles.cardName}>{getIconName(icon)}</div>
+                  <div className={styles.cardCountry}>{getCountryName(lang, icon.country)}</div>
+                  <div className={styles.cardShare}>{t.shop_share}</div>
+                  <div className={styles.cardRate}>+{icon.stakingRate}{t.shop_per_hour}</div>
+                  {owned > 0 &&
+                    <div className={styles.owned}>{t.shop_owned_label}: {owned}</div>
                   }
-                  <button className={styles.buyBtn} onClick={() => handleBuy(icon._id)} disabled={buyingId === icon._id || (userData?.coins || 0) < icon.price}>
+                  <button className={styles.buyButton} onClick={() => handleBuy(icon._id)} disabled={buyingId === icon._id || (userData?.coins || 0) < icon.price}>
                     {buyingId === icon._id ? '...' : `${icon.price.toLocaleString()} ${t.shop_coins}`}
                   </button>
                   {icon.starsPrice && (
-                    <button className={styles.starsBtn} onClick={() => handleBuyWithStars(icon)} disabled={buyingStarsId === icon._id}>
+                    <button className={styles.buyStarsButton} onClick={() => handleBuyWithStars(icon)} disabled={buyingStarsId === icon._id}>
                       {buyingStarsId === icon._id ? '...' : `⭐ ${icon.starsPrice} Stars`}
                     </button>
                   )}
@@ -215,5 +200,4 @@ const Shop: React.FC = () => {
     </Layout>
   );
 };
-
 export default Shop;
