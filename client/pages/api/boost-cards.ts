@@ -1,36 +1,46 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Mock boost cards for when backend is unavailable
+// Fields match IBoostCard interface: id, title, price, imageUrl, description, availability
 const mockBoostCards = [
   {
     _id: 'boost1',
-    name: 'Tap Power x2',
+    id: 'boost1',
+    title: 'Tap Power x2',
     description: 'Double your tap power for 1 hour',
     price: 500,
+    imageUrl: '/images/boost1.png',
+    availability: true,
+    starsPrice: 25,
     type: 'boost',
     duration: 3600,
-    multiplier: 2,
-    image: '/images/boost1.png'
+    multiplier: 2
   },
   {
     _id: 'boost2',
-    name: 'Auto Tap',
+    id: 'boost2',
+    title: 'Auto Tap',
     description: 'Automatic tapping for 30 minutes',
     price: 1000,
+    imageUrl: '/images/boost2.png',
+    availability: true,
+    starsPrice: 50,
     type: 'boost',
     duration: 1800,
-    multiplier: 1,
-    image: '/images/boost2.png'
+    multiplier: 1
   },
   {
     _id: 'boost3',
-    name: 'Energy Refill',
+    id: 'boost3',
+    title: 'Energy Refill',
     description: 'Fully restore your energy',
     price: 300,
+    imageUrl: '/images/boost3.png',
+    availability: true,
+    starsPrice: 15,
     type: 'boost',
     duration: 0,
-    multiplier: 1,
-    image: '/images/boost3.png'
+    multiplier: 1
   }
 ];
 
