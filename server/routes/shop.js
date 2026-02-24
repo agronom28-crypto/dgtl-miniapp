@@ -46,9 +46,13 @@ router.post('/buy', async (req, res) => {
         if (!icon) {
             return res.status(404).json({ success: false, error: 'Icon not found' });
         }
-
         if (!icon.isActive) {
             return res.status(400).json({ success: false, error: 'Icon is not available' });
+        }
+
+        // Проверяем доступные доли
+        if (icon.availableShares !== undefined && icon.availableShares <= 0) {
+            return res.status(400).json({ success: false, error: 'No shares available' });
         }
 
         // Проверяем баланс
@@ -59,6 +63,12 @@ router.post('/buy', async (req, res) => {
         // Списываем монеты
         user.coins -= icon.price;
         await user.save();
+
+        // Уменьшаем доступные доли
+        if (icon.availableShares !== undefined) {
+            icon.availableShares -= 1;
+            await icon.save();
+        }
 
         // Создаём запись о покупке доли
         const userIcon = new UserIcon({
