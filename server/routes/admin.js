@@ -5,6 +5,26 @@ const UserIcon = require('../models/UserIcon');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 
+// Admin authentication middleware
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'dgtl-admin-2024';
+
+const adminAuth = (req, res, next) => {
+    const token = req.headers['x-admin-token'] || req.query.token;
+    if (token !== ADMIN_SECRET) {
+        return res.status(401).json({ success: false, error: 'Unauthorized: invalid admin token' });
+    }
+    next();
+};
+
+// Apply admin auth to all routes except git-pull and seed operations
+router.use((req, res, next) => {
+    const openPaths = ['/git-pull', '/reseed-mining-sites', '/clear-cache', '/seed-boosts'];
+    if (openPaths.some(p => req.path.startsWith(p))) {
+        return next();
+    }
+    adminAuth(req, res, next);
+});
+
 // Получить все иконки (включая неактивные)
 router.get('/icons', async (req, res) => {
     try {
