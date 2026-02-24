@@ -7,27 +7,33 @@ interface TelegramWebApp {
     platform: string;
     colorScheme: string;
     themeParams: {
-      bg_color: string;
-      text_color: string;
-      hint_color: string;
-      link_color: string;
-      button_color: string;
-      button_text_color: string;
+        bg_color: string;
+        text_color: string;
+        hint_color: string;
+        link_color: string;
+        button_color: string;
+        button_text_color: string;
     };
     viewportHeight: number;
     headerColor: string;
     isExpanded: boolean;
     hapticFeedback: {
-      impactOccurred: (style: 'light' | 'medium' | 'heavy') => void;
+        impactOccurred: (style: 'light' | 'medium' | 'heavy') => void;
     };
-    ready: () => void; // Add 'ready' method type here
-  }
-  
-  interface Telegram {
+    ready: () => void;
+    close: () => void;
+    expand: () => void;
+    sendData: (data: string) => void;
+    openLink: (url: string) => void;
+    showPopup: (params: object) => void;
+    showAlert: (message: string) => void;
+    showConfirm: (message: string, callback?: (confirmed: boolean) => void) => void;
+}
+
+interface Telegram {
     WebApp: TelegramWebApp;
-  }
-  
-  interface Window {
+}
+
+interface Window {
     Telegram: Telegram;
-  }
-  
+}
