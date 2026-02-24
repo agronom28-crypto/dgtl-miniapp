@@ -65,35 +65,35 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           className={`tab h-16 ${isActive("/shop") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/shop"
         >
-          <img src="/icons/white/shop.svg" alt="Shop" className="w-8 h-8" />
+          <img src="/icons/white/basket.svg" alt="Shop" className="w-8 h-8" />
         </a>
         <a
           role="tab"
           className={`tab h-16 ${isActive("/staking") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/staking"
         >
-          <img src="/icons/white/staking.svg" alt="Staking" className="w-8 h-8" />
+          <img src="/icons/white/invoice-1.svg" alt="Staking" className="w-8 h-8" />
         </a>
         <a
           role="tab"
           className={`tab h-16 ${isActive("/friends") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/friends"
         >
-          <img src="/icons/white/friends.svg" alt="Friends" className="w-8 h-8" />
+          <img src="/icons/white/user-group.svg" alt="Friends" className="w-8 h-8" />
         </a>
         <a
           role="tab"
           className={`tab h-16 ${isActive("/tasks") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/tasks"
         >
-          <img src="/icons/white/tasks.svg" alt="Tasks" className="w-8 h-8" />
+          <img src="/icons/white/periodic-table.svg" alt="Tasks" className="w-8 h-8" />
         </a>
         <a
           role="tab"
           className={`tab h-16 ${isActive("/boosts") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/boosts"
         >
-          <img src="/icons/white/boosts.svg" alt="Boosts" className="w-8 h-8" />
+          <img src="/icons/white/rocket.svg" alt="Boosts" className="w-8 h-8" />
         </a>
       </div>
     </div>
