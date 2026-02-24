@@ -33,6 +33,9 @@ const publicPaths = [
   '/collection',
   '/friends',
   '/tasks',
+      '/periodic-table',
+    '/api/leveldata',
+    '/',
 ];
 
 export async function middleware(request: NextRequest) {
