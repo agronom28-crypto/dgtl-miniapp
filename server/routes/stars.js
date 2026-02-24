@@ -50,8 +50,8 @@ router.post('/create-invoice', async (req, res) => {
                 })
             }
         );
-        const tgData = await tgRes.json();
 
+        const tgData = await tgRes.json();
         if (!tgData.ok) {
             console.error('Telegram API error:', tgData);
             return res.status(500).json({ success: false, error: tgData.description || 'Telegram API error' });
@@ -89,6 +89,7 @@ router.post('/create-pending', async (req, res) => {
 router.post('/confirm', async (req, res) => {
     try {
         const { invoicePayload, paymentId, providerPaymentChargeId, telegramId } = req.body;
+
         const payment = await StarsPayment.findOne({
             invoicePayload,
             telegramId,
@@ -97,6 +98,7 @@ router.post('/confirm', async (req, res) => {
         if (!payment) {
             return res.status(404).json({ success: false, error: 'Pending payment not found' });
         }
+
         payment.status = 'completed';
         payment.paymentId = paymentId;
         payment.providerPaymentChargeId = providerPaymentChargeId;
@@ -105,24 +107,26 @@ router.post('/confirm', async (req, res) => {
 
         // Если покупка доли — выдаём пользователю
         if (payment.itemType === 'icon' && payment.itemId) {
-            // Ищем userId по telegramId
             const user = await User.findOne({ telegramId: payment.telegramId });
             if (user) {
-                const existingUserIcon = await UserIcon.findOne({
+                // Создаём новую запись UserIcon (игрок может купить несколько долей)
+                const icon = await Icon.findById(payment.itemId);
+                const userIcon = new UserIcon({
                     userId: user._id,
-                    iconId: payment.itemId
+                    iconId: payment.itemId,
+                    shareLabel: (icon && icon.shareLabel) || '1/10 доли',
+                    purchasedAt: new Date()
                 });
-                if (!existingUserIcon) {
-                    const userIcon = new UserIcon({
-                        userId: user._id,
-                        iconId: payment.itemId,
-                        shareLabel: '1/10 доли',
-                        purchasedAt: new Date()
-                    });
-                    await userIcon.save();
+                await userIcon.save();
+
+                // Уменьшаем доступные доли
+                if (icon && icon.availableShares !== undefined && icon.availableShares > 0) {
+                    icon.availableShares -= 1;
+                    await icon.save();
                 }
             }
         }
+
         res.json({ success: true, payment });
     } catch (error) {
         console.error('Error confirming payment:', error);
