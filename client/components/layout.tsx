@@ -29,7 +29,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="fixed top-3 right-3 z-50">
         <button
           onClick={toggleLang}
-          className="btn btn-xs btn-outline border-accent text-accent shadow-glow"
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            color: '#ffffff',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '8px',
+            padding: '4px 12px',
+            fontSize: '12px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            backdropFilter: 'blur(4px)',
+          }}
         >
           {lang === 'ru' ? 'EN' : 'RU'}
         </button>
@@ -55,35 +65,35 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           className={`tab h-16 ${isActive("/shop") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/shop"
         >
-          <img src="/icons/white/basket.svg" alt="Shop" className="w-8 h-8" />
+          <img src="/icons/white/shop.svg" alt="Shop" className="w-8 h-8" />
         </a>
         <a
           role="tab"
           className={`tab h-16 ${isActive("/staking") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/staking"
         >
-          <img src="/icons/white/invoice-1.svg" alt="Staking" className="w-8 h-8" />
+          <img src="/icons/white/staking.svg" alt="Staking" className="w-8 h-8" />
         </a>
         <a
           role="tab"
-          className={`tab h-16 ${isActive("/payment") ? "border-2 border-accent shadow-glow" : ""}`}
-          href="/payment"
+          className={`tab h-16 ${isActive("/friends") ? "border-2 border-accent shadow-glow" : ""}`}
+          href="/friends"
         >
-          <img src="/icons/white/user-group.svg" alt="Stars" className="w-8 h-8" />
+          <img src="/icons/white/friends.svg" alt="Friends" className="w-8 h-8" />
         </a>
         <a
           role="tab"
-          className={`tab h-16 ${isActive("/periodic-table") ? "border-2 border-accent shadow-glow" : ""}`}
-          href="/periodic-table"
+          className={`tab h-16 ${isActive("/tasks") ? "border-2 border-accent shadow-glow" : ""}`}
+          href="/tasks"
         >
-          <img src="/icons/white/periodic-table.svg" alt="Periodic Table" className="w-8 h-8" />
+          <img src="/icons/white/tasks.svg" alt="Tasks" className="w-8 h-8" />
         </a>
         <a
           role="tab"
           className={`tab h-16 ${isActive("/boosts") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/boosts"
         >
-          <img src="/icons/white/rocket.svg" alt="Boosts" className="w-8 h-8" />
+          <img src="/icons/white/boosts.svg" alt="Boosts" className="w-8 h-8" />
         </a>
       </div>
     </div>
