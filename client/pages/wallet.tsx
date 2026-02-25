@@ -4,8 +4,12 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { getTranslations, Lang } from '../lib/i18n';
 import { useRouter } from 'next/router';
+import { useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
+// Dev mode fallback telegramId for testing outside Telegram
+const DEV_TELEGRAM_ID = 12345678;
 
 interface WalletStatus {
   connected: boolean;
@@ -22,14 +26,20 @@ const WalletPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tonConnectUI] = useTonConnectUI();
+  const tonWallet = useTonWallet();
 
   const t = getTranslations(lang);
 
-  // Get telegramId from session or Telegram WebApp
+  // Get telegramId from session or Telegram WebApp, fallback to dev ID
   const getTelegramId = useCallback(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user?.id) {
       return tg.initDataUnsafe.user.id;
+    }
+    // Dev mode fallback
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return DEV_TELEGRAM_ID;
     }
     return null;
   }, []);
@@ -37,8 +47,11 @@ const WalletPage: React.FC = () => {
   // Fetch wallet status
   const fetchWalletStatus = useCallback(async () => {
     const telegramId = getTelegramId();
-    if (!telegramId) return;
-
+    if (!telegramId) {
+      setLoading(false);
+      setError('Could not detect Telegram user. Please open in Telegram.');
+      return;
+    }
     try {
       setLoading(true);
       const response = await axios.get(
@@ -48,7 +61,12 @@ const WalletPage: React.FC = () => {
         setWalletStatus(response.data.data);
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to fetch wallet status');
+      // If user not found, show connect wallet UI instead of error
+      if (err.response?.status === 404) {
+        setWalletStatus({ connected: false, walletAddress: null, balance: 0, tonBalance: null });
+      } else {
+        setError(err.response?.data?.error || 'Failed to fetch wallet status');
+      }
     } finally {
       setLoading(false);
     }
@@ -64,34 +82,37 @@ const WalletPage: React.FC = () => {
       setConnecting(true);
       setError(null);
 
-      // Use TonConnect UI
-      const tonConnect = (window as any).__tonConnectUI;
-      if (!tonConnect) {
+      if (!tonConnectUI) {
         setError('TON Connect is not initialized');
         return;
       }
 
-      const connectedWallet = await tonConnect.connectWallet();
-      if (connectedWallet) {
-        const walletAddress = connectedWallet.account.address;
-        const telegramId = getTelegramId();
-
-        // Save wallet to backend
-        const response = await axios.post(`${API_URL}/api/wallet/connect`, {
-          telegramId,
-          walletAddress,
-        });
-
-        if (response.data.success) {
-          await fetchWalletStatus();
-        }
-      }
+      await tonConnectUI.openModal();
     } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'Connection failed');
+      setError(err.message || 'Connection failed');
     } finally {
       setConnecting(false);
     }
   };
+
+  // Watch for wallet connection changes from TonConnect
+  useEffect(() => {
+    if (tonWallet) {
+      const walletAddress = tonWallet.account.address;
+      const telegramId = getTelegramId();
+      if (telegramId && walletAddress) {
+        // Save wallet to backend
+        axios.post(`${API_URL}/api/wallet/connect`, {
+          telegramId,
+          walletAddress,
+        }).then(() => {
+          fetchWalletStatus();
+        }).catch((err) => {
+          setError(err.response?.data?.error || 'Failed to save wallet');
+        });
+      }
+    }
+  }, [tonWallet, getTelegramId, fetchWalletStatus]);
 
   // Handle disconnect
   const handleDisconnectWallet = async () => {
@@ -105,9 +126,8 @@ const WalletPage: React.FC = () => {
 
       if (response.data.success) {
         // Also disconnect TonConnect
-        const tonConnect = (window as any).__tonConnectUI;
-        if (tonConnect) {
-          await tonConnect.disconnect();
+        if (tonConnectUI) {
+          await tonConnectUI.disconnect();
         }
         await fetchWalletStatus();
       }
@@ -229,7 +249,7 @@ const WalletPage: React.FC = () => {
               padding: '40px 20px',
               marginBottom: '20px',
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>&#128176;</div>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>{String.fromCodePoint(0x1F4B0)}</div>
               <h3 style={{ color: '#fff', marginBottom: '8px' }}>Connect Your Wallet</h3>
               <p style={{ color: '#aaa', fontSize: '14px' }}>
                 Connect your TON wallet to withdraw DGTL tokens
