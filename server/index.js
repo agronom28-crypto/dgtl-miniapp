@@ -5,7 +5,7 @@ const Level = require('./models/Level'); // Снова импортируем м
 require('dotenv').config();
 
 // Local MongoDB connection string
-  const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dgtl_miniapp';
+ const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dgtl_miniapp';
 const PORT = process.env.PORT || 5001;
 
 const app = express();
@@ -18,29 +18,38 @@ mongoose.set('strictQuery', false);
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
 .then(async () => { // <--- Снова делаем колбэк асинхронным
-  console.log('MongoDB connected successfully');
-  // ЗАКОММЕНТИРОВАНО: Принудительная очистка коллекции levels для диагностики
-  /*
-  try {
-    console.log('[SERVER STARTUP] Attempting to delete all documents from levels collection...');
-    const deleteResult = await Level.deleteMany({});
-    console.log(`[SERVER STARTUP] Successfully deleted ${deleteResult.deletedCount} documents from levels collection.`);
-  } catch (deleteErr) {
-    console.error('[SERVER STARTUP] Error deleting documents from levels collection:', deleteErr);
-  }
-  */
+    console.log('MongoDB connected successfully');
+    // ЗАКОММЕНТИРОВАНО: Принудительная очистка коллекции levels для диагностики
+    /*
+    try {
+        console.log('[SERVER STARTUP] Attempting to delete all documents from levels collection...');
+        const deleteResult = await Level.deleteMany({});
+        console.log(`[SERVER STARTUP] Successfully deleted ${deleteResult.deletedCount} documents from levels collection.`);
+    } catch (deleteErr) {
+        console.error('[SERVER STARTUP] Error deleting documents from levels collection:', deleteErr);
+    }
+    */
+
+    // Initialize TON client
+    const tonClient = require('./services/tonClient');
+    try {
+        await tonClient.initTonClient();
+        console.log('[SERVER STARTUP] TON client initialized');
+    } catch (tonError) {
+        console.warn('[SERVER STARTUP] TON client init failed:', tonError.message);
+    }
 })
 .catch(err => {
-  console.error('MongoDB connection error details:', {
-    error: err.message,
-    code: err.code,
-    name: err.name,
-    stack: err.stack
-  });
+    console.error('MongoDB connection error details:', {
+        error: err.message,
+        code: err.code,
+        name: err.name,
+        stack: err.stack
+    });
 });
 
 // Import routes
@@ -52,6 +61,8 @@ const stakingRoutes = require('./routes/staking');
 const adminRoutes = require('./routes/admin');
 const starsRoutes = require('./routes/stars');
 const boostsRoutes = require('./routes/boosts');
+const walletRoutes = require('./routes/wallet');
+const withdrawRoutes = require('./routes/withdraw');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -62,11 +73,13 @@ app.use('/api/shop', shopRoutes);
 app.use('/api/staking', stakingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/stars', starsRoutes);
+app.use('/api/wallet', walletRoutes);
+app.use('/api/withdraw', withdrawRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Server is running' });
+    res.json({ message: 'Server is running' });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
