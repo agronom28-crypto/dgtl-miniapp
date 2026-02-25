@@ -34,6 +34,17 @@ const WalletPage: React.FC = () => {
   // Get telegramId from session or Telegram WebApp, fallback to dev ID
   const getTelegramId = useCallback(() => {
     const tg = (window as any).Telegram?.WebApp;
+
+      useEffect(() => {
+            const savedLang = localStorage.getItem('app_lang') as Lang;
+            if (savedLang) setLang(savedLang);
+          }, []);
+
+      useEffect(() => {
+            const handleLangChange = (e: any) => setLang(e.detail as Lang);
+            window.addEventListener('langChange', handleLangChange);
+            return () => window.removeEventListener('langChange', handleLangChange);
+          }, []);
     if (tg?.initDataUnsafe?.user?.id) {
       return tg.initDataUnsafe.user.id;
     }
@@ -49,7 +60,7 @@ const WalletPage: React.FC = () => {
     const telegramId = getTelegramId();
     if (!telegramId) {
       setLoading(false);
-      setError('Could not detect Telegram user. Please open in Telegram.');
+      setError(t.wallet_error_detect);
       return;
     }
     try {
@@ -83,7 +94,7 @@ const WalletPage: React.FC = () => {
       setError(null);
 
       if (!tonConnectUI) {
-        setError('TON Connect is not initialized');
+        setError(t.wallet_error_init);
         return;
       }
 
@@ -250,7 +261,7 @@ const WalletPage: React.FC = () => {
               marginBottom: '20px',
             }}>
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>{String.fromCodePoint(0x1F4B0)}</div>
-              <h3 style={{ color: '#fff', marginBottom: '8px' }}>Connect Your Wallet</h3>
+              <h3 style={{ color: '#fff', marginBottom: '8px' }}>{t.wallet_connect_title}</h3>
               <p style={{ color: '#aaa', fontSize: '14px' }}>
                 Connect your TON wallet to withdraw DGTL tokens
               </p>
@@ -273,7 +284,7 @@ const WalletPage: React.FC = () => {
                 cursor: connecting ? 'not-allowed' : 'pointer',
               }}
             >
-              {connecting ? 'Connecting...' : 'Connect TON Wallet'}
+              {connecting ? t.wallet_connecting : t.wallet_connect_btn}
             </button>
           </div>
         )}
