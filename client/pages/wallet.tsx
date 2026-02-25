@@ -31,20 +31,20 @@ const WalletPage: React.FC = () => {
 
   const t = getTranslations(lang);
 
+    useEffect(() => {
+    const savedLang = localStorage.getItem('app_lang') as Lang;
+    if (savedLang) setLang(savedLang);
+  }, []);
+
+  useEffect(() => {
+    const handleLangChange = (e: any) => setLang(e.detail as Lang);
+    window.addEventListener('langChange', handleLangChange);
+    return () => window.removeEventListener('langChange', handleLangChange);
+  }, []);
+
   // Get telegramId from session or Telegram WebApp, fallback to dev ID
   const getTelegramId = useCallback(() => {
     const tg = (window as any).Telegram?.WebApp;
-
-      useEffect(() => {
-            const savedLang = localStorage.getItem('app_lang') as Lang;
-            if (savedLang) setLang(savedLang);
-          }, []);
-
-      useEffect(() => {
-            const handleLangChange = (e: any) => setLang(e.detail as Lang);
-            window.addEventListener('langChange', handleLangChange);
-            return () => window.removeEventListener('langChange', handleLangChange);
-          }, []);
     if (tg?.initDataUnsafe?.user?.id) {
       return tg.initDataUnsafe.user.id;
     }
