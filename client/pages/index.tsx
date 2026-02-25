@@ -25,6 +25,11 @@ const Index = () => {
     const savedLang = localStorage.getItem('app_lang') as Lang;
     if (savedLang) setLang(savedLang);
   }, []);
+    useEffect(() => {
+    const handleLangChange = (e: any) => setLang(e.detail as Lang);
+    window.addEventListener('langChange', handleLangChange);
+    return () => window.removeEventListener('langChange', handleLangChange);
+  }, []);
 
   const fetchLevels = useCallback(async () => {
     try {
