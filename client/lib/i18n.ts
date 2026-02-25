@@ -48,6 +48,24 @@ export function getMineralName(lang: Lang, name: string): string {
   return MINERAL_NAMES[lang][name] || name;
 }
 
+// ======= RESOURCE TYPE NAMES =======
+export const RESOURCE_TYPE_NAMES: Record<Lang, Record<string, string>> = {
+  ru: {
+    gold: 'Золото', copper: 'Медь', iron: 'Железо',
+    rare_metals: 'Редкие металлы', oil_gas: 'Нефть и газ',
+    diamonds: 'Алмазы', coal: 'Уголь',
+  },
+  en: {
+    gold: 'Gold', copper: 'Copper', iron: 'Iron',
+    rare_metals: 'Rare Metals', oil_gas: 'Oil & Gas',
+    diamonds: 'Diamonds', coal: 'Coal',
+  },
+};
+
+export function getResourceTypeName(lang: Lang, type: string): string {
+  return RESOURCE_TYPE_NAMES[lang][type] || type;
+}
+
 // ======= BOOST CARD NAMES =======
 export const BOOST_NAMES: Record<Lang, Record<string, string>> = {
   ru: {
