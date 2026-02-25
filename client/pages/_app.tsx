@@ -3,6 +3,9 @@ import type { AppProps } from 'next/app';
 import '../styles/globals.css';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
+import { TonConnectUIProvider } from '@tonconnect/ui-react';
+
+const manifestUrl = 'https://dgtl-miniapp.vercel.app/tonconnect-manifest.json';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isTelegram, setIsTelegram] = useState<boolean | null>(null);
@@ -28,49 +31,51 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const showDevBanner = isTelegram === false && isDevMode;
 
   return (
-    <SessionProvider session={session}>
-      <Head>
-        <script src="https://telegram.org/js/telegram-web-app.js" />
-      </Head>
-      {showDevBanner && (
-        <div style={{
-              background: '#ff9800',
-              color: '#000',
-              textAlign: 'center',
-              padding: '4px 16px',
-              fontSize: '11px',
-              position: 'fixed',
-              top: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              borderRadius: '0 0 8px 8px',
-              zIndex: 9999,
-              whiteSpace: 'nowrap'
-        }}>
-          Dev mode - open in Telegram for full functionality
-        </div>
-      )}
-      {isTelegram === false && !isDevMode ? (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-          textAlign: 'center',
-          padding: '20px',
-          background: '#000',
-          color: '#fff'
-        }}>
-          <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>DGTL Mini App</h1>
-          <p style={{ opacity: 0.7 }}>Please open this app inside Telegram</p>
-        </div>
-      ) : (
-        <div style={{ marginTop: showDevBanner ? '28px' : '0' }}>
-          <Component {...pageProps} />
-        </div>
-      )}
-    </SessionProvider>
+    <TonConnectUIProvider manifestUrl={manifestUrl}>
+      <SessionProvider session={session}>
+        <Head>
+          <script src="https://telegram.org/js/telegram-web-app.js" />
+        </Head>
+        {showDevBanner && (
+          <div style={{
+            background: '#ff9800',
+            color: '#000',
+            textAlign: 'center',
+            padding: '4px 16px',
+            fontSize: '11px',
+            position: 'fixed',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            borderRadius: '0 0 8px 8px',
+            zIndex: 9999,
+            whiteSpace: 'nowrap'
+          }}>
+            Dev mode - open in Telegram for full functionality
+          </div>
+        )}
+        {isTelegram === false && !isDevMode ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100vh',
+            textAlign: 'center',
+            padding: '20px',
+            background: '#000',
+            color: '#fff'
+          }}>
+            <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>DGTL Mini App</h1>
+            <p style={{ opacity: 0.7 }}>Please open this app inside Telegram</p>
+          </div>
+        ) : (
+          <div style={{ marginTop: showDevBanner ? '28px' : '0' }}>
+            <Component {...pageProps} />
+          </div>
+        )}
+      </SessionProvider>
+    </TonConnectUIProvider>
   );
 }
 
