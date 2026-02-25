@@ -5,7 +5,11 @@ import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 
-const manifestUrl = 'https://dgtl-miniapp.vercel.app/tonconnect-manifest.json';
+// Use env variable for manifest URL, fallback to localhost for dev
+const manifestUrl = process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL
+  || (typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? `${window.location.origin}/tonconnect-manifest.json`
+    : 'https://dgtl-miniapp.vercel.app/tonconnect-manifest.json');
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isTelegram, setIsTelegram] = useState<boolean | null>(null);
