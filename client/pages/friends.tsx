@@ -29,27 +29,7 @@ const Index: React.FC = () => {
     { name: "Bob", coins: 950 },
     { name: "Charlie", coins: 780 },
     { name: "Diana", coins: 1500 },
-    { name: "Eve", coins: 1100 },
-    { name: "Alice", coins: 1200 },
-    { name: "Bob", coins: 950 },
-    { name: "Charlie", coins: 780 },
-    { name: "Diana", coins: 1500 },
-    { name: "Eve", coins: 1100 },
-    { name: "Alice", coins: 1200 },
-    { name: "Bob", coins: 950 },
-    { name: "Charlie", coins: 780 },
-    { name: "Diana", coins: 1500 },
-    { name: "Eve", coins: 1100 },
-    { name: "Alice", coins: 1200 },
-    { name: "Bob", coins: 950 },
-    { name: "Charlie", coins: 780 },
-    { name: "Diana", coins: 1500 },
-    { name: "Eve", coins: 1100 },
-    { name: "Alice", coins: 1200 },
-    { name: "Bob", coins: 950 },
-    { name: "Charlie", coins: 780 },
-    { name: "Diana", coins: 1500 },
-    { name: "Eve", coins: 1100 }
+    { name: "Eve", coins: 1100 },  
   ];
 
   const handleInvite = () => {
