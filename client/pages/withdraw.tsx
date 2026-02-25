@@ -7,6 +7,9 @@ import { useRouter } from 'next/router';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
+// Dev mode fallback telegramId for testing outside Telegram
+const DEV_TELEGRAM_ID = 12345678;
+
 interface WithdrawConfig {
   commissionRate: number;
   minWithdrawGTL: number;
@@ -32,19 +35,23 @@ const WithdrawPage: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [config, setConfig] = useState<WithdrawConfig | null>(null);
   const [history, setHistory] = useState<WithdrawHistory[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [estimate, setEstimate] = useState<any>(null);
   const [userBalance, setUserBalance] = useState(0);
-
   const t = getTranslations(lang);
 
   const getTelegramId = useCallback(() => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user?.id) {
       return tg.initDataUnsafe.user.id;
+    }
+    // Dev mode fallback
+    if (process.env.NODE_ENV === 'development' || !tg) {
+      console.warn('Telegram WebApp not available, using dev telegramId');
+      return DEV_TELEGRAM_ID;
     }
     return null;
   }, []);
@@ -61,21 +68,25 @@ const WithdrawPage: React.FC = () => {
             : Promise.resolve({ data: { success: true, data: { requests: [] } } }),
           telegramId
             ? axios.get(`${API_URL}/api/wallet/status?telegramId=${telegramId}`)
-            : Promise.resolve({ data: { success: true, data: { balance: 0 } } }),
+            : Promise.resolve({ data: { success: true, data: { balance: 0, connected: true } } }),
         ]);
 
         if (configRes.data.success) setConfig(configRes.data.data);
         if (historyRes.data.success) setHistory(historyRes.data.data.requests || []);
         if (walletRes.data.success) {
           setUserBalance(walletRes.data.data.balance || 0);
-          if (!walletRes.data.data.connected) {
+          // Only redirect if wallet is genuinely not connected (not dev fallback)
+          if (!walletRes.data.data.connected && walletRes.data.data.walletAddress) {
             router.push('/wallet');
           }
         }
       } catch (err) {
         console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchData();
   }, [getTelegramId, router]);
 
@@ -95,6 +106,7 @@ const WithdrawPage: React.FC = () => {
         setEstimate(null);
       }
     };
+
     const timer = setTimeout(fetchEstimate, 300);
     return () => clearTimeout(timer);
   }, [amount]);
@@ -122,6 +134,7 @@ const WithdrawPage: React.FC = () => {
           setError(data.error || 'Withdrawal failed. Your GTL has been refunded.');
         }
         setAmount('');
+
         // Refresh data
         const [historyRes, walletRes] = await Promise.all([
           axios.get(`${API_URL}/api/withdraw/history?telegramId=${telegramId}`),
@@ -147,6 +160,16 @@ const WithdrawPage: React.FC = () => {
       default: return '#aaa';
     }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: '#aaa' }}>
+          Loading...
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
