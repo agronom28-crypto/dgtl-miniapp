@@ -6,7 +6,7 @@ import { IIcon, IUserIcon, ContinentKey, CONTINENT_LABELS, RESOURCE_LABELS, Reso
 import { shopService } from '../services/shopService';
 import { starsService } from '../services/starsService';
 import { showNotification } from '../lib/notifications';
-import { getTranslations, getCountryName, Lang } from '../lib/i18n';
+import { getTranslations, getCountryName, getResourceTypeName, Lang } from '../lib/i18n';
 import styles from '../styles/Shop.module.css';
 import WorldMap from '../components/WorldMap';
 import axios from 'axios';
@@ -46,6 +46,13 @@ const Shop: React.FC = () => {
   useEffect(() => {
     const savedLang = localStorage.getItem('app_lang') as Lang;
     if (savedLang) setLang(savedLang);
+  }, []);
+    useEffect(() => {
+    const handleLangChange = (e: any) => {
+      setLang(e.detail as Lang);
+    };
+    window.addEventListener('langChange', handleLangChange);
+    return () => window.removeEventListener('langChange', handleLangChange);
   }, []);
   useEffect(() => {
     if (session?.user) loadUserData();
@@ -178,6 +185,7 @@ const Shop: React.FC = () => {
                   <img src={icon.imageUrl || RESOURCE_ICON_URLS[icon.resourceType] || '/icons/resources/gold.svg'} alt={getIconName(icon)} className={styles.cardImage} />
                   <div className={styles.cardName}>{getIconName(icon)}</div>
                   <div className={styles.cardCountry}>{getCountryName(lang, icon.country)}</div>
+                                    <div className={styles.cardResource}>{icon.resourceEmoji} {getResourceTypeName(lang, icon.resourceType)}</div>
                   <div className={styles.cardShare}>{t.shop_share}</div>
                   <div className={styles.cardRate}>+{icon.stakingRate}{t.shop_per_hour}</div>
                   {owned > 0 &&
