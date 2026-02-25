@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   boosts: { type: Map, of: Number, default: () => new Map() },
   collectedMinerals: { type: Map, of: Number, default: () => new Map() },
   lastGamePlayed: { type: Date, default: null },
+      walletAddress: { type: String, default: null },
 }, {
   timestamps: true // Автоматически добавляет и управляет createdAt и updatedAt
 });
