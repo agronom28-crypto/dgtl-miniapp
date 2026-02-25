@@ -67,7 +67,7 @@ const WithdrawPage: React.FC = () => {
             ? axios.get(`${API_URL}/api/withdraw/history?telegramId=${telegramId}`)
             : Promise.resolve({ data: { success: true, data: { requests: [] } } }),
           telegramId
-            ? axios.get(`${API_URL}/api/wallet/status?telegramId=${telegramId}`)
+            ? axios.get(`${API_URL}/api/wallet/status?telegramId=${telegramId}`).catch(() => ({ data: { success: true, data: { balance: 0, connected: true } } }))
             : Promise.resolve({ data: { success: true, data: { balance: 0, connected: true } } }),
         ]);
 
@@ -138,7 +138,7 @@ const WithdrawPage: React.FC = () => {
         // Refresh data
         const [historyRes, walletRes] = await Promise.all([
           axios.get(`${API_URL}/api/withdraw/history?telegramId=${telegramId}`),
-          axios.get(`${API_URL}/api/wallet/status?telegramId=${telegramId}`),
+          axios.get(`${API_URL}/api/wallet/status?telegramId=${telegramId}`).catch(() => ({ data: { success: true, data: { balance: 0, connected: true } } })),
         ]);
         if (historyRes.data.success) setHistory(historyRes.data.data.requests || []);
         if (walletRes.data.success) setUserBalance(walletRes.data.data.balance || 0);
@@ -274,7 +274,7 @@ const WithdrawPage: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: '#aaa', fontSize: '14px' }}>You receive</span>
               <span style={{ color: '#30d158', fontSize: '16px', fontWeight: 'bold' }}>
-                {estimate.outputDGTLFormatted} DGTL
+                {parseFloat(estimate.outputDGTLFormatted)} DGTL
               </span>
             </div>
           </div>
