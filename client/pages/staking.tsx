@@ -28,6 +28,11 @@ const StakingPage = () => {
     const savedLang = localStorage.getItem('app_lang') as Lang;
     if (savedLang) setLang(savedLang);
   }, []);
+    useEffect(() => {
+    const handleLangChange = (e: any) => setLang(e.detail as Lang);
+    window.addEventListener('langChange', handleLangChange);
+    return () => window.removeEventListener('langChange', handleLangChange);
+  }, []);
 
   // Fix: handle case when session is loaded but no telegramId
   useEffect(() => {
