@@ -20,7 +20,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const newLang: Lang = lang === 'ru' ? 'en' : 'ru';
     setLang(newLang);
     localStorage.setItem('app_lang', newLang);
-    window.location.reload();
+        window.dispatchEvent(new CustomEvent('langChange', { detail: newLang }));
   };
 
   return (
