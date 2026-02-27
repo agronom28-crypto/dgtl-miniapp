@@ -151,7 +151,7 @@ const Store: React.FC = () => {
             <div className="flex flex-col gap-4">
               {boostCards.map((card) => (
                 <div key={card.id} className="flex items-center bg-secondary text-white p-4 rounded-xl">
-                  <img src={card.imageUrl} alt={getBoostName(lang, card.title)} className="w-16 h-16 object-contain mr-4 rounded-xl" />
+                  <img src={card.imageUrl} alt={getBoostName(lang, card.title)} className="w-16 h-16 object-contain mr-4 rounded-xl" onError={(e) => { (e.target as HTMLImageElement).src = '/boosts/boost.png'; }} />
                   <div className="flex-1">
                     <h3 className="font-bold text-lg">{getBoostName(lang, card.title)}</h3>
                     <p className="text-sm font-semibold">{card.price} GTL</p>
@@ -173,7 +173,7 @@ const Store: React.FC = () => {
           <div className="flex flex-col gap-4">
             {minerals.map((m, i) => (
               <div key={i} className="flex items-center bg-secondary text-white p-4 rounded-xl">
-                <img src={m.imageUrl} alt={m.name} className="w-16 h-16 object-contain mr-4 rounded-xl" />
+                <img src={m.imageUrl} alt={m.name} className="w-16 h-16 object-contain mr-4 rounded-xl" onError={(e) => { (e.target as HTMLImageElement).src = '/boosts/boost.png'; }} />
                 <div className="flex-1">
                   <p className="font-bold text-lg">{getMineralName(lang, m.name)} ({m.symbol})</p>
                   <p className="text-sm font-semibold">{m.price} GTL</p>
