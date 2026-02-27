@@ -38,7 +38,6 @@ const GameHUD: React.FC<GameHUDProps> = ({ score, timeLeft, boostCards, onBoostC
               alt={`Boost ${boost.id}`}
               className="w-full h-full object-contain rounded-xl"
               style={{ opacity: cooldowns[boost.id] ? 0.6 : 1 }}
-                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => { e.currentTarget.src = '/boosts/boost.png'; }}
             />
             
             {/* Cooldown Overlay */}
