@@ -11,6 +11,7 @@ import { LEVELS, LevelConfig } from "../game/constants/levels";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 
+import AnimatedBackground from "../components/game/AnimatedBackground";
 interface BoostCard {
   id: string;
   imageUrl: string;
@@ -236,7 +237,7 @@ const GamePage: React.FC = () => {
 
   // Effect to initialize or re-initialize the game when dependencies change
   useEffect(() => {
-    if (currentLevel && !isDataLoading && !isImagesLoading && !gameOver && canvasRef.current) {
+    if (1 && !isDataLoading && !isImagesLoading && !gameOver && canvasRef.current) {
       initializeGame();
     }
 
@@ -447,6 +448,7 @@ const GamePage: React.FC = () => {
             }}
          />
       )}
+            <AnimatedBackground />
 
       <GameHUD
         score={score}
