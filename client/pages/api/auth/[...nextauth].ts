@@ -24,6 +24,13 @@ export const authOptions: NextAuthOptions  = {
         try {
           const initData = credentials?.initData;
           console.log(initData);
+
+                      // DEV MODE: Skip Telegram verification in development
+            if (!initData && process.env.NODE_ENV === 'development') {
+              await connectToDatabase();
+              const devUser = await findOrCreateUser({ id: '999999999', telegramId: '999999999', first_name: 'Dev', last_name: 'User', username: 'devuser' });
+              return { id: devUser._id.toString(), telegramId: devUser.telegramId, firstName: devUser.firstName, lastName: devUser.lastName || '', username: devUser.username || '' };
+            }
           if (!initData) {
             throw new Error('Missing Telegram Init Data');
           }
