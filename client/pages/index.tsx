@@ -94,14 +94,42 @@ const Index = () => {
 
   if (status === 'loading' || loading) {
     return (
-      <>
+            <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+      }}>
         <Head>
           <title>Home | DGTL P2E Game</title>
         </Head>
-        <div className="flex items-center justify-center h-screen">
-          <span className="loading loading-spinner loading-lg"></span>
+        <div style={{
+          fontSize: '48px',
+          fontWeight: 'bold',
+          color: '#ffffff',
+          textShadow: '0 0 20px rgba(100, 149, 237, 0.8)',
+          marginBottom: '20px',
+          letterSpacing: '8px',
+        }}>
+          DGTL
         </div>
-      </>
+        <div style={{
+          fontSize: '14px',
+          color: 'rgba(255,255,255,0.6)',
+          marginBottom: '30px',
+        }}>
+          P2E Mining Game
+        </div>
+        <span className="loading loading-spinner loading-lg" style={{ color: '#6495ED' }}></span>
+      </div>
+    );
     );
   }
 
