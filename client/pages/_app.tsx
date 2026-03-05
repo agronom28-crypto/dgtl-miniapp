@@ -36,6 +36,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   // Show warning banner when not in Telegram (but still render the app for testing)
   const showDevBanner = isTelegram === false && isDevMode && !router.pathname.startsWith('/game');
 
+    // Hide TonConnect widget on game page
+  const isGamePage = router.pathname.startsWith('/game');
+  useEffect(() => {
+    const tcWidget = document.getElementById('tc-widget-root');
+    if (tcWidget) {
+      tcWidget.style.display = isGamePage ? 'none' : '';
+    }
+  }, [isGamePage]);
+
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
       <SessionProvider session={session}>
