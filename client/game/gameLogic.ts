@@ -330,6 +330,9 @@ export class Game {
         }, 5000);
     }
 
+            private applyDoublePointsBoost() {
+            this.doublePointsActive = true;
+            this.scoreMultiplier = 2;
         setTimeout(() => {
             console.log("Double Points Boost Ended!"); // Можно оставить для информации игроку
             this.doublePointsActive = false;
