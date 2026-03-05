@@ -1,6 +1,10 @@
-import Link from 'next/link';
+import { signIn } from 'next-auth/react';
 
 export default function Error1Page() {
+  const handleDevLogin = async () => {
+    await signIn('credentials', { redirect: true, callbackUrl: '/' });
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
@@ -16,11 +20,12 @@ export default function Error1Page() {
         <p className="text-gray-400 text-sm mb-6">
           Please open this mini-app through the Telegram bot.
         </p>
-        <Link href="/game">
-          <span className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors cursor-pointer">
-            Continue to Game (Dev Mode)
-          </span>
-        </Link>
+        <button
+          onClick={handleDevLogin}
+          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors cursor-pointer"
+        >
+          Continue to Game (Dev Mode)
+        </button>
       </div>
     </div>
   );
