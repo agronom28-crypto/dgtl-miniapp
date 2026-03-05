@@ -130,7 +130,6 @@ const Index = () => {
         <span className="loading loading-spinner loading-lg" style={{ color: '#6495ED' }}></span>
       </div>
     );
-    );
   }
 
   if (!userData) {
