@@ -60,6 +60,7 @@ const GamePage: React.FC = () => {
   const [boostCards, setBoostCards] = useState<BoostCard[]>([]);
   const [userBoosts, setUserBoosts] = useState<UserBoosts>({});
     const [equippedBoots, setEquippedBoots] = useState<string | null>(null);
+      const [equippedPickaxe, setEquippedPickaxe] = useState<string | null>(null);
   const [cooldowns, setCooldowns] = useState<{ [key: string]: number | null }>({});
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isImagesLoading, setIsImagesLoading] = useState(true);
@@ -121,6 +122,7 @@ const GamePage: React.FC = () => {
           const userResponse = await axios.get("/api/user/data");
           setUserBoosts(userResponse.data.boosts || {});
                       setEquippedBoots(userResponse.data.equippedBoots || null);
+                                setEquippedPickaxe(userResponse.data.equippedPickaxe || null);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -224,7 +226,9 @@ const GamePage: React.FC = () => {
     );
 
     // Set boots equipped status from user data
-    gameInstance.setBootsEquipped(!!equippedBoots);
+    gameInstance.setBootsEquipped(equippedBoots || 'none');
+    gameInstance.setPickaxeEquipped(equippedPickaxe || 'none', 2);
+
 
     gameInstance.startGame();
     gameRef.current = gameInstance;

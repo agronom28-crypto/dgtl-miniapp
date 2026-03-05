@@ -60,10 +60,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <img src="/icons/white/basket.svg" alt="Shop" className="w-6 h-6 mb-1" />
           Shop
         </a>
-        <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/boosts') ? 'text-yellow-400' : 'text-gray-400'}`} href="/boosts">
-          <img src="/icons/white/rocket.svg" alt="Boosts" className="w-6 h-6 mb-1" />
-          Boosts
-        </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/staking') ? 'text-yellow-400' : 'text-gray-400'}`} href="/staking">
           <img src="/icons/white/periodic-table.svg" alt="Staking" className="w-6 h-6 mb-1" />
           Staking

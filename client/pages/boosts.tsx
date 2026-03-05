@@ -32,6 +32,8 @@ const Store: React.FC = () => {
   const [userData, setUserData] = useState<IUserState | null>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState<boolean>(true);
   const [buyingId, setBuyingId] = useState<string | null>(null);
+    const [equippedBoots, setEquippedBoots] = useState<string | null>(null);
+  const [equippedPickaxe, setEquippedPickaxe] = useState<string | null>(null);
 
   useEffect(() => {
     const savedLang = localStorage.getItem('app_lang') as Lang;
@@ -134,6 +136,27 @@ const Store: React.FC = () => {
     } catch (err) { showNotification(t.boosts_stars_error, 'error'); } finally { setBuyingId(null); }
   };
 
+  const handleEquip = async (boostId: string, type: string) => {
+    try {
+      const response = await fetch('/api/equip-boost', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ boostId, type }),
+      });
+      if (response.ok) {
+        if (type === 'boots') {
+          setEquippedBoots(boostId);
+          showNotification(t.boosts_equipped || 'Equipped!', 'success');
+        } else if (type === 'tool') {
+          setEquippedPickaxe(boostId);
+          showNotification(t.boosts_equipped || 'Equipped!', 'success');
+        }
+      }
+    } catch (err) {
+      showNotification('Error equipping', 'error');
+    }
+  };
+
   const isLoading = isBoostsLoading || isUserDataLoading;
 
   return (
@@ -161,6 +184,11 @@ const Store: React.FC = () => {
                   <div className="flex flex-col gap-2 ml-2">
                     <button className="btn btn-sm btn-base-100 rounded-xl" disabled={buyingId === card.id + '-coins'} onClick={() => handlePurchase(card.id)}>{buyingId === card.id + '-coins' ? '...' : t.boosts_buy}</button>
                     <button className="btn btn-sm btn-warning rounded-xl" disabled={buyingId === card.id + '-stars'} onClick={() => handlePurchaseStars(card.id)}>{buyingId === card.id + '-stars' ? '...' : t.boosts_stars}</button>
+                                      {((card as any).type === 'boots' || (card as any).type === 'tool') && (userData?.boosts?.[card.id] || 0) > 0 && (
+                    <button className="btn-sm bg-green-600 text-white rounded mt-1" onClick={() => handleEquip(card.id, (card as any).type)}>
+                      {equippedBoots === card.id || equippedPickaxe === card.id ? (lang === 'ru' ? 'Снять' : 'Unequip') : (lang === 'ru' ? 'Одеть' : 'Equip')}
+                    </button>
+                  )}
                   </div>
                 </div>
               ))}

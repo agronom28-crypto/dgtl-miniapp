@@ -4,6 +4,19 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 // Fields match IBoostCard interface: id, title, price, imageUrl, description, availability
 const mockBoostCards = [
   {
+    _id: 'dynamite1',
+    id: 'dynamite1',
+    title: 'Dynamite 1',
+    description: 'Collects all minerals on screen instantly',
+    price: 100,
+    imageUrl: '/images/dinamit1.png',
+    availability: true,
+    starsPrice: 1,
+    type: 'boost',
+    duration: 0,
+    multiplier: 1
+  },
+  {
     _id: 'pickaxe1',
     id: 'pickaxe1',
     title: 'Pickaxe 1',
@@ -11,7 +24,7 @@ const mockBoostCards = [
     price: 300,
     imageUrl: '/images/kirka1.png',
     availability: true,
-    starsPrice: 100,
+    starsPrice: 1,
     type: 'tool',
     duration: 0,
     multiplier: 2
@@ -24,7 +37,7 @@ const mockBoostCards = [
     price: 600,
     imageUrl: '/images/boot_female.png',
     availability: true,
-    starsPrice: 200,
+    starsPrice: 1,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -37,7 +50,7 @@ const mockBoostCards = [
     price: 750,
     imageUrl: '/images/boot_male.png',
     availability: true,
-    starsPrice: 250,
+    starsPrice: 1,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -50,7 +63,7 @@ const mockBoostCards = [
     price: 1200,
     imageUrl: '/images/magnit_boot.png',
     availability: true,
-    starsPrice: 400,
+    starsPrice: 1,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -63,23 +76,10 @@ const mockBoostCards = [
     price: 1500,
     imageUrl: '/images/boot_male.png',
     availability: true,
-    starsPrice: 500,
+    starsPrice: 1,
     type: 'boots',
     duration: 0,
     multiplier: 1
-  },
-  {
-    _id: 'tap_power_x2',
-    id: 'tap_power_x2',
-    title: 'Tap Power x2',
-    description: 'Double your tap power for 1 hour',
-    price: 500,
-    imageUrl: '/icons/resources/rare_metals.svg',
-    availability: true,
-    starsPrice: 25,
-    type: 'boost',
-    duration: 3600,
-    multiplier: 2
   }
 ];
 

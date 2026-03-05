@@ -5,342 +5,414 @@ import { LevelConfig } from "./constants/levels";
 import { MineralInfo, MINERALS as ALL_MINERALS } from "./constants/minerals";
 
 interface CollectedMinerals {
-    [mineralSymbol: string]: {
-        count: number;
-        value: number;
-        totalPoints: number;
-    };
+  [mineralSymbol: string]: {
+    count: number;
+    value: number;
+    totalPoints: number;
+  };
 }
 
 interface GameCallbacks {
-    onScoreUpdate?: (score: number) => void;
-    onTimeLeftUpdate?: (timeLeft: number) => void;
-    onGameOver?: (totalCollectedValue: number, collectedMinerals: CollectedMinerals) => void;
+  onScoreUpdate?: (score: number) => void;
+  onTimeLeftUpdate?: (timeLeft: number) => void;
+  onGameOver?: (totalCollectedValue: number, collectedMinerals: CollectedMinerals) => void;
 }
 
+// Footprint that fades out over time
+interface Footprint {
+  x: number;
+  y: number;
+  image: HTMLImageElement;
+  opacity: number;
+  createdAt: number;
+}
+
+// Boot type to footprint image mapping
+const BOOT_FOOTPRINTS: Record<string, { left: string; right: string }> = {
+  boots_female: { left: '/images/left_foot_female.png', right: '/images/right_foot_female.png' },
+  boots_male: { left: '/images/left_foot_male.png', right: '/images/right_foot_male.png' },
+  boots_golden: { left: '/images/left_foot_gold.png', right: '/images/right_foot_gold.png' },
+  boots_leather: { left: '/images/lef_foot_white.png', right: '/images/right_foot_white.png' },
+};
+
+const DEFAULT_FOOTPRINTS = {
+  left: '/images/foot1.png',
+  right: '/images/foot2.png',
+};
+
+const PICKAXE_FOOTPRINT = '/images/pickaxe_foot.png';
+
 export class Game {
-    private canvas: HTMLCanvasElement;
-    private context: CanvasRenderingContext2D;
-    private offscreenCanvas: HTMLCanvasElement;
-    private offscreenContext: CanvasRenderingContext2D;
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private offscreenCanvas: HTMLCanvasElement;
+  private offscreenContext: CanvasRenderingContext2D;
 
-    private windowWidth: number;
-    private windowHeight: number;
+  private windowWidth: number;
+  private windowHeight: number;
 
-    private entities: ImageEntity[] = [];
-    private score: number = 0;
-    private gameTime: number;
-    private spawnTimer: ReturnType<typeof setInterval> | null = null;
-    private gameTimer: ReturnType<typeof setInterval> | null = null;
-    private lastUpdateTime: number = 0;
-    private scoreMultiplier: number = 1;
-    private doublePointsActive: boolean = false;
-        private hasBoots: boolean = false;
-    private redStoneChance: number = 0.15; // 15% chance to spawn red stone
-    private collectedMinerals: CollectedMinerals = {};
+  private entities: ImageEntity[] = [];
+  private score: number = 0;
+  private gameTime: number;
+  private spawnTimer: ReturnType<typeof setInterval> | null = null;
+  private gameTimer: ReturnType<typeof setInterval> | null = null;
+  private lastUpdateTime: number = 0;
+  private scoreMultiplier: number = 1;
+  private doublePointsActive: boolean = false;
 
-    private level?: LevelConfig;
-    private mineralsPool: MineralInfo[] = [];
-    private spawnInterval: number;
-    private minSpeed: number;
-    private maxSpeed: number;
+  // Equipment state
+  private equippedBoots: string = 'none';
+  private equippedPickaxe: string = 'none';
+  private pickaxeMultiplier: number = 1;
 
-    // External callbacks for game events
-    private onScoreUpdate?: (score: number) => void;
-    private onTimeLeftUpdate?: (timeLeft: number) => void;
-    private onGameOver?: (totalCollectedValue: number, collectedMinerals: CollectedMinerals) => void;
-    private availableElements: MineralInfo[];
+  private redStoneChance: number = 0.15;
+  private collectedMinerals: CollectedMinerals = {};
 
-    constructor(
-        canvas: HTMLCanvasElement,
-        callbacks: GameCallbacks = {},
-        level?: LevelConfig,
-        availableElementDefs: MineralInfo[] = []
-    ) {
-        this.canvas = canvas;
-        this.context = this.canvas.getContext("2d")!;
-        this.windowWidth = window.innerWidth;
-        this.windowHeight = window.innerHeight;
+  // Footprints
+  private footprints: Footprint[] = [];
+  private footprintImages: Map<string, HTMLImageElement> = new Map();
+  private nextFootSide: 'left' | 'right' = 'left';
+  private readonly FOOTPRINT_DURATION = 1500; // ms
+  private readonly FOOTPRINT_SIZE = 50;
 
-        this.onScoreUpdate = callbacks.onScoreUpdate;
-        this.onTimeLeftUpdate = callbacks.onTimeLeftUpdate;
-        this.onGameOver = callbacks.onGameOver;
+  private level?: LevelConfig;
+  private mineralsPool: MineralInfo[] = [];
+  private spawnInterval: number;
+  private minSpeed: number;
+  private maxSpeed: number;
 
-        this.level = level;
-        this.availableElements = availableElementDefs.length > 0 ? availableElementDefs : ALL_MINERALS;
+  private onScoreUpdate?: (score: number) => void;
+  private onTimeLeftUpdate?: (timeLeft: number) => void;
+  private onGameOver?: (totalCollectedValue: number, collectedMinerals: CollectedMinerals) => void;
+  private availableElements: MineralInfo[];
 
-        if (level) {
-            const levelMineralSymbols = new Set(level.minerals);
-            this.mineralsPool = ALL_MINERALS.filter(mineral => levelMineralSymbols.has(mineral.symbol));
+  constructor(
+    canvas: HTMLCanvasElement,
+    callbacks: GameCallbacks = {},
+    level?: LevelConfig,
+    availableElementDefs: MineralInfo[] = []
+  ) {
+    this.canvas = canvas;
+    this.context = this.canvas.getContext("2d")!;
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
+    this.onScoreUpdate = callbacks.onScoreUpdate;
+    this.onTimeLeftUpdate = callbacks.onTimeLeftUpdate;
+    this.onGameOver = callbacks.onGameOver;
+    this.level = level;
+    this.availableElements = availableElementDefs.length > 0 ? availableElementDefs : ALL_MINERALS;
 
-            if (this.mineralsPool.length === 0 && level.minerals.length > 0) {
-                console.warn(`Для уровня ${level.id} ('${level.name}') указаны минералы (${level.minerals.join(', ')}), но ни один из них не найден в общем списке MINERALS. Пул спавна будет пуст.`);
-            } else if (level.minerals.length === 0) {
-                console.warn(`Для уровня ${level.id} ('${level.name}') не указаны минералы для спавна (level.minerals пуст). Пул спавна будет пуст.`);
-            }
-        } else if (availableElementDefs.length > 0) {
-            this.mineralsPool = availableElementDefs;
-            console.warn("Игра запущена без конфигурации уровня, используя переданный список доступных элементов.");
-        } else {
-            console.error("В конструктор Game не передана конфигурация уровня и нет списка доступных элементов. Пул минералов будет пуст.");
-            this.mineralsPool = [];
-        }
-
-        this.spawnInterval = level ? level.spawnInterval : DEFAULT_SPAWN_INTERVAL;
-        this.minSpeed = level ? level.minSpeed : DEFAULT_MIN_SPEED;
-        this.maxSpeed = level ? level.maxSpeed : DEFAULT_MAX_SPEED;
-        this.gameTime = level ? level.duration : DEFAULT_GAME_DURATION;
-
-        this.offscreenCanvas = document.createElement("canvas");
-        this.offscreenCanvas.width = this.windowWidth;
-        this.offscreenCanvas.height = this.windowHeight;
-        this.offscreenContext = this.offscreenCanvas.getContext("2d")!;
-
-        this.setupCanvas();
-        this.setupEventListeners();
+    if (level) {
+      const levelMineralSymbols = new Set(level.minerals);
+      this.mineralsPool = ALL_MINERALS.filter(mineral => levelMineralSymbols.has(mineral.symbol));
+      if (this.mineralsPool.length === 0 && level.minerals.length > 0) {
+        console.warn(`No minerals found for level ${level.id}`);
+      }
+    } else if (availableElementDefs.length > 0) {
+      this.mineralsPool = availableElementDefs;
+    } else {
+      this.mineralsPool = [];
     }
 
-    private setupCanvas() {
-        this.canvas.style.background = this.level ? this.level.background : "#000";
-        if (this.level && this.level.backgroundImage) {
-            this.canvas.style.backgroundImage = `url(${this.level.backgroundImage})`;
-            this.canvas.style.backgroundSize = "cover";
-            this.canvas.style.backgroundPosition = "center";
-            this.canvas.style.backgroundRepeat = "no-repeat";
-        } else {
-            this.canvas.style.backgroundImage = "none";
-        }
-        this.canvas.width = this.windowWidth;
-        this.canvas.height = this.windowHeight;
+    this.spawnInterval = level ? level.spawnInterval : DEFAULT_SPAWN_INTERVAL;
+    this.minSpeed = level ? level.minSpeed : DEFAULT_MIN_SPEED;
+    this.maxSpeed = level ? level.maxSpeed : DEFAULT_MAX_SPEED;
+    this.gameTime = level ? level.duration : DEFAULT_GAME_DURATION;
+
+    this.offscreenCanvas = document.createElement("canvas");
+    this.offscreenCanvas.width = this.windowWidth;
+    this.offscreenCanvas.height = this.windowHeight;
+    this.offscreenContext = this.offscreenCanvas.getContext("2d")!;
+
+    this.preloadFootprintImages();
+    this.setupCanvas();
+    this.setupEventListeners();
+  }
+
+  private preloadFootprintImages() {
+    // Preload default footprints
+    const loadImg = (src: string) => {
+      const img = new Image();
+      img.src = src;
+      this.footprintImages.set(src, img);
+    };
+    loadImg(DEFAULT_FOOTPRINTS.left);
+    loadImg(DEFAULT_FOOTPRINTS.right);
+    loadImg(PICKAXE_FOOTPRINT);
+    Object.values(BOOT_FOOTPRINTS).forEach(pair => {
+      loadImg(pair.left);
+      loadImg(pair.right);
+    });
+  }
+
+  private setupCanvas() {
+    this.canvas.style.background = this.level ? this.level.background : "#000";
+    if (this.level && this.level.backgroundImage) {
+      this.canvas.style.backgroundImage = `url(${this.level.backgroundImage})`;
+      this.canvas.style.backgroundSize = "cover";
+      this.canvas.style.backgroundPosition = "center";
+      this.canvas.style.backgroundRepeat = "no-repeat";
+    } else {
+      this.canvas.style.backgroundImage = "none";
+    }
+    this.canvas.width = this.windowWidth;
+    this.canvas.height = this.windowHeight;
+  }
+
+  private setupEventListeners() {
+    this.canvas.addEventListener("pointerdown", this.handlePointerDown.bind(this));
+  }
+
+  private getFootprintImageSrc(): string {
+    // If pickaxe equipped, use pickaxe footprint
+    if (this.equippedPickaxe !== 'none') {
+      return PICKAXE_FOOTPRINT;
+    }
+    // If boots equipped, use boot footprints
+    if (this.equippedBoots !== 'none' && BOOT_FOOTPRINTS[this.equippedBoots]) {
+      const pair = BOOT_FOOTPRINTS[this.equippedBoots];
+      const src = this.nextFootSide === 'left' ? pair.left : pair.right;
+      this.nextFootSide = this.nextFootSide === 'left' ? 'right' : 'left';
+      return src;
+    }
+    // Default bare foot
+    const src = this.nextFootSide === 'left' ? DEFAULT_FOOTPRINTS.left : DEFAULT_FOOTPRINTS.right;
+    this.nextFootSide = this.nextFootSide === 'left' ? 'right' : 'left';
+    return src;
+  }
+
+  private addFootprint(x: number, y: number) {
+    const src = this.getFootprintImageSrc();
+    let img = this.footprintImages.get(src);
+    if (!img) {
+      img = new Image();
+      img.src = src;
+      this.footprintImages.set(src, img);
+    }
+    this.footprints.push({
+      x: x - this.FOOTPRINT_SIZE / 2,
+      y: y - this.FOOTPRINT_SIZE / 2,
+      image: img,
+      opacity: 1,
+      createdAt: performance.now(),
+    });
+  }
+
+  private renderFootprints(ctx: CanvasRenderingContext2D, currentTime: number) {
+    this.footprints = this.footprints.filter(fp => {
+      const age = currentTime - fp.createdAt;
+      if (age > this.FOOTPRINT_DURATION) return false;
+      fp.opacity = 1 - (age / this.FOOTPRINT_DURATION);
+      return true;
+    });
+    this.footprints.forEach(fp => {
+      ctx.save();
+      ctx.globalAlpha = fp.opacity;
+      ctx.drawImage(fp.image, fp.x, fp.y, this.FOOTPRINT_SIZE, this.FOOTPRINT_SIZE);
+      ctx.restore();
+    });
+  }
+
+  private handlePointerDown(event: PointerEvent) {
+    const rect = this.canvas.getBoundingClientRect();
+    const mouseX = (event.clientX - rect.left) * (this.canvas.width / rect.width);
+    const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
+
+    // Add footprint at tap location
+    this.addFootprint(mouseX, mouseY);
+
+    for (let i = this.entities.length - 1; i >= 0; i--) {
+      if (this.entities[i] && this.entities[i].isClicked(mouseX, mouseY)) {
+        const entity = this.entities[i];
+        this.collectEntity(entity);
+        this.entities.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  private collectEntity(entity: ImageEntity) {
+    entity.collect();
+
+    // Red stone penalty: lose 50% of current score
+    if (entity.symbol === 'RED_STONE') {
+      // If wearing boots, no penalty
+      if (this.equippedBoots !== 'none') {
+        return;
+      }
+      const penalty = this.score * 0.5;
+      this.score -= penalty;
+      if (this.score < 0) this.score = 0;
+      if (this.onScoreUpdate) {
+        this.onScoreUpdate(parseFloat(this.score.toFixed(2)));
+      }
+      return;
     }
 
-    private setupEventListeners() {
-        this.canvas.addEventListener("pointerdown", this.handlePointerDown.bind(this));
+    const basePoints = entity.points;
+    const comboMultiplier = this.calculateComboMultiplier();
+    const levelMultiplier = this.level ? 1 + (this.level.id * 0.1) : 1;
+    const pointsEarned = basePoints * this.scoreMultiplier * comboMultiplier * levelMultiplier * this.pickaxeMultiplier;
+    this.score += pointsEarned;
+
+    const mineralSymbol = entity.symbol;
+    const updatedCollectedMinerals = { ...this.collectedMinerals };
+    if (!updatedCollectedMinerals[mineralSymbol]) {
+      updatedCollectedMinerals[mineralSymbol] = { count: 0, value: entity.points, totalPoints: 0 };
+    }
+    updatedCollectedMinerals[mineralSymbol].count += 1;
+    updatedCollectedMinerals[mineralSymbol].totalPoints += pointsEarned;
+    this.collectedMinerals = updatedCollectedMinerals;
+
+    if (this.onScoreUpdate) {
+      this.onScoreUpdate(parseFloat(this.score.toFixed(2)));
+    }
+  }
+
+  private spawnEntity() {
+    if (this.mineralsPool.length === 0) return;
+
+    // Red stone: only spawn if player has NO boots
+    if (this.equippedBoots === 'none' && Math.random() < this.redStoneChance) {
+      const randomX = Math.random() * (this.windowWidth - 50);
+      const speedFactor = this.windowHeight / BASE_HEIGHT;
+      const randomSpeed = (Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed) * speedFactor;
+      const redStone = new ImageEntity(randomX, -50, '/images/stones/stone.png', randomSpeed, -1, 'RED_STONE');
+      this.entities.push(redStone);
+      return;
     }
 
-    private handlePointerDown(event: PointerEvent) {
-        const rect = this.canvas.getBoundingClientRect();
-        const mouseX = (event.clientX - rect.left) * (this.canvas.width / rect.width);
-        const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
+    const randomX = Math.random() * (this.windowWidth - 50);
+    const speedFactor = this.windowHeight / BASE_HEIGHT;
+    const progressFactor = 1 - (this.gameTime / (this.level?.duration || DEFAULT_GAME_DURATION));
+    const dynamicMinSpeed = this.minSpeed * (1 + progressFactor * 0.5);
+    const dynamicMaxSpeed = this.maxSpeed * (1 + progressFactor * 0.3);
+    const randomSpeed = (Math.random() * (dynamicMaxSpeed - dynamicMinSpeed) + dynamicMinSpeed) * speedFactor;
 
-        for (let i = this.entities.length - 1; i >= 0; i--) {
-            if (this.entities[i] && this.entities[i].isClicked(mouseX, mouseY)) {
-                const entity = this.entities[i];
-                this.collectEntity(entity);
-                this.entities.splice(i, 1);
-                break;
-            }
-        }
+    const mineral = this.getWeightedRandomMineral();
+    if (!mineral) return;
+
+    const entity = new ImageEntity(randomX, -50, mineral.image, randomSpeed, mineral.points, mineral.symbol);
+    this.entities.push(entity);
+  }
+
+  private getWeightedRandomMineral(): MineralInfo | undefined {
+    if (this.mineralsPool.length === 0) return undefined;
+    const weights = this.mineralsPool.map(mineral => {
+      const baseWeight = 1;
+      const rarityBonus = mineral.points * 0.5;
+      const levelBonus = this.level ? this.level.id * 0.1 : 0;
+      return baseWeight + rarityBonus + levelBonus;
+    });
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    const random = Math.random();
+    let cumulativeWeight = 0;
+    for (let i = 0; i < this.mineralsPool.length; i++) {
+      cumulativeWeight += normalizedWeights[i];
+      if (random <= cumulativeWeight) return this.mineralsPool[i];
     }
+    return this.mineralsPool[0];
+  }
 
-    private collectEntity(entity: ImageEntity) {
-        entity.collect();
+  private calculateComboMultiplier(): number {
+    const recentCollections = this.entities.filter(e => e.isCollected).length;
+    return 1 + (recentCollections * 0.1);
+  }
 
-                // Red stone penalty: lose 50% of current score
-        if (entity.symbol === 'RED_STONE') {
-            const penalty = this.score * 0.5;
-            this.score -= penalty;
-            if (this.score < 0) this.score = 0;
-            if (this.onScoreUpdate) {
-                this.onScoreUpdate(parseFloat(this.score.toFixed(2)));
-            }
-            return;
-        }
+  private updateEntities(currentTime: number = 0) {
+    const deltaTime = (currentTime - this.lastUpdateTime) / 1000;
+    this.lastUpdateTime = currentTime;
 
-        const basePoints = entity.points;
-        const comboMultiplier = this.calculateComboMultiplier();
-        const levelMultiplier = this.level ? 1 + (this.level.id * 0.1) : 1;
-        const pointsEarned = basePoints * this.scoreMultiplier * comboMultiplier * levelMultiplier;
+    this.offscreenContext.clearRect(0, 0, this.windowWidth, this.windowHeight);
 
-        this.score += pointsEarned;
+    // Render footprints first (behind entities)
+    this.renderFootprints(this.offscreenContext, currentTime);
 
-        const mineralSymbol = entity.symbol;
-        const updatedCollectedMinerals = { ...this.collectedMinerals };
+    this.entities.forEach((entity) => entity.update(this.offscreenContext, deltaTime));
+    this.entities = this.entities.filter((entity) => !entity.isOffScreen(this.windowHeight));
 
-        if (!updatedCollectedMinerals[mineralSymbol]) {
-            updatedCollectedMinerals[mineralSymbol] = {
-                count: 0,
-                value: entity.points,
-                totalPoints: 0,
-            };
-        }
+    this.context.clearRect(0, 0, this.windowWidth, this.windowHeight);
+    this.context.drawImage(this.offscreenCanvas, 0, 0);
 
-        updatedCollectedMinerals[mineralSymbol].count += 1;
-        updatedCollectedMinerals[mineralSymbol].totalPoints += pointsEarned;
-
-        this.collectedMinerals = updatedCollectedMinerals;
-
-        if (this.onScoreUpdate) {
-            this.onScoreUpdate(parseFloat(this.score.toFixed(2)));
-        }
+    if (this.gameTime <= 0) {
+      this.endGame();
+    } else {
+      requestAnimationFrame((time) => this.updateEntities(time));
     }
+  }
 
-    private spawnEntity() {
-        if (this.mineralsPool.length === 0) {
-            return;
-        }
+  public startGame() {
+    this.collectedMinerals = {};
+    this.score = 0;
+    this.lastUpdateTime = performance.now();
+    this.spawnTimer = setInterval(() => this.spawnEntity(), this.spawnInterval);
+    this.gameTimer = setInterval(() => {
+      this.gameTime -= 1;
+      if (this.onTimeLeftUpdate) this.onTimeLeftUpdate(this.gameTime);
+      if (this.gameTime <= 0) this.clearTimers();
+    }, 1000);
+    this.updateEntities(this.lastUpdateTime);
+  }
 
-                // Red stone spawn logic: if player has no boots, chance to spawn red stone
-        if (!this.hasBoots && Math.random() < this.redStoneChance) {
-            const randomX = Math.random() * (this.windowWidth - 50);
-            const speedFactor = this.windowHeight / BASE_HEIGHT;
-            const randomSpeed = (Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed) * speedFactor;
-            const redStone = new ImageEntity(randomX, -50, '/images/stones/stone.png', randomSpeed, -1, 'RED_STONE');
-            this.entities.push(redStone);
-            return;
-        }
-
-        const randomX = Math.random() * (this.windowWidth - 50);
-        const speedFactor = this.windowHeight / BASE_HEIGHT;
-
-        const progressFactor = 1 - (this.gameTime / (this.level?.duration || DEFAULT_GAME_DURATION));
-        const dynamicMinSpeed = this.minSpeed * (1 + progressFactor * 0.5);
-        const dynamicMaxSpeed = this.maxSpeed * (1 + progressFactor * 0.3);
-
-        const randomSpeed = (Math.random() * (dynamicMaxSpeed - dynamicMinSpeed) + dynamicMinSpeed) * speedFactor;
-
-        const mineral = this.getWeightedRandomMineral();
-
-        if (!mineral) {
-            return;
-        }
-
-        let imageSrc = mineral.image;
-
-        const entity = new ImageEntity(randomX, -50, imageSrc, randomSpeed, mineral.points, mineral.symbol);
-        this.entities.push(entity);
+  private endGame() {
+    let totalValue = 0;
+    for (const mineralKey in this.collectedMinerals) {
+      totalValue += this.collectedMinerals[mineralKey].totalPoints;
     }
-
-    private getWeightedRandomMineral(): MineralInfo | undefined {
-        if (this.mineralsPool.length === 0) {
-            return undefined;
-        }
-        const weights = this.mineralsPool.map(mineral => {
-            const baseWeight = 1;
-            const rarityBonus = mineral.points * 0.5;
-            const levelBonus = this.level ? this.level.id * 0.1 : 0;
-            return baseWeight + rarityBonus + levelBonus;
-        });
-
-        const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-        const normalizedWeights = weights.map(weight => weight / totalWeight);
-
-        const random = Math.random();
-        let cumulativeWeight = 0;
-
-        for (let i = 0; i < this.mineralsPool.length; i++) {
-            cumulativeWeight += normalizedWeights[i];
-            if (random <= cumulativeWeight) {
-                return this.mineralsPool[i];
-            }
-        }
-        return this.mineralsPool[0]; // Fallback
+    if (this.onGameOver) {
+      this.onGameOver(parseFloat(totalValue.toFixed(2)), this.collectedMinerals);
     }
+    this.clearTimers();
+  }
 
-    private calculateComboMultiplier(): number {
-        const recentCollections = this.entities.filter(e => e.isCollected).length;
-        return 1 + (recentCollections * 0.1);
-    }
+  private clearTimers() {
+    if (this.spawnTimer) { clearInterval(this.spawnTimer); this.spawnTimer = null; }
+    if (this.gameTimer) { clearInterval(this.gameTimer); this.gameTimer = null; }
+  }
 
-    private updateEntities(currentTime: number = 0) {
-        const deltaTime = (currentTime - this.lastUpdateTime) / 1000;
-        this.lastUpdateTime = currentTime;
-
-        this.offscreenContext.clearRect(0, 0, this.windowWidth, this.windowHeight);
-        this.entities.forEach((entity) => entity.update(this.offscreenContext, deltaTime));
-        this.entities = this.entities.filter((entity) => !entity.isOffScreen(this.windowHeight));
-
-        this.context.clearRect(0, 0, this.windowWidth, this.windowHeight);
-        this.context.drawImage(this.offscreenCanvas, 0, 0);
-
-        if (this.gameTime <= 0) {
-            this.endGame();
-        } else {
-            requestAnimationFrame((time) => this.updateEntities(time));
-        }
-    }
-
-    public startGame() {
-        this.collectedMinerals = {};
-        this.score = 0;
-        this.lastUpdateTime = performance.now();
-        this.spawnTimer = setInterval(() => this.spawnEntity(), this.spawnInterval);
-        this.gameTimer = setInterval(() => {
-            this.gameTime -= 1;
-            if (this.onTimeLeftUpdate) {
-                this.onTimeLeftUpdate(this.gameTime);
-            }
-            if (this.gameTime <= 0) {
-                this.clearTimers();
-            }
-        }, 1000);
-        this.updateEntities(this.lastUpdateTime);
-    }
-
-    private endGame() {
-        let totalValue = 0;
-        for (const mineralKey in this.collectedMinerals) {
-            totalValue += this.collectedMinerals[mineralKey].totalPoints;
-        }
-
-        if (this.onGameOver) {
-            this.onGameOver(parseFloat(totalValue.toFixed(2)), this.collectedMinerals);
-        }
-
-        this.clearTimers();
-    }
-
-    private clearTimers() {
-        if (this.spawnTimer) {
-            clearInterval(this.spawnTimer);
-            this.spawnTimer = null;
-        }
-        if (this.gameTimer) {
-            clearInterval(this.gameTimer);
-            this.gameTimer = null;
-        }
-    }
-
-      public useBoost(boostId: string) {
+  public useBoost(boostId: string) {
     switch (boostId) {
+      case 'dynamite1':
+      case 'boost2':
+        this.applyDynamiteBoost();
+        break;
       case 'tap_power_x2':
       case 'boost1':
         this.applyDoublePointsBoost();
-        break;
-      case 'pickaxe1':
-      case 'boost2':
-        this.applySpeedBoost();
         break;
       default:
         console.warn(`Unknown boost ID: ${boostId}`);
     }
   }
 
-    private applySpeedBoost() {
-        if (this.spawnTimer) {
-            clearInterval(this.spawnTimer);
-        }
-        const fastSpawnInterval = this.spawnInterval / 2;
-        this.spawnTimer = setInterval(() => this.spawnEntity(), fastSpawnInterval);
-        setTimeout(() => {
-            if (this.spawnTimer) {
-                clearInterval(this.spawnTimer);
-            }
-            this.spawnTimer = setInterval(() => this.spawnEntity(), this.spawnInterval);
-        }, 5000);
+  private applyDynamiteBoost() {
+    // Collect all entities on screen
+    for (let i = this.entities.length - 1; i >= 0; i--) {
+      const entity = this.entities[i];
+      if (entity.symbol !== 'RED_STONE') {
+        this.collectEntity(entity);
+      }
+      this.entities.splice(i, 1);
     }
+  }
 
-            private applyDoublePointsBoost() {
-            this.doublePointsActive = true;
-            this.scoreMultiplier = 2;
-        setTimeout(() => {
-            console.log("Double Points Boost Ended!"); // Можно оставить для информации игроку
-            this.doublePointsActive = false;
-            this.scoreMultiplier = 1;
-        }, 3000);
-    }
+  private applyDoublePointsBoost() {
+    this.doublePointsActive = true;
+    this.scoreMultiplier = 2;
+    setTimeout(() => {
+      this.doublePointsActive = false;
+      this.scoreMultiplier = 1;
+    }, 3000);
+  }
 
-        public setBootsEquipped(equipped: boolean) {
-        this.hasBoots = equipped;
-    }
+  // Equipment setters
+  public setBootsEquipped(bootsType: string) {
+    this.equippedBoots = bootsType || 'none';
+  }
+
+  public setPickaxeEquipped(pickaxeType: string, multiplier: number = 2) {
+    this.equippedPickaxe = pickaxeType || 'none';
+    this.pickaxeMultiplier = pickaxeType !== 'none' ? multiplier : 1;
+  }
 }
