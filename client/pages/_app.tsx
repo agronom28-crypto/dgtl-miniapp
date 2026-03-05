@@ -4,6 +4,7 @@ import '../styles/globals.css';
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { useRouter } from 'next/router';
 
 // Use env variable for manifest URL, fallback to localhost for dev
 const manifestUrl = process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL
@@ -14,6 +15,7 @@ const manifestUrl = process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isTelegram, setIsTelegram] = useState<boolean | null>(null);
   const [isDevMode, setIsDevMode] = useState(false);
+    const router = useRouter();
 
   useEffect(() => {
     // Check if running inside Telegram WebApp
@@ -32,7 +34,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   }, []);
 
   // Show warning banner when not in Telegram (but still render the app for testing)
-  const showDevBanner = isTelegram === false && isDevMode;
+  const showDevBanner = isTelegram === false && isDevMode && !router.pathname.startsWith('/game');
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
