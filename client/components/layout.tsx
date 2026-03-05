@@ -53,27 +53,27 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         style={{ background: 'rgba(0,0,0,0.85)', borderTop: '1px solid rgba(255,255,255,0.1)' }}
       >
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/') ? 'text-yellow-400' : 'text-gray-400'}`} href="/">
-          <img src="/icons/nav/home.svg" alt="Home" className="w-6 h-6 mb-1" />
+          <img src="/icons/white/home-1.svg" alt="Home" className="w-6 h-6 mb-1" />
           Home
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/shop') ? 'text-yellow-400' : 'text-gray-400'}`} href="/shop">
-          <img src="/icons/nav/shop.svg" alt="Shop" className="w-6 h-6 mb-1" />
+          <img src="/icons/white/basket.svg" alt="Shop" className="w-6 h-6 mb-1" />
           Shop
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/boosts') ? 'text-yellow-400' : 'text-gray-400'}`} href="/boosts">
-          <img src="/icons/nav/boosts.svg" alt="Boosts" className="w-6 h-6 mb-1" />
+          <img src="/icons/white/rocket.svg" alt="Boosts" className="w-6 h-6 mb-1" />
           Boosts
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/staking') ? 'text-yellow-400' : 'text-gray-400'}`} href="/staking">
-          <img src="/icons/nav/staking.svg" alt="Staking" className="w-6 h-6 mb-1" />
+          <img src="/icons/white/periodic-table.svg" alt="Staking" className="w-6 h-6 mb-1" />
           Staking
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/friends') ? 'text-yellow-400' : 'text-gray-400'}`} href="/friends">
-          <img src="/icons/nav/friends.svg" alt="Friends" className="w-6 h-6 mb-1" />
+          <img src="/icons/white/user-group.svg" alt="Friends" className="w-6 h-6 mb-1" />
           Friends
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/tasks') ? 'text-yellow-400' : 'text-gray-400'}`} href="/tasks">
-          <img src="/icons/nav/tasks.svg" alt="Tasks" className="w-6 h-6 mb-1" />
+          <img src="/icons/white/invoice-1.svg" alt="Tasks" className="w-6 h-6 mb-1" />
           Tasks
         </a>
       </div>
