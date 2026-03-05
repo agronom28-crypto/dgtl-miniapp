@@ -348,12 +348,18 @@ const GamePage: React.FC = () => {
     }
   }
 
-  if (!router.isReady || (router.isReady && router.query.level === undefined && !currentLevel)) {
+  if (!router.isReady) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#000', color: '#fff' }}>
         <p>Initializing Game Page...</p>
       </div>
     );
+  }
+
+  // Redirect to home if no level parameter
+  if (router.isReady && router.query.level === undefined && !currentLevel) {
+    router.replace('/');
+    return null;
   }
 
   if (currentLevel === null) {
