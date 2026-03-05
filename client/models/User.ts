@@ -12,6 +12,7 @@ export interface IUser extends Document {
   boosts: {
     [key: string]: number; 
   };
+      equippedBoots?: string;
   collectedMinerals?: Map<string, number>;
   createdAt: Date;
 }
@@ -27,6 +28,7 @@ export interface IUserState {
   boosts: {
     [key: string]: number;
   };
+      equippedBoots?: string;
 }
 
 // Define the Mongoose schema for the User model
@@ -57,6 +59,10 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
     boost3: { type: Number, default: 0 },
     boost4: { type: Number, default: 0 },
   },
+      equippedBoots: {
+        type: String,
+        default: null,
+    },
   collectedMinerals: {
     type: Map,
     of: Number,
