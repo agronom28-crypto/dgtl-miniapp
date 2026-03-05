@@ -190,7 +190,7 @@ const Index = () => {
                       <div className="card-body p-4">
                         <h2 className="card-title">{level.name}</h2>
                         <div className="card-actions justify-end mt-4">
-                          <button className="btn btn-accent btn-sm">{t.home_play}</button>
+                          <button className="btn btn-accent btn-sm" onClick={() => router.push(`/game?level=${level.order}`)}>{t.home_play}</button>
                         </div>
                       </div>
                     </>
