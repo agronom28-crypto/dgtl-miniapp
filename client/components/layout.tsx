@@ -68,6 +68,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <img src="/icons/white/basket.svg" alt="Shop" className="w-8 h-8" />
         </a>
         <a
+                    style={{ opacity: 0.4, pointerEvents: 'none' }}
           role="tab"
           className={`tab h-16 ${isActive("/staking") ? "border-2 border-accent shadow-glow" : ""}`}
           href="/staking"
