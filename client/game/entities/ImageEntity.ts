@@ -28,6 +28,8 @@ export class ImageEntity {
     }
 
     draw(context: CanvasRenderingContext2D) {
+                // Skip drawing if image is broken/not loaded
+        if (!this.image.complete || this.image.naturalWidth === 0) return;
         // Draw trail
         this.trail.forEach((point, index) => {
             context.save();
