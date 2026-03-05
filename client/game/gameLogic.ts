@@ -185,7 +185,7 @@ export class Game {
             const randomX = Math.random() * (this.windowWidth - 50);
             const speedFactor = this.windowHeight / BASE_HEIGHT;
             const randomSpeed = (Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed) * speedFactor;
-            const redStone = new ImageEntity(randomX, -50, '/images/stones/red_stone.png', randomSpeed, -1, 'RED_STONE');
+            const redStone = new ImageEntity(randomX, -50, '/images/stones/stone.png', randomSpeed, -1, 'RED_STONE');
             this.entities.push(redStone);
             return;
         }
