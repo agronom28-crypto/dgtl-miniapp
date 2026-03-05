@@ -36,7 +36,7 @@ export const LEVELS: LevelConfig[] = [
     spawnInterval: 200,
     minSpeed: 100,
     maxSpeed: 400,
-    duration: 20,
+    duration: 60,
     special: "Стандартная скорость и минералы.",
     colorScheme: {
       primary: "#181818",
