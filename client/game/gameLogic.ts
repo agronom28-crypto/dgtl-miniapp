@@ -35,6 +35,8 @@ export class Game {
     private lastUpdateTime: number = 0;
     private scoreMultiplier: number = 1;
     private doublePointsActive: boolean = false;
+        private hasBoots: boolean = false;
+    private redStoneChance: number = 0.15; // 15% chance to spawn red stone
     private collectedMinerals: CollectedMinerals = {};
 
     private level?: LevelConfig;
@@ -134,6 +136,17 @@ export class Game {
     private collectEntity(entity: ImageEntity) {
         entity.collect();
 
+                // Red stone penalty: lose 50% of current score
+        if (entity.symbol === 'RED_STONE') {
+            const penalty = this.score * 0.5;
+            this.score -= penalty;
+            if (this.score < 0) this.score = 0;
+            if (this.onScoreUpdate) {
+                this.onScoreUpdate(parseFloat(this.score.toFixed(2)));
+            }
+            return;
+        }
+
         const basePoints = entity.points;
         const comboMultiplier = this.calculateComboMultiplier();
         const levelMultiplier = this.level ? 1 + (this.level.id * 0.1) : 1;
@@ -164,6 +177,16 @@ export class Game {
 
     private spawnEntity() {
         if (this.mineralsPool.length === 0) {
+            return;
+        }
+
+                // Red stone spawn logic: if player has no boots, chance to spawn red stone
+        if (!this.hasBoots && Math.random() < this.redStoneChance) {
+            const randomX = Math.random() * (this.windowWidth - 50);
+            const speedFactor = this.windowHeight / BASE_HEIGHT;
+            const randomSpeed = (Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed) * speedFactor;
+            const redStone = new ImageEntity(randomX, -50, '/images/stones/red_stone.png', randomSpeed, -1, 'RED_STONE');
+            this.entities.push(redStone);
             return;
         }
 
@@ -325,5 +348,9 @@ export class Game {
             this.doublePointsActive = false;
             this.scoreMultiplier = 1;
         }, 3000);
+    }
+
+        public setBootsEquipped(equipped: boolean) {
+        this.hasBoots = equipped;
     }
 }
