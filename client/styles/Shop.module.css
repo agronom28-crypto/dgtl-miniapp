@@ -250,3 +250,259 @@
     color: #666;
     transform: none;
 }
+
+
+/* Boost styles */
+.sectionTitle {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #ffd700;
+}
+
+.emptyText {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 2rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #4CAF50;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 2rem auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.boostGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.boostCard {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 0.75rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s;
+}
+
+.boostCard:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.boostImage {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin: 0 auto 0.5rem;
+    display: block;
+}
+
+.boostName {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: #e0e0e0;
+}
+
+.boostPrice {
+    font-size: 0.8rem;
+    color: #ffd700;
+    margin-bottom: 0.15rem;
+}
+
+.boostStars {
+    font-size: 0.75rem;
+    color: #FFB800;
+    margin-bottom: 0.15rem;
+}
+
+.boostOwned {
+    font-size: 0.75rem;
+    color: #81c784;
+    margin-bottom: 0.4rem;
+}
+
+.boostButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.buyBtn {
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 8px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    font-weight: 600;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.buyBtn:disabled {
+    background: #333;
+    cursor: not-allowed;
+    color: #666;
+}
+
+.buyStarsBtn {
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #FFB800 0%, #FF6B00 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.buyStarsBtn:disabled {
+    background: #333;
+    cursor: not-allowed;
+    color: #666;
+}
+
+.equipBtn {
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 8px;
+    border: 1px solid #2196F3;
+    background: transparent;
+    color: #2196F3;
+    font-weight: 600;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.equipBtn:hover {
+    background: rgba(33, 150, 243, 0.1);
+}
+
+/* Icon grid aliases */
+.backBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.filters {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.filterBtn {
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: white;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.filterActive {
+    background: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.iconGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.iconCard {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 0.75rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s;
+}
+
+.iconCard:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.iconImage {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 auto 0.5rem;
+    display: block;
+}
+
+.iconName {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: #e0e0e0;
+}
+
+.iconCountry {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.2rem;
+}
+
+.iconResource {
+    font-size: 0.7rem;
+    color: #90caf9;
+    margin-bottom: 0.2rem;
+}
+
+.iconShare {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 0.4rem;
+    font-style: italic;
+}
+
+.iconRate {
+    font-size: 0.75rem;
+    color: #81c784;
+    margin-bottom: 0.25rem;
+}
+
+.iconOwned {
+    color: #81c784;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.hint {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+}
