@@ -24,8 +24,7 @@ const mockBoostCards = [
     price: 300,
     imageUrl: '/images/kirka1.png',
     availability: true,
-    37
-    : 1,
+        starsPrice: 1,
     type: 'tool',
     duration: 0,
     multiplier: 2
