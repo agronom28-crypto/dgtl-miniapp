@@ -228,7 +228,7 @@ const GamePage: React.FC = () => {
 
     gameInstance.startGame();
     gameRef.current = gameInstance;
-  }, [currentLevel, trulyAvailableElementDefs, handleGameOverCallbac, equippedBootsk]);
+  }, [currentLevel, trulyAvailableElementDefs, handleGameOverCallback, equippedBoots]);
 
   // Effect to initialize or re-initialize the game when dependencies change
   useEffect(() => {
