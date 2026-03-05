@@ -3,18 +3,6 @@ require('dotenv').config();
 
 const boostCards = [
   {
-    id: 'dynamite1',
-    title: 'Dynamite 1',
-    description: 'Collect all minerals on screen at once',
-    price: 500,
-    imageUrl: '/images/dinamit1.png',
-    availability: true,
-    starsPrice: 25,
-    type: 'boost',
-    duration: 0,
-    multiplier: 1
-  },
-  {
     id: 'pickaxe1',
     title: 'Pickaxe 1',
     description: 'Increases tap power and leaves pickaxe trail',

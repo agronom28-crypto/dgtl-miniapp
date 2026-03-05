@@ -301,21 +301,20 @@ export class Game {
         }
     }
 
-    public useBoost(boostId: string) {
-        switch (boostId) {
-            case 'boost1':
-                this.applySpeedBoost();
-                break;
-            case 'boost2':
-                this.applyDynamite();
-                break;
-            case 'boost3':
-                this.applyDoublePointsBoost();
-                break;
-            default:
-                console.warn(`Unknown boost ID: ${boostId}`);
-        }
+      public useBoost(boostId: string) {
+    switch (boostId) {
+      case 'tap_power_x2':
+      case 'boost1':
+        this.applyDoublePointsBoost();
+        break;
+      case 'pickaxe1':
+      case 'boost2':
+        this.applySpeedBoost();
+        break;
+      default:
+        console.warn(`Unknown boost ID: ${boostId}`);
     }
+  }
 
     private applySpeedBoost() {
         if (this.spawnTimer) {
@@ -331,18 +330,6 @@ export class Game {
         }, 5000);
     }
 
-    private applyDynamite() {
-        for (const entity of this.entities) {
-            this.collectEntity(entity);
-        }
-        this.entities = [];
-    }
-
-    private applyDoublePointsBoost() {
-        if (this.doublePointsActive) return;
-        console.log("Double Points Boost Activated!"); // Можно оставить для информации игроку
-        this.doublePointsActive = true;
-        this.scoreMultiplier = 2;
         setTimeout(() => {
             console.log("Double Points Boost Ended!"); // Можно оставить для информации игроку
             this.doublePointsActive = false;
