@@ -59,6 +59,7 @@ const GamePage: React.FC = () => {
   >({});
   const [boostCards, setBoostCards] = useState<BoostCard[]>([]);
   const [userBoosts, setUserBoosts] = useState<UserBoosts>({});
+    const [equippedBoots, setEquippedBoots] = useState<string | null>(null);
   const [cooldowns, setCooldowns] = useState<{ [key: string]: number | null }>({});
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isImagesLoading, setIsImagesLoading] = useState(true);
@@ -119,6 +120,7 @@ const GamePage: React.FC = () => {
         if (session) {
           const userResponse = await axios.get("/api/user/data");
           setUserBoosts(userResponse.data.boosts || {});
+                      setEquippedBoots(userResponse.data.equippedBoots || null);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -221,9 +223,12 @@ const GamePage: React.FC = () => {
       trulyAvailableElementDefs
     );
 
+    // Set boots equipped status from user data
+    gameInstance.setBootsEquipped(!!equippedBoots);
+
     gameInstance.startGame();
     gameRef.current = gameInstance;
-  }, [currentLevel, trulyAvailableElementDefs, handleGameOverCallback]);
+  }, [currentLevel, trulyAvailableElementDefs, handleGameOverCallbac, equippedBootsk]);
 
   // Effect to initialize or re-initialize the game when dependencies change
   useEffect(() => {
