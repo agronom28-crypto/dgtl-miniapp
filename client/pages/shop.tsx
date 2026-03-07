@@ -283,8 +283,8 @@ const Shop: React.FC = () => {
       ) : boostCards.length === 0 ? (
         <p className={styles.emptyText}>{t.boosts_no_cards}</p>
       ) : (
-        <div className={styles.boostGrid}>
-          {boostCards.map((card) => (
+                  {boostCards.filter((c: any) => (c as any).type !== 'boots').map((card) => (
+      
             <div key={card.id} className={styles.boostCard}>
               <img
                 src={`/boosts/${card.image || card.id + '.png'}`}
@@ -313,6 +313,44 @@ const Shop: React.FC = () => {
               </div>
             </div>
           ))}
+
+            {/* Boot Cards section */}
+      {boostCards.filter((c: any) => (c as any).type === 'boots').length > 0 && (
+        <>
+          <h2 className={styles.sectionTitle}>{lang === 'ru' ? 'Обувь' : 'Boot Cards'}</h2>
+          <div className={styles.boostGrid}>
+            {boostCards.filter((c: any) => (c as any).type === 'boots').map((card) => (
+              <div key={card.id} className={styles.boostCard}>
+                <img
+                  src={`/boosts/${card.image || card.id + '.png'}`}
+                  alt={getBoostName(lang, card.title)}
+                  className={styles.boostImage}
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/boosts/boost.png'; }}
+                />
+                <h3 className={styles.boostName}>{getBoostName(lang, card.title)}</h3>
+                <p className={styles.boostPrice}>{card.price} GTL</p>
+                <p className={styles.boostStars}>{(card as any).starsPrice} Stars</p>
+                <p className={styles.boostOwned}>{t.boosts_owned}: {userData?.boosts?.[card.id] || 0}</p>
+                <div className={styles.boostButtons}>
+                  <button className={styles.buyBtn} onClick={() => handleBoostPurchase(card.id)}>
+                    {buyingId === card.id + '-coins' ? '...' : t.boosts_buy}
+                  </button>
+                  <button className={styles.buyStarsBtn} onClick={() => handleBoostPurchaseStars(card.id)}>
+                    {buyingId === card.id + '-stars' ? '...' : t.boosts_stars}
+                  </button>
+                  {(userData?.boosts?.[card.id] || 0) > 0 && (
+                    <button className={styles.equipBtn} onClick={() => handleEquip(card.id, 'boots')}>
+                      {equippedBoots === card.id
+                        ? (lang === 'ru' ? '\u0421\u043d\u044f\u0442\u044c' : 'Unequip')
+                        : (lang === 'ru' ? '\u041e\u0434\u0435\u0442\u044c' : 'Equip')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
         </div>
       )}
 
