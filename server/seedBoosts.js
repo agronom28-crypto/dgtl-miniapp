@@ -15,64 +15,16 @@ const boostCards = [
     multiplier: 2
   },
   {
-    id: 'boots_female',
-    title: 'Female Boots',
-    description: 'Protects from red stone penalty. Leaves female boot footprint.',
-    price: 600,
-    imageUrl: '/images/boot_female.png',
-    availability: true,
-    starsPrice: 200,
-    type: 'boots',
-    duration: 0,
-    multiplier: 1
-  },
-  {
-    id: 'boots_male',
-    title: 'Male Boots',
-    description: 'Protects from red stone penalty. Leaves male boot footprint.',
-    price: 750,
-    imageUrl: '/images/boot_male.png',
-    availability: true,
-    starsPrice: 250,
-    type: 'boots',
-    duration: 0,
-    multiplier: 1
-  },
-  {
-    id: 'boots_golden',
-    title: 'Golden Foots',
-    description: 'Premium protection from red stone. Golden boot footprint.',
-    price: 1200,
-    imageUrl: '/images/magnit_boot.png',
-    availability: true,
-    starsPrice: 400,
-    type: 'boots',
-    duration: 0,
-    multiplier: 1
-  },
-  {
-    id: 'boots_leather',
-    title: 'Leather Boots',
-    description: 'Best protection from red stone. Leather boot footprint.',
-    price: 1500,
-    imageUrl: '/images/boot_male.png',
-    availability: true,
-    starsPrice: 500,
-    type: 'boots',
-    duration: 0,
-    multiplier: 1
-  },
-  {
-    id: 'tap_power_x2',
-    title: 'Tap Power x2',
-    description: 'Double your tap power for 1 hour',
+    id: 'dynamite1',
+    title: 'Dynamite',
+    description: 'Collects all minerals on screen at once',
     price: 500,
-    imageUrl: '/icons/resources/rare_metals.svg',
+    imageUrl: '/images/dinamit1.png',
     availability: true,
-    starsPrice: 25,
+    starsPrice: 150,
     type: 'boost',
-    duration: 3600,
-    multiplier: 2
+    duration: 0,
+    multiplier: 1
   }
 ];
 
