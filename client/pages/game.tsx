@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 
 import AnimatedBackground from "../components/game/AnimatedBackground";
+import BackgroundVideo from "../components/game/BackgroundVideo";
 interface BoostCard {
   id: string;
   imageUrl: string;
