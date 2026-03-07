@@ -25,6 +25,54 @@ const boostCards = [
     type: 'boost',
     duration: 0,
     multiplier: 1
+  },
+  {
+    id: 'boots_female',
+    title: 'Female Boots',
+    description: 'Protects from red stone penalty. Leaves female boot footprint.',
+    price: 600,
+    imageUrl: '/images/boot_female.png',
+    availability: true,
+    starsPrice: 50,
+    type: 'boots',
+    duration: 0,
+    multiplier: 1
+  },
+  {
+    id: 'boots_male',
+    title: 'Male Boots',
+    description: 'Protects from red stone penalty. Leaves male boot footprint.',
+    price: 750,
+    imageUrl: '/images/boot_male.png',
+    availability: true,
+    starsPrice: 60,
+    type: 'boots',
+    duration: 0,
+    multiplier: 1
+  },
+  {
+    id: 'boots_golden',
+    title: 'Golden Foots',
+    description: 'Premium protection from red stone. Golden boot footprint.',
+    price: 1200,
+    imageUrl: '/images/magnit_boot.png',
+    availability: true,
+    starsPrice: 100,
+    type: 'boots',
+    duration: 0,
+    multiplier: 1
+  },
+  {
+    id: 'boots_leather',
+    title: 'Leather Boots',
+    description: 'Best protection from red stone. Leather boot footprint.',
+    price: 1500,
+    imageUrl: '/images/boot_male.png',
+    availability: true,
+    starsPrice: 120,
+    type: 'boots',
+    duration: 0,
+    multiplier: 1
   }
 ];
 
