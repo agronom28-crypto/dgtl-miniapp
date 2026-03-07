@@ -25,7 +25,8 @@ const Index = () => {
     const savedLang = localStorage.getItem('app_lang') as Lang;
     if (savedLang) setLang(savedLang);
   }, []);
-    useEffect(() => {
+
+  useEffect(() => {
     const handleLangChange = (e: any) => setLang(e.detail as Lang);
     window.addEventListener('langChange', handleLangChange);
     return () => window.removeEventListener('langChange', handleLangChange);
@@ -51,6 +52,7 @@ const Index = () => {
       setLevels(levelsData);
     } catch (error) {
       console.error('Error fetching levels:', error);
+      toast.error('Could not load levels.');
       setLevels([]);
     } finally {
       setLoading(false);
@@ -67,6 +69,7 @@ const Index = () => {
         setUserData(data);
       } catch (error) {
         console.error('Error fetching user data:', error);
+        toast.error('Could not load user data.');
         setUserData(null);
       } finally {
         setLoading(false);
@@ -94,41 +97,14 @@ const Index = () => {
 
   if (status === 'loading' || loading) {
     return (
-            <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: 'linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-      }}>
+      <Layout>
         <Head>
           <title>Home | DGTL P2E Game</title>
         </Head>
-        <div style={{
-          fontSize: '48px',
-          fontWeight: 'bold',
-          color: '#ffffff',
-          textShadow: '0 0 20px rgba(100, 149, 237, 0.8)',
-          marginBottom: '20px',
-          letterSpacing: '8px',
-        }}>
-          DGTL
+        <div className="flex items-center justify-center h-screen w-screen bg-base-100">
+          <div className="loading loading-spinner loading-lg mb-4"></div>
         </div>
-        <div style={{
-          fontSize: '14px',
-          color: 'rgba(255,255,255,0.6)',
-          marginBottom: '30px',
-        }}>
-          P2E Mining Game
-        </div>
-        <span className="loading loading-spinner loading-lg" style={{ color: '#6495ED' }}></span>
-      </div>
+      </Layout>
     );
   }
 
@@ -150,59 +126,83 @@ const Index = () => {
       <Head>
         <title>Home | DGTL P2E Game</title>
       </Head>
-      <div className="flex flex-col min-h-screen pb-20">
-        <div className="p-4">
-          <div className="card bg-base-100 shadow-xl border-2 border-accent">
-            <div className="card-body">
-              <h2 className="card-title text-2xl font-bold">
-                {userData?.username || userData?.firstName || 'Player'}
-              </h2>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="flex flex-col">
-                  <span className="text-sm opacity-70">{t.home_balance}</span>
-                  <span className="text-xl font-mono text-accent">
-                    {typeof userData.coins === 'number' ? userData.coins.toFixed(2) : userData.coins} GTL
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm opacity-70">{t.home_level}</span>
-                  <span className="text-xl font-bold">1</span>
-                </div>
-              </div>
+      <div className="container mx-auto px-4 py-8 pb-24">
+        {/* Main Card - pink accent border */}
+        <div className="card bg-base-100 shadow-xl border-2 border-accent mb-3">
+          <div className="card-body text-white p-4">
+            <h2 className="card-title text-2xl font-bold">
+              {userData?.username || userData?.firstName || 'Player'}
+            </h2>
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className="stats bg-neutral text-primary-content w-full">
+          <div className="stat">
+            <div className="stat-title">{t.home_balance}</div>
+            <div className="stat-value text-white text-3xl">
+              {typeof userData.coins === 'number' ? userData.coins.toFixed(2) : userData.coins} GTL
             </div>
           </div>
+          <div className="stat">
+            <div className="stat-title">{t.home_level}</div>
+            <div className="stat-value text-white text-5xl">
+              {userData.currentLevel || 1}
+            </div>
+          </div>
+        </div>
 
-          <h3 className="text-xl font-bold mt-8 mb-4">{t.home_levels}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Levels Section */}
+        <div className="card bg-neutral mt-4">
+          <div className="card-body p-4 text-white">
+            <h2 className="card-title text-xl mb-3">{t.home_levels}</h2>
             {levels.length > 0 ? (
               levels.map((level) => (
-                <div key={level.order} className="card bg-base-200 shadow-lg overflow-hidden">
+                <div
+                  key={level.order}
+                  className={`relative rounded-lg mb-2 shadow-inner overflow-hidden ${
+                    level.availability ? 'bg-neutral-content' : 'bg-base-100'
+                  }`}
+                >
                   {level.availability ? (
                     <>
-                      <div className="absolute top-2 right-2 flex gap-1">
+                      {/* Badges */}
+                      <div className="flex absolute top-2 left-2 flex-wrap gap-2 z-10">
                         {level.badges.map((badge, i) => (
-                          <ChemicalBadge key={i} element={typeof badge === 'string' ? badge : badge.symbol || ''} />
+                          <ChemicalBadge key={i} element={typeof badge === 'string' ? badge : badge.symbol} />
                         ))}
                       </div>
-                      {level.backgroundUrl && (
-                        <figure><img src={level.backgroundUrl} alt={level.name} /></figure>
-                      )}
-                      <div className="card-body p-4">
-                        <h2 className="card-title">{level.name}</h2>
-                        <div className="card-actions justify-end mt-4">
-                          <button className="btn btn-accent btn-sm" onClick={() => router.push(`/game?level=${level.order}`)}>{t.home_play}</button>
+
+                      {/* Level background image */}
+                      <img
+                        src={level.menuImageUrl || level.backgroundUrl || '/default-level-bg.jpg'}
+                        alt={level.name}
+                        className="h-[150px] w-full object-cover"
+                      />
+
+                      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent flex items-center justify-between">
+                        <div>
+                          <h2 className="text-lg font-bold text-white">{level.name}</h2>
                         </div>
+                        <Link href={`/game?level=${level.order}`}>
+                          <button className="btn btn-md border-2 border-accent shadow-glow">
+                            {t.home_play}
+                          </button>
+                        </Link>
                       </div>
                     </>
                   ) : (
-                    <div className="card-body p-8 items-center justify-center bg-black/20">
-                      <span className="text-lg opacity-50">{t.home_locked}</span>
+                    /* Locked state */
+                    <div className="h-[150px] flex items-center justify-center rounded-lg shadow-inner overflow-hidden bg-base-100 border-2 border-accent">
+                      <span className="text-white text-xl font-bold">{t.home_locked}</span>
                     </div>
                   )}
                 </div>
               ))
             ) : (
-              <p className="opacity-50">{t.home_no_levels}</p>
+              <div className="text-center py-10">
+                <p className="text-xl text-gray-500">{t.home_no_levels}</p>
+              </div>
             )}
           </div>
         </div>
