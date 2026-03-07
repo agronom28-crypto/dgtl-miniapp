@@ -283,7 +283,9 @@ const Shop: React.FC = () => {
       ) : boostCards.length === 0 ? (
         <p className={styles.emptyText}>{t.boosts_no_cards}</p>
       ) : (
-                  {boostCards.filter((c: any) => (c as any).type !== 'boots').map((card) => (
+              <>
+                          <div className={styles.boostGrid}>  
+                {boostCards.filter((c: any) => (c as any).type !== 'boots').map((card) => (
       
             <div key={card.id} className={styles.boostCard}>
               <img
@@ -313,6 +315,7 @@ const Shop: React.FC = () => {
               </div>
             </div>
           ))}
+                                      </div>
 
             {/* Boot Cards section */}
       {boostCards.filter((c: any) => (c as any).type === 'boots').length > 0 && (
@@ -351,7 +354,7 @@ const Shop: React.FC = () => {
           </div>
         </>
       )}
-        </div>
+        </>
       )}
 
       <h2 className={styles.sectionTitle}>{t.boosts_minerals}</h2>
