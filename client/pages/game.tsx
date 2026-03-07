@@ -70,13 +70,8 @@ const GamePage: React.FC = () => {
   const [finalDetailedCollectedMinerals, setFinalDetailedCollectedMinerals] = useState<CollectedGameLogicState | null>(null);
   const [finalScore, setFinalScore] = useState(0);
 
-  // Мемоизированный список действительно доступных определений элементов
-  const trulyAvailableElementDefs = useMemo(() => {
-    return ELEMENT_DEFINITIONS.filter(def => {
-      const fileName = def.image.split('/').pop();
-      return fileName ? staticAvailableImageFileNames.has(fileName) : false;
-    });
-  }, []); // Зависимостей нет, т.к. ELEMENT_DEFINITIONS и staticAvailableImageFileNames не меняются
+    // All elements from MINERALS are available (images copied to /minerals/)
+  const trulyAvailableElementDefs = ELEMENT_DEFINITIONS;
 
   const usedBoostsRef = useRef<UserBoosts>({}); // Track boosts used during the game
 
