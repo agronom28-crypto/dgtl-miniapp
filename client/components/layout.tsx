@@ -2,6 +2,11 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { Lang } from "../lib/i18n";
 
+const NAV_LABELS: Record<Lang, { home: string; shop: string; friends: string; tasks: string }> = {
+  ru: { home: 'Главная', shop: 'Магазин', friends: 'Друзья', tasks: 'Задания' },
+  en: { home: 'Home', shop: 'Shop', friends: 'Friends', tasks: 'Tasks' },
+};
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const isActive = (path: string) => router.pathname === path;
@@ -14,12 +19,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleLangChange = (e: any) => setLang(e.detail as Lang);
+    window.addEventListener('langChange', handleLangChange);
+    return () => window.removeEventListener('langChange', handleLangChange);
+  }, []);
+
   const toggleLang = () => {
     const newLang: Lang = lang === 'ru' ? 'en' : 'ru';
     setLang(newLang);
     localStorage.setItem('app_lang', newLang);
     window.dispatchEvent(new CustomEvent('langChange', { detail: newLang }));
   };
+
+  const nav = NAV_LABELS[lang];
 
   return (
     <div className="flex flex-col min-h-screen pb-20">
@@ -54,19 +67,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       >
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/') ? 'text-yellow-400' : 'text-gray-400'}`} href="/">
           <img src="/icons/white/home-1.svg" alt="Home" className="w-6 h-6 mb-1" />
-          Home
+          {nav.home}
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/shop') ? 'text-yellow-400' : 'text-gray-400'}`} href="/shop">
           <img src="/icons/white/basket.svg" alt="Shop" className="w-6 h-6 mb-1" />
-          Shop
+          {nav.shop}
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/friends') ? 'text-yellow-400' : 'text-gray-400'}`} href="/friends">
           <img src="/icons/white/user-group.svg" alt="Friends" className="w-6 h-6 mb-1" />
-          Friends
+          {nav.friends}
         </a>
         <a role="tab" className={`flex flex-col items-center text-xs ${isActive('/tasks') ? 'text-yellow-400' : 'text-gray-400'}`} href="/tasks">
           <img src="/icons/white/invoice-1.svg" alt="Tasks" className="w-6 h-6 mb-1" />
-          Tasks
+          {nav.tasks}
         </a>
       </div>
     </div>
