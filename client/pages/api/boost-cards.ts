@@ -1,21 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Mock boost cards for when backend is unavailable
-// Fields match IBoostCard interface: id, title, price, imageUrl, description, availability
 const mockBoostCards = [
-  {
-    _id: 'dynamite1',
-    id: 'dynamite1',
-    title: 'Dynamite 1',
-    description: 'Collects all minerals on screen instantly',
-    price: 100,
-    imageUrl: '/images/dinamit1.png',
-    availability: true,
-    starsPrice: 1,
-    type: 'boost',
-    duration: 0,
-    multiplier: 1
-  },
   {
     _id: 'pickaxe1',
     id: 'pickaxe1',
@@ -24,10 +10,23 @@ const mockBoostCards = [
     price: 300,
     imageUrl: '/images/kirka1.png',
     availability: true,
-        starsPrice: 1,
+    starsPrice: 100,
     type: 'tool',
     duration: 0,
     multiplier: 2
+  },
+  {
+    _id: 'dynamite1',
+    id: 'dynamite1',
+    title: 'Dynamite',
+    description: 'Collects all minerals on screen at once',
+    price: 500,
+    imageUrl: '/images/dinamit1.png',
+    availability: true,
+    starsPrice: 150,
+    type: 'boost',
+    duration: 0,
+    multiplier: 1
   },
   {
     _id: 'boots_female',
@@ -37,7 +36,7 @@ const mockBoostCards = [
     price: 600,
     imageUrl: '/images/boot_female.png',
     availability: true,
-    starsPrice: 1,
+    starsPrice: 50,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -50,7 +49,7 @@ const mockBoostCards = [
     price: 750,
     imageUrl: '/images/boot_male.png',
     availability: true,
-    starsPrice: 1,
+    starsPrice: 60,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -63,7 +62,7 @@ const mockBoostCards = [
     price: 1200,
     imageUrl: '/images/magnit_boot.png',
     availability: true,
-    starsPrice: 1,
+    starsPrice: 100,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -76,7 +75,7 @@ const mockBoostCards = [
     price: 1500,
     imageUrl: '/images/boot_male.png',
     availability: true,
-    starsPrice: 1,
+    starsPrice: 120,
     type: 'boots',
     duration: 0,
     multiplier: 1
@@ -87,8 +86,7 @@ const mockBoostCards = [
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const serverUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-    const response = await fetch(`${serverUrl}/api/boost-cards`);
-
+    const response = await fetch(`${serverUrl}/api/boosts`);
     if (response.ok) {
       const data = await response.json();
       return res.status(200).json(data);
