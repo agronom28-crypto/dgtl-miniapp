@@ -10,7 +10,7 @@ const levels = [
     name: 'Newbie',
     order: 1,
     badges: [],
-    backgroundUrl: '/backgrounds/level1.png',
+    backgroundUrl: '',
     availability: true,
     requiredScore: 0,
     requiredLevel: 0
@@ -19,7 +19,7 @@ const levels = [
     name: 'Miner',
     order: 2,
     badges: ['first_mine'],
-    backgroundUrl: '/backgrounds/level2.png',
+    backgroundUrl: '',
     availability: true,
     requiredScore: 1000,
     requiredLevel: 1
@@ -28,7 +28,7 @@ const levels = [
     name: 'Pro Miner',
     order: 3,
     badges: ['pro_mine', 'speed'],
-    backgroundUrl: '/backgrounds/level3.png',
+    backgroundUrl: '',
     availability: true,
     requiredScore: 5000,
     requiredLevel: 2
@@ -37,7 +37,7 @@ const levels = [
     name: 'Expert',
     order: 4,
     badges: ['expert', 'multi_resource'],
-    backgroundUrl: '/backgrounds/level4.png',
+    backgroundUrl: '',
     availability: true,
     requiredScore: 15000,
     requiredLevel: 3
@@ -46,7 +46,7 @@ const levels = [
     name: 'Master',
     order: 5,
     badges: ['master', 'diamond_hands'],
-    backgroundUrl: '/backgrounds/level5.png',
+    backgroundUrl: '',
     availability: true,
     requiredScore: 50000,
     requiredLevel: 4
@@ -55,7 +55,7 @@ const levels = [
     name: 'Legend',
     order: 6,
     badges: ['legend', 'whale'],
-    backgroundUrl: '/backgrounds/level6.png',
+    backgroundUrl: '',
     availability: true,
     requiredScore: 150000,
     requiredLevel: 5
@@ -73,21 +73,22 @@ async function seed() {
     let inserted = 0;
     let updated = 0;
 
-    for (const level of levels) {
-      const existing = await Level.findOne({ order: level.order });
+    for (const levelData of levels) {
+      const existing = await Level.findOne({ order: levelData.order });
       if (existing) {
-        await Level.updateOne({ order: level.order }, { $set: level });
+        await Level.updateOne({ order: levelData.order }, { $set: levelData });
         updated++;
       } else {
-        await Level.create(level);
+        await Level.create(levelData);
         inserted++;
       }
     }
 
-    console.log(`Levels seeded: ${inserted} inserted, ${updated} updated (total: ${levels.length})`);
-    process.exit(0);
-  } catch (err) {
-    console.error('Seed error:', err);
+    console.log(`Seeding complete: ${inserted} inserted, ${updated} updated`);
+    await mongoose.disconnect();
+    console.log('Disconnected from MongoDB');
+  } catch (error) {
+    console.error('Error seeding levels:', error);
     process.exit(1);
   }
 }
