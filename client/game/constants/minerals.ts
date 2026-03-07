@@ -7,40 +7,69 @@ export interface MineralInfo {
   period: number;
 }
 
-// Список реально существующих файлов спрайтов в /public/minerals/
+// Mapping chemical symbols to stone image filenames in /images/stones/
+const SYMBOL_TO_STONE: Record<string, string> = {
+  H: 'Hydrogen', He: 'Helium', Li: 'Lithium', Be: 'Beryllium', B: 'boron',
+  C: 'carbon', N: 'Nirtogen', O: 'Oxygen', F: 'Fluorine', Ne: 'Neon',
+  Na: 'Sodium', Mg: 'Magnesium', Al: 'Aluminum', Si: 'Silicon', P: 'phosphorus',
+  S: 'Sulfur', Cl: 'Chlorine', Ar: 'Argon', K: 'Potassium', Ca: 'Calcium',
+  Sc: 'Scandium', Ti: 'Titanium', V: 'Vanadium', Cr: 'Chromium', Mn: 'Manganese',
+  Fe: 'iron', Co: 'Cobalt', Ni: 'Nickel', Cu: 'Copper', Zn: 'Zinc',
+  Ga: 'Gallium', Ge: 'Germanium', As: 'Arsenic', Se: 'Selenium', Br: 'Brom',
+  Kr: 'Krypton', Rb: 'Rubidium', Sr: 'Strontium', Y: 'Yttrium', Zr: 'Zirconium',
+  Nb: 'Niobium', Mo: 'Molybdenum', Tc: 'Technetium', Ru: 'Ruthenium', Rh: 'rhodium',
+  Pd: 'palladium', Ag: 'Silver', Cd: 'Cadmium', In: 'Indium', Sn: 'Tin',
+  Sb: 'antimony', Te: 'Tellurium', I: 'Iodine', Xe: 'Xenon', Cs: 'Cesium',
+  Ba: 'Barium', La: 'Lanthanum', Ce: 'Cerium', Pr: 'Praseodymium', Nd: 'Neodymium',
+  Pm: 'Promethium', Sm: 'Samarium', Eu: 'Europium', Gd: 'Gadolinium', Tb: 'Terbium',
+  Dy: 'Dysprosium', Ho: 'Holmium', Er: 'Erbium', Tm: 'Thulium', Yb: 'Ytterbium',
+  Lu: 'Lutetium', Hf: 'Hafnium', Ta: 'Tantalum', W: 'Tungsten', Re: 'Rhenium',
+  Os: 'Osmium', Ir: 'Iridium', Pt: 'Platium', Au: 'gold', Hg: 'Mercury',
+  Tl: 'Thallium', Pb: 'Lead', Bi: 'Bismuth', Po: 'Polonium', At: 'Astatine',
+  Rn: 'Radon', Fr: 'Francium', Ra: 'Radium', Ac: 'Actinium', Th: 'Thorium',
+  Pa: 'Protactinium', U: 'Uranium', Np: 'Neptunium', Pu: 'Plutonium', Am: 'Americium',
+  Cm: 'Curium', Bk: 'Berkelium', Cf: 'Californium', Es: 'Einsteinium', Fm: 'Fermium',
+  Md: 'Mendelevium', No: 'Nobelium', Lr: 'Lawrencium', Rf: 'Rutherfordium ',
+  Db: 'Dubnium', Sg: 'Seaborgium', Bh: 'Bohrium', Hs: 'Hassium', Mt: 'Meitnerium',
+  Ds: 'Darmstadtium', Rg: 'Roentgenium', Cn: 'Copernicium', Nh: 'Nihonium',
+  Fl: 'Flerovium', Mc: 'Moscovium', Lv: 'Livermorium', Ts: 'Tennessine', Og: 'Oganesson',
+};
+
+// Old sprites in /public/minerals/ as fallback
 const AVAILABLE_SPRITE_FILENAMES: string[] = [
-  'Xe.png', 'U.png', 'Tm.png', 'Te.png', 'Sr.png', 'Sn.png', 'Si.png', 
-  'Se.png', 'Sc.png', 'Sb.png', 'S.png', 'Re.png', 'Rb.png', 'Ra.png', 
-  'Pb.png', 'P.png', 'O.png', 'No.png', 'Ne.png', 'Na.png', 'N.png', 
-  'Mg.png', 'Md.png', 'Lv.png', 'Lu.png', 'LR.png', 'Li.png', 'Kr.png', 
-  'K.png', 'I.png', 'Hf.png', 'H.png', 'Ge.png', 'Fr.png', 'Fe.png', 
-  'F.png', 'Cu.png', 'Cs.png', 'Cm.png', 'Cl.png', 'Ci.png', 'Cf.png', 
-  'Ca.png', 'C.png', 'Br.png', 'Be.png', 'Ba.png', 'B.png', 'Au.png', 
+  'Xe.png', 'U.png', 'Tm.png', 'Te.png', 'Sr.png', 'Sn.png', 'Si.png',
+  'Se.png', 'Sc.png', 'Sb.png', 'S.png', 'Re.png', 'Rb.png', 'Ra.png',
+  'Pb.png', 'P.png', 'O.png', 'No.png', 'Ne.png', 'Na.png', 'N.png',
+  'Mg.png', 'Md.png', 'Lv.png', 'Lu.png', 'LR.png', 'Li.png', 'Kr.png',
+  'K.png', 'I.png', 'Hf.png', 'H.png', 'Ge.png', 'Fr.png', 'Fe.png',
+  'F.png', 'Cu.png', 'Cs.png', 'Cm.png', 'Cl.png', 'Ci.png', 'Cf.png',
+  'Ca.png', 'C.png', 'Br.png', 'Be.png', 'Ba.png', 'B.png', 'Au.png',
   'He.png', 'Ar.png', 'Al.png', 'Ag.png'
-  // Добавьте сюда 'Ti.png', 'V.png' и т.д., если они у вас появятся
-  // или если они есть, но не попали в автоматический список
 ];
 
 const AVAILABLE_SPRITE_PATHS: string[] = AVAILABLE_SPRITE_FILENAMES.map(file => `/minerals/${file}`);
 
 const getRandomFallbackImage = (): string => {
   if (AVAILABLE_SPRITE_PATHS.length === 0) {
-    // Этот путь должен существовать, если список пуст, иначе будет вечная ошибка
-    // Лучше убедиться, что AVAILABLE_SPRITE_PATHS не пуст
-    // Можно кинуть ошибку или вернуть специальный "дефолтный" спрайт, если он есть
     console.error("CRITICAL: No available mineral sprites for fallback!");
-    return '/minerals/fallback_error.png'; // Пример, если бы такой файл существовал
+    return '/minerals/fallback_error.png';
   }
   const randomIndex = Math.floor(Math.random() * AVAILABLE_SPRITE_PATHS.length);
   return AVAILABLE_SPRITE_PATHS[randomIndex];
 };
 
 const getMineralImage = (symbol: string): string => {
+  // First try new high-quality stones from /images/stones/
+  const stoneName = SYMBOL_TO_STONE[symbol];
+  if (stoneName) {
+    return `/images/stones/${stoneName}.png`;
+  }
+  // Fallback to old /minerals/ sprites
   const expectedImagePath = `/minerals/${symbol}.png`;
   if (AVAILABLE_SPRITE_PATHS.includes(expectedImagePath)) {
     return expectedImagePath;
   }
-  // console.warn(`Sprite for ${symbol} (${expectedImagePath}) not found. Using random fallback.`);
+  console.warn(`Sprite for ${symbol} not found. Using random fallback.`);
   return getRandomFallbackImage();
 };
 
@@ -168,4 +197,4 @@ export const MINERALS_DATA: Omit<MineralInfo, 'image'>[] = [
 export const MINERALS: MineralInfo[] = MINERALS_DATA.map(m => ({
   ...m,
   image: getMineralImage(m.symbol)
-})); 
+}));
