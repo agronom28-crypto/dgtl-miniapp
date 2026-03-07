@@ -47,10 +47,8 @@ export class Game {
   private context: CanvasRenderingContext2D;
   private offscreenCanvas: HTMLCanvasElement;
   private offscreenContext: CanvasRenderingContext2D;
-
   private windowWidth: number;
   private windowHeight: number;
-
   private entities: ImageEntity[] = [];
   private score: number = 0;
   private gameTime: number;
@@ -59,28 +57,23 @@ export class Game {
   private lastUpdateTime: number = 0;
   private scoreMultiplier: number = 1;
   private doublePointsActive: boolean = false;
-
   // Equipment state
   private equippedBoots: string = 'none';
   private equippedPickaxe: string = 'none';
   private pickaxeMultiplier: number = 1;
-
   private redStoneChance: number = 0.15;
   private collectedMinerals: CollectedMinerals = {};
-
   // Footprints
   private footprints: Footprint[] = [];
   private footprintImages: Map<string, HTMLImageElement> = new Map();
   private nextFootSide: 'left' | 'right' = 'left';
-  private readonly FOOTPRINT_DURATION = 1500; // ms
+  private readonly FOOTPRINT_DURATION = 1500;
   private readonly FOOTPRINT_SIZE = 50;
-
   private level?: LevelConfig;
   private mineralsPool: MineralInfo[] = [];
   private spawnInterval: number;
   private minSpeed: number;
   private maxSpeed: number;
-
   private onScoreUpdate?: (score: number) => void;
   private onTimeLeftUpdate?: (timeLeft: number) => void;
   private onGameOver?: (totalCollectedValue: number, collectedMinerals: CollectedMinerals) => void;
@@ -101,7 +94,6 @@ export class Game {
     this.onGameOver = callbacks.onGameOver;
     this.level = level;
     this.availableElements = availableElementDefs.length > 0 ? availableElementDefs : ALL_MINERALS;
-
     if (level) {
       const levelMineralSymbols = new Set(level.minerals);
       this.mineralsPool = ALL_MINERALS.filter(mineral => levelMineralSymbols.has(mineral.symbol));
@@ -113,24 +105,20 @@ export class Game {
     } else {
       this.mineralsPool = [];
     }
-
     this.spawnInterval = level ? level.spawnInterval : DEFAULT_SPAWN_INTERVAL;
     this.minSpeed = level ? level.minSpeed : DEFAULT_MIN_SPEED;
     this.maxSpeed = level ? level.maxSpeed : DEFAULT_MAX_SPEED;
     this.gameTime = level ? level.duration : DEFAULT_GAME_DURATION;
-
     this.offscreenCanvas = document.createElement("canvas");
     this.offscreenCanvas.width = this.windowWidth;
     this.offscreenCanvas.height = this.windowHeight;
     this.offscreenContext = this.offscreenCanvas.getContext("2d")!;
-
     this.preloadFootprintImages();
     this.setupCanvas();
     this.setupEventListeners();
   }
 
   private preloadFootprintImages() {
-    // Preload default footprints
     const loadImg = (src: string) => {
       const img = new Image();
       img.src = src;
@@ -146,13 +134,18 @@ export class Game {
   }
 
   private setupCanvas() {
-    this.canvas.style.background = this.level ? this.level.background : "#000";
-    if (this.level && this.level.backgroundImage) {
+    // If level has backgroundVideo, keep canvas transparent so video shows through
+    if (this.level && this.level.backgroundVideo) {
+      this.canvas.style.background = "transparent";
+      this.canvas.style.backgroundImage = "none";
+    } else if (this.level && this.level.backgroundImage) {
+      this.canvas.style.background = this.level.background || "#000";
       this.canvas.style.backgroundImage = `url(${this.level.backgroundImage})`;
       this.canvas.style.backgroundSize = "cover";
       this.canvas.style.backgroundPosition = "center";
       this.canvas.style.backgroundRepeat = "no-repeat";
     } else {
+      this.canvas.style.background = this.level ? this.level.background : "#000";
       this.canvas.style.backgroundImage = "none";
     }
     this.canvas.width = this.windowWidth;
@@ -164,18 +157,15 @@ export class Game {
   }
 
   private getFootprintImageSrc(): string {
-    // If pickaxe equipped, use pickaxe footprint
     if (this.equippedPickaxe !== 'none') {
       return PICKAXE_FOOTPRINT;
     }
-    // If boots equipped, use boot footprints
     if (this.equippedBoots !== 'none' && BOOT_FOOTPRINTS[this.equippedBoots]) {
       const pair = BOOT_FOOTPRINTS[this.equippedBoots];
       const src = this.nextFootSide === 'left' ? pair.left : pair.right;
       this.nextFootSide = this.nextFootSide === 'left' ? 'right' : 'left';
       return src;
     }
-    // Default bare foot
     const src = this.nextFootSide === 'left' ? DEFAULT_FOOTPRINTS.left : DEFAULT_FOOTPRINTS.right;
     this.nextFootSide = this.nextFootSide === 'left' ? 'right' : 'left';
     return src;
@@ -217,10 +207,7 @@ export class Game {
     const rect = this.canvas.getBoundingClientRect();
     const mouseX = (event.clientX - rect.left) * (this.canvas.width / rect.width);
     const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
-
-    // Add footprint at tap location
     this.addFootprint(mouseX, mouseY);
-
     for (let i = this.entities.length - 1; i >= 0; i--) {
       if (this.entities[i] && this.entities[i].isClicked(mouseX, mouseY)) {
         const entity = this.entities[i];
@@ -233,10 +220,7 @@ export class Game {
 
   private collectEntity(entity: ImageEntity) {
     entity.collect();
-
-    // Red stone penalty: lose 50% of current score
     if (entity.symbol === 'RED_STONE') {
-      // If wearing boots, no penalty
       if (this.equippedBoots !== 'none') {
         return;
       }
@@ -248,13 +232,11 @@ export class Game {
       }
       return;
     }
-
     const basePoints = entity.points;
     const comboMultiplier = this.calculateComboMultiplier();
     const levelMultiplier = this.level ? 1 + (this.level.id * 0.1) : 1;
     const pointsEarned = basePoints * this.scoreMultiplier * comboMultiplier * levelMultiplier * this.pickaxeMultiplier;
     this.score += pointsEarned;
-
     const mineralSymbol = entity.symbol;
     const updatedCollectedMinerals = { ...this.collectedMinerals };
     if (!updatedCollectedMinerals[mineralSymbol]) {
@@ -263,7 +245,6 @@ export class Game {
     updatedCollectedMinerals[mineralSymbol].count += 1;
     updatedCollectedMinerals[mineralSymbol].totalPoints += pointsEarned;
     this.collectedMinerals = updatedCollectedMinerals;
-
     if (this.onScoreUpdate) {
       this.onScoreUpdate(parseFloat(this.score.toFixed(2)));
     }
@@ -271,8 +252,6 @@ export class Game {
 
   private spawnEntity() {
     if (this.mineralsPool.length === 0) return;
-
-    // Red stone: only spawn if player has NO boots
     if (this.equippedBoots === 'none' && Math.random() < this.redStoneChance) {
       const randomX = Math.random() * (this.windowWidth - 50);
       const speedFactor = this.windowHeight / BASE_HEIGHT;
@@ -281,17 +260,14 @@ export class Game {
       this.entities.push(redStone);
       return;
     }
-
     const randomX = Math.random() * (this.windowWidth - 50);
     const speedFactor = this.windowHeight / BASE_HEIGHT;
     const progressFactor = 1 - (this.gameTime / (this.level?.duration || DEFAULT_GAME_DURATION));
     const dynamicMinSpeed = this.minSpeed * (1 + progressFactor * 0.5);
     const dynamicMaxSpeed = this.maxSpeed * (1 + progressFactor * 0.3);
     const randomSpeed = (Math.random() * (dynamicMaxSpeed - dynamicMinSpeed) + dynamicMinSpeed) * speedFactor;
-
     const mineral = this.getWeightedRandomMineral();
     if (!mineral) return;
-
     const entity = new ImageEntity(randomX, -50, mineral.image, randomSpeed, mineral.points, mineral.symbol);
     this.entities.push(entity);
   }
@@ -323,18 +299,12 @@ export class Game {
   private updateEntities(currentTime: number = 0) {
     const deltaTime = (currentTime - this.lastUpdateTime) / 1000;
     this.lastUpdateTime = currentTime;
-
     this.offscreenContext.clearRect(0, 0, this.windowWidth, this.windowHeight);
-
-    // Render footprints first (behind entities)
     this.renderFootprints(this.offscreenContext, currentTime);
-
     this.entities.forEach((entity) => entity.update(this.offscreenContext, deltaTime));
     this.entities = this.entities.filter((entity) => !entity.isOffScreen(this.windowHeight));
-
     this.context.clearRect(0, 0, this.windowWidth, this.windowHeight);
     this.context.drawImage(this.offscreenCanvas, 0, 0);
-
     if (this.gameTime <= 0) {
       this.endGame();
     } else {
@@ -387,7 +357,6 @@ export class Game {
   }
 
   private applyDynamiteBoost() {
-    // Collect all entities on screen
     for (let i = this.entities.length - 1; i >= 0; i--) {
       const entity = this.entities[i];
       if (entity.symbol !== 'RED_STONE') {
@@ -406,7 +375,6 @@ export class Game {
     }, 3000);
   }
 
-  // Equipment setters
   public setBootsEquipped(bootsType: string) {
     this.equippedBoots = bootsType || 'none';
   }
