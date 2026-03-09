@@ -40,7 +40,6 @@ const CONTINENT_COUNTRIES: Record<ContinentKey, string[]> = {
     australia: ['au','nz','pg','fj','sb','vu','nc','tf']
 };
 
-// Countries shown in neutral gray (not clickable as a continent)
 const NEUTRAL_COUNTRIES = ['ua','by','kz','uz','tm','md'];
 
 const CONTINENT_COLORS: Record<ContinentKey, string> = {
@@ -55,7 +54,6 @@ const CONTINENT_COLORS: Record<ContinentKey, string> = {
 
 const NEUTRAL_COLOR = '#334455';
 
-// Build reverse lookup: country code -> continent
 const COUNTRY_TO_CONTINENT: Record<string, ContinentKey> = {};
 for (const [continent, codes] of Object.entries(CONTINENT_COUNTRIES)) {
     for (const code of codes) {
@@ -63,7 +61,6 @@ for (const [continent, codes] of Object.entries(CONTINENT_COUNTRIES)) {
     }
 }
 
-// Helper: hex color to rgba with alpha
 function hexToRgba(hex: string, alpha: number): string {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -75,15 +72,21 @@ const SVG_URL = 'https://raw.githubusercontent.com/flekschas/simple-world-map/ma
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    // Use ref to always have latest onSelect callback (avoids stale closure in SVG event listeners)
-    const onSelectRef = useRef(onSelect);
-    onSelectRef.current = onSelect;
 
-    const handlePathClick = useCallback((continent: ContinentKey) => {
-        if (onSelectRef.current) {
-            onSelectRef.current(continent);
+    // Event delegation: handle clicks on the container, find closest [data-continent]
+    const handleContainerClick = useCallback((e: React.MouseEvent) => {
+        const target = e.target as HTMLElement;
+        // Walk up from clicked element to find the g[data-continent]
+        let el: HTMLElement | null = target;
+        while (el && el !== e.currentTarget) {
+            const continent = el.getAttribute('data-continent');
+            if (continent) {
+                onSelect(continent as ContinentKey);
+                return;
+            }
+            el = el.parentElement;
         }
-    }, []);
+    }, [onSelect]);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -101,10 +104,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                 const svgEl = doc.querySelector('svg');
                 if (!svgEl) return;
 
-                // Clear container
                 container.innerHTML = '';
 
-                // Create new SVG
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('viewBox', svgEl.getAttribute('viewBox') || '30.767 241.591 784.077 458.627');
                 svg.setAttribute('width', '100%');
@@ -112,7 +113,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                 svg.style.background = '#0a0e1a';
                 svg.style.borderRadius = '12px';
 
-                // Add glow filters
                 const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
                 Object.entries(CONTINENT_COLORS).forEach(([key, color]) => {
                     const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
@@ -121,11 +121,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     filter.setAttribute('y', '-50%');
                     filter.setAttribute('width', '200%');
                     filter.setAttribute('height', '200%');
-
                     const blur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
                     blur.setAttribute('stdDeviation', '2');
                     blur.setAttribute('result', 'blur');
-
                     const merge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
                     const mn1 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
                     mn1.setAttribute('in', 'blur');
@@ -133,14 +131,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     mn2.setAttribute('in', 'SourceGraphic');
                     merge.appendChild(mn1);
                     merge.appendChild(mn2);
-
                     filter.appendChild(blur);
                     filter.appendChild(merge);
                     defs.appendChild(filter);
                 });
                 svg.appendChild(defs);
 
-                // Group paths by continent + collect neutrals
                 const groups: Record<string, SVGElement[]> = {};
                 const neutralPaths: SVGElement[] = [];
 
@@ -154,7 +150,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                         }
                     }
                     code = code.toLowerCase();
-
                     if (NEUTRAL_COUNTRIES.includes(code)) {
                         neutralPaths.push(path as unknown as SVGElement);
                     } else {
@@ -166,7 +161,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     }
                 });
 
-                // Render neutral countries first (dim gray, not clickable)
                 if (neutralPaths.length) {
                     const ng = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                     neutralPaths.forEach(origPath => {
@@ -182,7 +176,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     svg.appendChild(ng);
                 }
 
-                // Render continent groups
                 Object.entries(CONTINENT_COLORS).forEach(([key, color]) => {
                     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                     g.setAttribute('data-continent', key);
@@ -194,7 +187,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                     const paths = groups[key] || [];
                     paths.forEach(origPath => {
                         const newPath = origPath.cloneNode(true) as SVGElement;
-                        // Fill with semi-transparent color so the entire area is clickable
                         newPath.setAttribute('fill', hexToRgba(color, isActive ? 0.35 : 0.15));
                         newPath.setAttribute('stroke', color);
                         newPath.setAttribute('stroke-width', isActive ? '1.5' : '0.8');
@@ -204,11 +196,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
                         g.appendChild(newPath);
                     });
 
-                    g.addEventListener('click', () => {
-                        handlePathClick(key as ContinentKey);
-                    });
-
-                    // Hover effect
+                    // Hover effects via DOM listeners (visual only, no state changes)
                     g.addEventListener('mouseenter', () => {
                         const children = g.querySelectorAll('path');
                         children.forEach(p => {
@@ -236,11 +224,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
             });
 
         return () => { cancelled = true; };
-    }, [activeContinent, handlePathClick]);
+    }, [activeContinent]);
 
     return (
         <div
             ref={containerRef}
+            onClick={handleContainerClick}
             style={{
                 width: '100%',
                 maxWidth: 600,
