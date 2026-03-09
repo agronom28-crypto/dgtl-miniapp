@@ -384,7 +384,7 @@ const Shop: React.FC = () => {
       <Layout>
         <h1 className={styles.title}>{t.shop_title}</h1>
         <p className={styles.coins}>💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}</p>
-        <WorldMap onSelectContinent={(c: ContinentKey) => setActiveContinent(c)} activeContinent={null} />
+        <WorldMap onSelect={(c: ContinentKey) => setActiveContinent(c)} activeContinent={null} />
         <p className={styles.hint}>{t.shop_map_hint}</p>
         {myIcons.length > 0 && (
           <div className={styles.ownedSection}>
