@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { ContinentKey } from '../models/Icon';
 
 interface WorldMapProps {
@@ -10,7 +10,7 @@ const CONTINENT_COUNTRIES: Record<ContinentKey, string[]> = {
     north_america: ['us','ca','mx','gt','bz','hn','sv','ni','cr','pa','cu','jm','ht','do','pr','bs','tt','gl'],
     south_america: ['br','ar','cl','co','pe','ve','ec','bo','py','uy','gy','sr','fk'],
     europe: ['gb','fr','de','it','es','pt','nl','be','ch','at','se','no','fi','dk','ie','is','pl','cz','sk','hu','ro','bg','hr','rs','ba','me','mk','al','gr','cy','ee','lv','lt','si','lu','mt'],
-    africa: ['eg','dz','ly','tn','ma','eh','mr','ml','ne','td','sd','ss','er','dj','so','et','ke','ug','tz','mz','mg','zm','zw','bw','na','za','sz','ls','ao','cd','cg','ga','gq','cm','ng','bj','tg','gh','ci','lr','sl','gn','gw','sn','gm','bf','rw','bi','mw'],
+    africa: ['eg','dz','ly','tn','ma','eh','mr','ml','ne','td','sd','ss','er','dj','so','et','ke','ug','tz','mz','mg','zm','zw','bw','na','za','ls','ao','cd','cg','ga','gq','cm','ng','bj','tg','gh','ci','lr','sl','gn','gw','sn','gm','bf','rw','bi','mw'],
     asia: ['cn','jp','kr','kp','mn','in','pk','bd','lk','np','bt','mm','th','vn','la','kh','my','sg','id','ph','tw','bn','tl','sa','ae','om','ye','iq','ir','sy','jo','il','lb','ps','tr','ge','az','am','af','tj','kg','qa','kw'],
     russia: ['ru'],
     australia: ['au','nz','pg','fj','sb','vu','nc','tf']
@@ -48,9 +48,20 @@ const SVG_URL = 'https://raw.githubusercontent.com/flekschas/simple-world-map/ma
 
 const WorldMap: React.FC<WorldMapProps> = (props) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const onSelectRef = useRef<((c: ContinentKey) => void) | undefined>(props.onSelect);
-    // Always keep ref in sync with latest prop
-    onSelectRef.current = props.onSelect;
+
+    // Handle click via React event delegation on the container div
+    const handleContainerClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        let target = e.target as Element | null;
+        // Walk up from clicked element to find group with data-continent
+        while (target && target !== e.currentTarget) {
+            const continent = target.getAttribute?.('data-continent');
+            if (continent) {
+                props.onSelect(continent as ContinentKey);
+                return;
+            }
+            target = target.parentElement;
+        }
+    }, [props.onSelect]);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -84,8 +95,8 @@ const WorldMap: React.FC<WorldMapProps> = (props) => {
                     blur.setAttribute('stdDeviation', '2'); blur.setAttribute('result', 'blur');
                     const merge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
                     const mn1 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
-                    mn1.setAttribute('in', 'blur');
                     const mn2 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+                    mn1.setAttribute('in', 'blur');
                     mn2.setAttribute('in', 'SourceGraphic');
                     merge.appendChild(mn1); merge.appendChild(mn2);
                     filter.appendChild(blur); filter.appendChild(merge);
@@ -138,15 +149,7 @@ const WorldMap: React.FC<WorldMapProps> = (props) => {
                         np.removeAttribute('id');
                         g.appendChild(np);
                     });
-                    // Click handler uses ref — always latest callback
-                    g.addEventListener('click', () => {
-                        const fn = onSelectRef.current;
-                        if (typeof fn === 'function') {
-                            fn(key as ContinentKey);
-                        } else {
-                            console.error('WorldMap: onSelect is not a function, got:', fn, 'props:', props);
-                        }
-                    });
+                    // Hover effects
                     g.addEventListener('mouseenter', () => {
                         g.querySelectorAll('path').forEach(p => {
                             p.setAttribute('fill', hexToRgba(color, 0.4));
@@ -172,6 +175,7 @@ const WorldMap: React.FC<WorldMapProps> = (props) => {
     return (
         <div
             ref={containerRef}
+            onClick={handleContainerClick}
             style={{
                 width: '100%',
                 maxWidth: 600,
