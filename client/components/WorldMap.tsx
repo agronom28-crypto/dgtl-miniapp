@@ -75,10 +75,15 @@ const SVG_URL = 'https://raw.githubusercontent.com/flekschas/simple-world-map/ma
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelect, activeContinent }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    // Use ref to always have latest onSelect callback (avoids stale closure in SVG event listeners)
+    const onSelectRef = useRef(onSelect);
+    onSelectRef.current = onSelect;
 
     const handlePathClick = useCallback((continent: ContinentKey) => {
-        onSelect(continent);
-    }, [onSelect]);
+        if (onSelectRef.current) {
+            onSelectRef.current(continent);
+        }
+    }, []);
 
     useEffect(() => {
         const container = containerRef.current;
