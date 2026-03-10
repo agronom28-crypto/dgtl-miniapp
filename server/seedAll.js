@@ -6,10 +6,10 @@ const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb:/
 const levels = [
   {name:"Newbie",order:1,badges:[],backgroundUrl:"/game/backgrounds/level1.jpg",availability:true,requiredScore:0,requiredLevel:0},
   {name:"Miner",order:2,badges:["first_mine"],backgroundUrl:"/game/backgrounds/level2.jpg",availability:true,requiredScore:1000,requiredLevel:1},
-  {name:"Pro Miner",order:3,badges:["pro_mine","speed"],backgroundUrl:"",availability:true,requiredScore:5000,requiredLevel:2},
-  {name:"Expert",order:4,badges:["expert","multi_resource"],backgroundUrl:"",availability:true,requiredScore:15000,requiredLevel:3},
-  {name:"Master",order:5,badges:["master","diamond_hands"],backgroundUrl:"",availability:true,requiredScore:50000,requiredLevel:4},
-  {name:"Legend",order:6,badges:["legend","whale"],backgroundUrl:"",availability:true,requiredScore:150000,requiredLevel:5}
+  {name:"Pro Miner",order:3,badges:["pro_mine","speed"],backgroundUrl:"/game/backgrounds/level1.jpg",availability:true,requiredScore:5000,requiredLevel:2},
+  {name:"Expert",order:4,badges:["expert","multi_resource"],backgroundUrl:"/game/backgrounds/level1.jpg",availability:true,requiredScore:15000,requiredLevel:3},
+  {name:"Master",order:5,badges:["master","diamond_hands"],backgroundUrl:"/game/backgrounds/level1.jpg",availability:true,requiredScore:50000,requiredLevel:4},
+  {name:"Legend",order:6,badges:["legend","whale"],backgroundUrl:"/game/backgrounds/level1.jpg",availability:true,requiredScore:150000,requiredLevel:5}
 ];
 
 const boosts = [
