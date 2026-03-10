@@ -1,10 +1,8 @@
 const levels = [
   {
-    order: 1,
-    name: "Newbie",
+    order: 1, name: "Newbie",
     backgroundUrl: "/game/backgrounds/level1.jpg",
-    requiredScore: 0,
-    duration: 60,
+    requiredScore: 0, duration: 60,
     colorScheme: { primary: "#4CAF50", secondary: "#8BC34A" },
     minerals: [
       { name: "Бром", symbol: "Br", imageSrc: "/minerals/Br.png", score: 10, frequency: 0.1 },
@@ -16,11 +14,9 @@ const levels = [
     ]
   },
   {
-    order: 2,
-    name: "Miner",
+    order: 2, name: "Miner",
     backgroundUrl: "/game/backgrounds/level2.jpg",
-    requiredScore: 1000,
-    duration: 70,
+    requiredScore: 1000, duration: 70,
     colorScheme: { primary: "#FFC107", secondary: "#FF9800" },
     minerals: [
       { name: "Литий", symbol: "Li", imageSrc: "/minerals/Li.png", score: 20, frequency: 0.1 },
@@ -31,11 +27,8 @@ const levels = [
     ]
   },
   {
-    order: 3,
-    name: "Pro Miner",
-    backgroundUrl: "",
-    requiredScore: 5000,
-    duration: 80,
+    order: 3, name: "Pro Miner",
+    backgroundUrl: "", requiredScore: 5000, duration: 80,
     colorScheme: { primary: "#2196F3", secondary: "#03A9F4" },
     minerals: [
       { name: "Фтор", symbol: "F", imageSrc: "/minerals/F.png", score: 15, frequency: 0.1 },
@@ -45,11 +38,8 @@ const levels = [
     ]
   },
   {
-    order: 4,
-    name: "Expert",
-    backgroundUrl: "",
-    requiredScore: 15000,
-    duration: 90,
+    order: 4, name: "Expert",
+    backgroundUrl: "", requiredScore: 15000, duration: 90,
     colorScheme: { primary: "#9C27B0", secondary: "#E91E63" },
     minerals: [
       { name: "Титан", symbol: "Ti", imageSrc: "/minerals/Ti.png", score: 35, frequency: 0.07 },
@@ -59,11 +49,8 @@ const levels = [
     ]
   },
   {
-    order: 5,
-    name: "Master",
-    backgroundUrl: "",
-    requiredScore: 50000,
-    duration: 100,
+    order: 5, name: "Master",
+    backgroundUrl: "", requiredScore: 50000, duration: 100,
     colorScheme: { primary: "#FF5722", secondary: "#F44336" },
     minerals: [
       { name: "Платина", symbol: "Pt", imageSrc: "/minerals/Pt.png", score: 80, frequency: 0.02 },
@@ -73,11 +60,8 @@ const levels = [
     ]
   },
   {
-    order: 6,
-    name: "Legend",
-    backgroundUrl: "",
-    requiredScore: 150000,
-    duration: 120,
+    order: 6, name: "Legend",
+    backgroundUrl: "", requiredScore: 150000, duration: 120,
     colorScheme: { primary: "#FFD700", secondary: "#FFA000" },
     minerals: [
       { name: "Уран", symbol: "U", imageSrc: "/minerals/U.png", score: 150, frequency: 0.01 },
