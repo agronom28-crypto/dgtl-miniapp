@@ -28,8 +28,8 @@ async function seedAll() {
     const db = mongoose.connection.db;
 
     // Seed levels
-    await db.collection('levels').deleteMany({});
-    await db.collection('levels').insertMany(levels);
+    await db.collection('leveldata').deleteMany({});
+    await db.collection('leveldata').insertMany(levels);
     console.log('Seeded', levels.length, 'levels');
 
     // Seed boosts
