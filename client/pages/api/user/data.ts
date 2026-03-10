@@ -58,8 +58,8 @@ export default async function handler(
         return res.status(200).json({
           ...mockUserData,
           telegramId: telegramIdFromSession,
-          username: session.user.name || 'Player',
-          firstName: session.user.name || 'Player'
+          username: (session.user as any).name || 'Player',
+          firstName: (session.user as any).name || 'Player'
         });
       }
 
@@ -70,8 +70,8 @@ export default async function handler(
       return res.status(200).json({
         ...mockUserData,
         telegramId: telegramIdFromSession,
-        username: session.user.name || 'Player',
-        firstName: session.user.name || 'Player'
+        username: (session.user as any).name || 'Player',
+        firstName: (session.user as any).name || 'Player'
       });
     }
   } catch (error) {

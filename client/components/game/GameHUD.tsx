@@ -15,14 +15,17 @@ interface GameHUDProps {
   style?: React.CSSProperties;
 }
 
-const GameHUD: React.FC<GameHUDProps> = ({ score, timeLeft, boostCards, onBoostClick, cooldowns, style }) => {
+const GameHUD: React.FC<GameHUDProps> = ({ score, timeLeft, boostCards, onBoostClick, cooldowns, style
+}) => {
   return (
-    <div className="absolute top-0 left-0 right-0 p-4 z-20 flex justify-between items-center" style={style}>
-      <div className="text-2xl font-bold">
-        Score: {score} GTL
-      </div>
-      <div className="text-2xl font-bold">
-        Time: {timeLeft}s
+    <div className="absolute top-0 left-0 right-0 p-4 z-20 flex justify-between items-start" style={style}>
+      <div className="flex flex-col">
+        <div className="text-2xl font-bold">
+          Score: {score} GTL
+        </div>
+        <div className="text-2xl font-bold">
+          Time: {timeLeft}s
+        </div>
       </div>
 
       {/* Boosts Display */}
@@ -39,7 +42,7 @@ const GameHUD: React.FC<GameHUDProps> = ({ score, timeLeft, boostCards, onBoostC
               className="w-full h-full object-contain rounded-xl"
               style={{ opacity: cooldowns[boost.id] ? 0.6 : 1 }}
             />
-            
+
             {/* Cooldown Overlay */}
             {cooldowns[boost.id] && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-xl">
@@ -48,7 +51,7 @@ const GameHUD: React.FC<GameHUDProps> = ({ score, timeLeft, boostCards, onBoostC
                 </span>
               </div>
             )}
-            
+
             {/* Quantity Display */}
             <span className="absolute bottom-1.5 left-1.5 text-white text-xs font-bold">
               x{boost.quantity}

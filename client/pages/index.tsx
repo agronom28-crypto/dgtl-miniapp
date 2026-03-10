@@ -161,7 +161,7 @@ const Index = () => {
                 <div
                   key={level.order}
                   className={`relative rounded-lg mb-2 shadow-inner overflow-hidden ${
-                    level.availability ? 'bg-neutral-content' : 'bg-base-100'
+                    level.availability ? 'bg-gray-900' : 'bg-base-100'
                   }`}
                 >
                   {level.availability ? (

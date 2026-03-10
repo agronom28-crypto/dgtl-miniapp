@@ -146,10 +146,10 @@ const Store: React.FC = () => {
       if (response.ok) {
         if (type === 'boots') {
           setEquippedBoots(boostId);
-          showNotification(t.boosts_equipped || 'Equipped!', 'success');
+          showNotification((t as any).boosts_equipped || 'Equipped!', 'success');
         } else if (type === 'tool') {
           setEquippedPickaxe(boostId);
-          showNotification(t.boosts_equipped || 'Equipped!', 'success');
+          showNotification((t as any).boosts_equipped || 'Equipped!', 'success');
         }
       }
     } catch (err) {
