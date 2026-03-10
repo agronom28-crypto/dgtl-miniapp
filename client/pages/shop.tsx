@@ -289,7 +289,7 @@ const Shop: React.FC = () => {
       
             <div key={card.id} className={styles.boostCard}>
               <img
-                src={`/boosts/${card.image || card.id + '.png'}`}
+                src={card.imageUrl}
                 alt={getBoostName(lang, card.title)}
                 className={styles.boostImage}
                 onError={(e) => { (e.target as HTMLImageElement).src = '/boosts/boost.png'; }}
@@ -325,7 +325,7 @@ const Shop: React.FC = () => {
             {boostCards.filter((c: any) => (c as any).type === 'boots').map((card) => (
               <div key={card.id} className={styles.boostCard}>
                 <img
-                  src={`/boosts/${card.image || card.id + '.png'}`}
+                  src={card.imageUrl}
                   alt={getBoostName(lang, card.title)}
                   className={styles.boostImage}
                   onError={(e) => { (e.target as HTMLImageElement).src = '/boosts/boost.png'; }}
