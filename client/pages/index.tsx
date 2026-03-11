@@ -176,21 +176,13 @@ const Index = () => {
                       {/* Level background image */}
                       <img
                         src={level.menuImageUrl || level.backgroundUrl || '/default-level-bg.jpg'}
-<<<<<<< Updated upstream
                         alt={getLevelName(lang, level.name)}
-=======
-                        alt={lang === 'en' ? (level.nameEn || level.name) : level.name}
->>>>>>> Stashed changes
                         className="h-[150px] w-full object-cover"
                       />
 
                       <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent flex items-center justify-between">
                         <div>
-<<<<<<< Updated upstream
                           <h2 className="text-lg font-bold text-white">{getLevelName(lang, level.name)}</h2>
-=======
-                          <h2 className="text-lg font-bold text-white">{lang === 'en' ? (level.nameEn || level.name) : level.name}</h2>
->>>>>>> Stashed changes
                         </div>
                         <Link href={`/game?level=${level.order}`}>
                           <button className="btn btn-md border-2 border-accent shadow-glow">
