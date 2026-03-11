@@ -9,7 +9,7 @@ import ChemicalBadge from '../components/ChemicalBadge';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Head from 'next/head';
-import { getTranslations, Lang } from '../lib/i18n';
+import { getTranslations, getLevelName, Lang } from '../lib/i18n';
 
 const Index = () => {
   const { data: session, status } = useSession();
@@ -176,13 +176,13 @@ const Index = () => {
                       {/* Level background image */}
                       <img
                         src={level.menuImageUrl || level.backgroundUrl || '/default-level-bg.jpg'}
-                        alt={level.name}
+                        alt={getLevelName(lang, level.name)}
                         className="h-[150px] w-full object-cover"
                       />
 
                       <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent flex items-center justify-between">
                         <div>
-                          <h2 className="text-lg font-bold text-white">{level.name}</h2>
+                          <h2 className="text-lg font-bold text-white">{getLevelName(lang, level.name)}</h2>
                         </div>
                         <Link href={`/game?level=${level.order}`}>
                           <button className="btn btn-md border-2 border-accent shadow-glow">
