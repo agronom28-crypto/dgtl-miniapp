@@ -49,7 +49,9 @@ const Store: React.FC = () => {
     const fetchBoostCards = async () => {
       try {
         const response = await axios.get("/api/boost-cards");
-        setBoostCards(Array.isArray(response.data) ? response.data : []);
+                      const VALID_BOOST_IDS = ['pickaxe1', 'dynamite1', 'boots_female', 'boots_male', 'boots_golden', 'boots_leather'];
+              const allCards = Array.isArray(response.data) ? response.data : [];
+              setBoostCards(allCards.filter((card: IBoostCard) => VALID_BOOST_IDS.includes(card.id)));
       } catch (err) { console.error(err); } finally { setIsBoostsLoading(false); }
     };
     fetchBoostCards();
