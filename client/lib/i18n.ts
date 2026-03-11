@@ -76,6 +76,8 @@ export const BOOST_NAMES: Record<Lang, Record<string, string>> = {
     'Speed Boost': 'Буст скорости',
     'Lucky Boost': 'Буст удачи',
     'Shield Boost': 'Буст защиты',
+        'Pickaxe 1': 'Кирка 1',
+    'Dynamite': 'Динамит',
   },
   en: {
     'Hashrate Boost S': 'Hashrate Boost S',
@@ -85,6 +87,8 @@ export const BOOST_NAMES: Record<Lang, Record<string, string>> = {
     'Speed Boost': 'Speed Boost',
     'Lucky Boost': 'Lucky Boost',
     'Shield Boost': 'Shield Boost',
+        'Pickaxe 1': 'Pickaxe 1',
+    'Dynamite': 'Dynamite',
   },
 };
 
