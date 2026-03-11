@@ -12,7 +12,7 @@ var T={
     name:'Название',country:'Страна',resource:'Ресурс',price:'Цена',rate:'Рейт',activeCol:'Актив.',actions:'Действия',
     add:'+ Добавить',edit:'Редактировать',newSite:'Новое месторождение',save:'Сохранить',cancel:'Отмена',del:'Удал.',confirmDel:'Удалить?',
     search:'Поиск...',allRes:'Все ресурсы',allCountries:'Все страны',yes:'Да',no:'Нет',run:'Запустить',running:'Выполняю',
-    tgId:'TG ID',username:'Ник',coins:'Монеты',
+    tgId:'TG ID',username:'Ник',coins:'Монеты',editBal:'Изменить',saveBal:'Сохр.',cancelBal:'✕',
     gitPull:'Git Pull',gitPullDesc:'Обновить код с GitHub (git pull origin master)',gitPullWarn:'⚠ Сбросит все локальные изменения! Нужен рестарт серверов.',
     seedBoosts:'Seed Boosts',seedBoostsDesc:'Заполнить коллекцию буст-карточек в MongoDB',seedBoostsWarn:'Перезапишет существующие бусты.',
     reseed:'Reseed Sites',reseedDesc:'Перезаполнить месторождения из seedMiningSites.js',reseedWarn:'⚠ Перезапишет все месторождения!',
@@ -25,7 +25,7 @@ var T={
     name:'Name',country:'Country',resource:'Resource',price:'Price',rate:'Rate',activeCol:'Active',actions:'Actions',
     add:'+ Add',edit:'Edit',newSite:'New Site',save:'Save',cancel:'Cancel',del:'Del',confirmDel:'Delete?',
     search:'Search...',allRes:'All resources',allCountries:'All countries',yes:'Yes',no:'No',run:'Run',running:'Running',
-    tgId:'TG ID',username:'Username',coins:'Coins',
+    tgId:'TG ID',username:'Username',coins:'Coins',editBal:'Edit',saveBal:'Save',cancelBal:'✕',
     gitPull:'Git Pull',gitPullDesc:'Update code from GitHub (git pull origin master)',gitPullWarn:'\u26a0 Resets all local changes! Requires server restart.',
     seedBoosts:'Seed Boosts',seedBoostsDesc:'Fill boosts-cards collection in MongoDB',seedBoostsWarn:'Will overwrite existing boosts.',
     reseed:'Reseed Sites',reseedDesc:'Re-seed mining sites from seedMiningSites.js',reseedWarn:'\u26a0 Will overwrite all mining sites!',
@@ -44,6 +44,7 @@ export default function AdminPage(){
   var _fc=useState('all'),filterCountry=_fc[0],setFilterCountry=_fc[1];
   var _so=useState({col:'name',dir:'asc'}),sortCfg=_so[0],setSortCfg=_so[1];
   var _ln=useState('ru'),lang=_ln[0],setLang=_ln[1];
+var _eb=useState(null),editBalanceId=_eb[0],setEditBalanceId=_eb[1];var _ebv=useState(''),editBalanceVal=_ebv[0],setEditBalanceVal=_ebv[1];
   var t=T[lang];
   var hdr={headers:{'x-admin-token':token}};
   function load(){
@@ -54,7 +55,9 @@ export default function AdminPage(){
   useEffect(function(){if(auth)load()},[auth,tab,token]);
   function login(){axios.get(API+'/api/admin/stats',{headers:{'x-admin-token':inp}}).then(function(r){if(r.data.success){setToken(inp);setAuth(true);setStats(r.data.stats)}}).catch(function(){alert(t.wrongToken)})}
   function runOp(p,l){setBusy(true);setOpRes(t.running+': '+l+'...');axios.get(API+'/api/admin'+p,hdr).then(function(r){setOpRes(JSON.stringify(r.data,null,2));setBusy(false)}).catch(function(e){setOpRes('Error: '+e.message);setBusy(false)})}
-  function delIcon(id){if(!confirm(t.confirmDel))return;axios.delete(API+'/api/admin/icons/'+id,hdr).then(function(){load()}).catch(function(e){alert(e.message)})}
+  
+function saveBalance(userId,val){axios.put(API+'/api/admin/users/'+userId+'/balance',{coins:Number(val)},hdr).then(function(){setEditBalanceId(null);setEditBalanceVal('');load()}).catch(function(e){alert(e.message)})}
+function delIcon(id){if(!confirm(t.confirmDel))return;axios.delete(API+'/api/admin/icons/'+id,hdr).then(function(){load()}).catch(function(e){alert(e.message)})}
   function saveIcon(){var d=Object.assign({},modal);NUMS.forEach(function(k){d[k]=Number(d[k])||0});var p=d._id?axios.put(API+'/api/admin/icons/'+d._id,d,hdr):axios.post(API+'/api/admin/icons',d,hdr);p.then(function(){setModal(null);load()}).catch(function(e){alert(e.message)})}
   function uf(f,v){var o=Object.assign({},modal);o[f]=v;setModal(o)}
   function newIcon(){setModal({name:'',imageUrl:'',price:0,continent:'',country:'',resourceType:'',rarity:'common',stakingRate:10,starsPrice:0,isActive:true,order:0,lat:0,lng:0})}
@@ -74,7 +77,7 @@ export default function AdminPage(){
     h('div',{className:s.header},h('div',{style:{display:'flex',alignItems:'center'}},h('h1',null,t.title),langToggle),h('button',{className:s.btn,onClick:function(){setAuth(false);setToken('')}},t.logout)),
     h('div',{className:s.tabs},TABLIST.map(function(x){return h('button',{key:x[0],className:tab===x[0]?s.tabActive:s.tab,onClick:function(){setTab(x[0])}},x[1])})),
     tab==='stats'&&stats&&h('div',{className:s.grid},[[t.sites,stats.totalIcons],[t.active,stats.activeIcons],[t.usersN,stats.totalUsers],[t.purchases,stats.totalPurchases]].map(function(x,i){return h('div',{key:i,className:s.card},h('h3',null,x[0]),h('div',{className:s.val},x[1]))})),
-    tab==='users'&&h('table',{className:s.table},h('thead',null,h('tr',null,['#',t.tgId,t.name,t.username,t.coins].map(function(x){return h('th',{key:x},x)}))),h('tbody',null,users.map(function(u,i){return h('tr',{key:u._id},h('td',null,i+1),h('td',null,u.telegramId),h('td',null,(u.firstName||'')+' '+(u.lastName||'')),h('td',null,u.username?'@'+u.username:'-'),h('td',{style:{color:'#f5a623',fontWeight:700}},u.coins))}))),
+    tab==='users'&&h('table',{className:s.table},h('thead',null,h('tr',null,['#',t.tgId,t.name,t.username,t.coins,''].map(function(x){return h('th',{key:x||'act'},x)}))),h('tbody',null,users.map(function(u,i){return h('tr',{key:u._id},h('td',null,i+1),h('td',null,u.telegramId),h('td',null,(u.firstName||'')+' '+(u.lastName||'')),h('td',null,u.username?'@'+u.username:'-'),h('td',{style:{color:'#f5a623',fontWeight:700}},editBalanceId===u._id?h('input',{type:'number',value:editBalanceVal,onChange:function(e){setEditBalanceVal(e.target.value)},style:{width:90,padding:'4px 6px',borderRadius:4,border:'1px solid #f5a623',background:'#1a1a1a',color:'#f5a623',fontWeight:700},autoFocus:true,onKeyDown:function(e){if(e.key==='Enter')saveBalance(u._id,editBalanceVal);if(e.key==='Escape'){setEditBalanceId(null);setEditBalanceVal('')}}}):u.coins),h('td',null,editBalanceId===u._id?h('span',{style:{display:'flex',gap:4}},h('button',{className:s.btn,style:{padding:'2px 8px',fontSize:11},onClick:function(){saveBalance(u._id,editBalanceVal)}},t.saveBal),h('button',{className:s.btnSmall,style:{padding:'2px 6px',fontSize:11},onClick:function(){setEditBalanceId(null);setEditBalanceVal('')}},t.cancelBal)):h('button',{className:s.btnSmall,style:{padding:'2px 8px',fontSize:11},onClick:function(){setEditBalanceId(u._id);setEditBalanceVal(String(u.coins))}},t.editBal)))}))),
     tab==='icons'&&h('div',null,
       h('div',{style:{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap',alignItems:'center'}},
         h('button',{className:s.btn,onClick:newIcon},t.add),

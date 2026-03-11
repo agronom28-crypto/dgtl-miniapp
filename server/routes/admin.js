@@ -320,4 +320,39 @@ router.get('/clear-cache', (req, res) => {
     });
 });
 
+
+// Обновить баланс пользователя
+router.put("/users/:id/balance", async (req, res) => {
+  try {
+    const { coins } = req.body;
+    if (coins === undefined || isNaN(Number(coins))) {
+      return res.status(400).json({ success: false, error: "Invalid coins value" });
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, { coins: Number(coins) }, { new: true });
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;
+
+// Обновить баланс пользователя
+router.put('/users/:id/balance', async (req, res) => {
+  try {
+    const { coins } = req.body;
+    if (coins === undefined || isNaN(Number(coins))) {
+      return res.status(400).json({ success: false, error: 'Invalid coins value' });
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, { coins: Number(coins) }, { new: true });
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
