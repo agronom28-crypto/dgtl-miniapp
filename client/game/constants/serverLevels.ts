@@ -25,7 +25,7 @@ export interface LevelConstant {
 const levels: LevelConstant[] = [
     {
         order: 1,
-        name: "Базовый уровень",
+        name: "Базовый уровень", nameEn: "Basic Level",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level1_video.mp4",
         requiredScore: 0,
@@ -45,7 +45,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 2,
-        name: "Щелочные металлы",
+        name: "Щелочные металлы", nameEn: "Alkali Metals",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level2_video.mp4",
         requiredScore: 1000,
@@ -64,7 +64,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 3,
-        name: "Галогены и благородные газы",
+        name: "Галогены и благородные газы", nameEn: "Halogens & Noble Gases",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level3_video.mp4",
         requiredScore: 2000,
@@ -83,7 +83,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 4,
-        name: "Переходные металлы",
+        name: "Переходные металлы", nameEn: "Transition Metals",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level4_video.mp4",
         requiredScore: 3000,
@@ -102,7 +102,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 5,
-        name: "Лантаноиды",
+        name: "Лантаноиды", nameEn: "Lanthanides",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level5_video.mp4",
         requiredScore: 4000,
@@ -121,7 +121,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 6,
-        name: "Актиноиды",
+        name: "Актиноиды", nameEn: "Actinides",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level6_video.mp4",
         requiredScore: 5000,
@@ -140,7 +140,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 7,
-        name: "Главная группа",
+        name: "Главная группа", nameEn: "Main Group",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level7_video.mp4",
         requiredScore: 6000,
@@ -159,7 +159,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 8,
-        name: "Щелочноземельные металлы",
+        name: "Щелочноземельные металлы", nameEn: "Alkaline Earth Metals",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level8_video.mp4",
         requiredScore: 7000,
@@ -178,7 +178,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 9,
-        name: "Постпереходные металлы",
+        name: "Постпереходные металлы", nameEn: "Post-Transition Metals",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level9_video.mp4",
         requiredScore: 8000,
@@ -197,7 +197,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 10,
-        name: "Смешанный уровень",
+        name: "Смешанный уровень", nameEn: "Mixed Level",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level10_video.mp4",
         requiredScore: 9000,
@@ -216,7 +216,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 11,
-        name: "Редкоземельные элементы",
+        name: "Редкоземельные элементы", nameEn: "Rare Earth Elements",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level11_video.mp4",
         requiredScore: 10000,
@@ -235,7 +235,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 12,
-        name: "Супер-редкие",
+        name: "Супер-редкие", nameEn: "Super Rare",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level12_video.mp4",
         requiredScore: 11000,
@@ -254,7 +254,7 @@ const levels: LevelConstant[] = [
     },
     {
         order: 13,
-        name: "Все элементы!",
+        name: "Все элементы!", nameEn: "All Elements!",
         backgroundUrl: "/game/backgrounds/level1.jpg",
         backgroundVideo: "/game/backgrounds/videos/level13_video.mp4",
         requiredScore: 12000,
