@@ -29,10 +29,10 @@ interface Footprint {
 
 // Boot type to footprint image mapping
 const BOOT_FOOTPRINTS: Record<string, { left: string; right: string }> = {
-  boots_female: { left: '/images/left_foot_female.png', right: '/images/right_foot_female.png' },
-  boots_male: { left: '/images/left_foot_male.png', right: '/images/right_foot_male.png' },
-  boots_golden: { left: '/images/left_foot_gold.png', right: '/images/right_foot_gold.png' },
-  boots_leather: { left: '/images/lef_foot_white.png', right: '/images/right_foot_white.png' },
+  boots_female: { left: '/images/clover_logo.svg', right: '/images/clover_logo.svg' },
+  boots_male: { left: '/images/clover_logo.svg', right: '/images/clover_logo.svg' },
+  boots_golden: { left: '/images/clover_logo.svg', right: '/images/clover_logo.svg' },
+  boots_leather: { left: '/images/clover_logo.svg', right: '/images/clover_logo.svg' },
 };
 
 const DEFAULT_FOOTPRINTS = {
