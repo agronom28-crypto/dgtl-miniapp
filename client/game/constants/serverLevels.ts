@@ -9,6 +9,7 @@ export interface MineralConstant {
 export interface LevelConstant {
     order: number;
     name: string;
+        nameEn?: string;
     backgroundUrl: string;
     backgroundVideo?: string; // Made optional as it might not be on all server levels
     requiredScore: number;
