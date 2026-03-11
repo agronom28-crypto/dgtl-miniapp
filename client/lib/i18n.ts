@@ -96,6 +96,44 @@ export function getBoostName(lang: Lang, title: string): string {
   return BOOST_NAMES[lang][title] || title;
 }
 
+
+// ======= LEVEL NAMES =======
+export const LEVEL_NAMES: Record<Lang, Record<string, string>> = {
+  ru: {
+    'Базовый уровень': 'Базовый уровень',
+    'Щелочные металлы': 'Щелочные металлы',
+    'Галогены и благородные газы': 'Галогены и благородные газы',
+    'Переходные металлы': 'Переходные металлы',
+    'Лантаноиды': 'Лантаноиды',
+    'Актиноиды': 'Актиноиды',
+    'Главная группа': 'Главная группа',
+    'Щелочноземельные металлы': 'Щелочноземельные металлы',
+    'Постпереходные металлы': 'Постпереходные металлы',
+    'Смешанный уровень': 'Смешанный уровень',
+    'Редкоземельные элементы': 'Редкоземельные элементы',
+    'Супер-редкие': 'Супер-редкие',
+    'Все элементы!': 'Все элементы!',
+  },
+  en: {
+    'Базовый уровень': 'Basic Level',
+    'Щелочные металлы': 'Alkali Metals',
+    'Галогены и благородные газы': 'Halogens & Noble Gases',
+    'Переходные металлы': 'Transition Metals',
+    'Лантаноиды': 'Lanthanides',
+    'Актиноиды': 'Actinides',
+    'Главная группа': 'Main Group',
+    'Щелочноземельные металлы': 'Alkaline Earth Metals',
+    'Постпереходные металлы': 'Post-Transition Metals',
+    'Смешанный уровень': 'Mixed Level',
+    'Редкоземельные элементы': 'Rare Earth Elements',
+    'Супер-редкие': 'Super-Rare',
+    'Все элементы!': 'All Elements!',
+  },
+};
+
+export function getLevelName(lang: Lang, name: string): string {
+  return LEVEL_NAMES[lang][name] || name;
+}
 // ======= TRANSLATIONS =======
 export const translations = {
   ru: {
