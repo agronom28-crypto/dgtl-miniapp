@@ -113,7 +113,9 @@ const GamePage: React.FC = () => {
       setIsDataLoading(true); // Set loading true at the start
       try {
         const boostsResponse = await axios.get("/api/boost-cards");
-        setBoostCards(boostsResponse.data);
+                    const VALID_BOOST_IDS = ['pickaxe1', 'dynamite1', 'boots_female', 'boots_male', 'boots_golden', 'boots_leather'];
+            const allCards = Array.isArray(boostsResponse.data) ? boostsResponse.data : [];
+            setBoostCards(allCards.filter((card: BoostCard) => VALID_BOOST_IDS.includes(card.id)));
 
         if (session) {
           const userResponse = await axios.get("/api/user/data");
