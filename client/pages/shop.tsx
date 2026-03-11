@@ -105,12 +105,12 @@ const Shop: React.FC = () => {
 
   const loadUserData = async () => {
     try {
-      const telegramId = (session?.user as any)?.telegramId;
-      if (!telegramId) return;
-      const userRes = await axios.get(`/api/users/${telegramId}`);
-      if (userRes.data.success) {
-        setUserData(userRes.data.user);
-        const myRes = await shopService.getMyIcons(userRes.data.user._id);
+      const res = await fetch('/api/user/data');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data._id) {
+        setUserData(data);
+        const myRes = await shopService.getMyIcons(data._id);
         if (myRes.success) setMyIcons(myRes.userIcons);
       }
     } catch (err) { console.error(err); }
@@ -385,7 +385,7 @@ const Shop: React.FC = () => {
     return (
       <Layout>
         <h1 className={styles.title}>{t.shop_title}</h1>
-        <p className={styles.coins}>💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}</p>
+        <p className={styles.coins}>💰 {userData?.coins?.toFixed(2) || 0} {t.shop_coins}</p>
         <WorldMap onSelect={(c: ContinentKey) => setActiveContinent(c)} activeContinent={null} />
         <p className={styles.hint}>{t.shop_map_hint}</p>
         {myIcons.length > 0 && (
@@ -406,7 +406,7 @@ const Shop: React.FC = () => {
       <h1 className={styles.title}>
         {lang === 'ru' ? CONTINENT_LABELS[activeContinent] : (t as any)[`continent_${activeContinent}`]}
       </h1>
-      <p className={styles.coins}>💰 {userData?.coins?.toLocaleString() || 0} {t.shop_coins}</p>
+      <p className={styles.coins}>💰 {userData?.coins?.toFixed(2) || 0} {t.shop_coins}</p>
 
       <div className={styles.filters}>
         {RESOURCE_FILTERS.map(f => (
